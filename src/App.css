@@ -51,6 +51,38 @@ button:hover {
   color: #fff;
 }
 
+.button-ghost {
+  font-weight: 600;
+  padding: 8px;
+  background: transparent;
+  color: #38bdf8;
+  border: 1px solid #38bdf8;
+}
+
+.button-ghost:hover {
+  background: #38bdf8;
+  color: #fff;
+}
+
+.button-secondary {
+  background: #444;
+  color: #f4f4f5;
+  border: none;
+  border-radius: 6px;
+  padding: 4px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition:
+    background-color 0.2s,
+    color 0.2s;
+}
+
+button.button-secondary:hover {
+  background: #555;
+  color: #fff;
+}
+
 input,
 textarea,
 select {
@@ -68,4 +100,12 @@ input:focus,
 textarea:focus,
 select:focus {
   border-color: #a78bfa;
+}
+
+code {
+  background: #2d2d34;
+  color: #f4f4f5;
+  padding: 2px 4px;
+  border-radius: 4px;
+  font-family: 'Courier New', Courier, monospace;
 }

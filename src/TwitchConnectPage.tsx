@@ -1,5 +1,31 @@
+import { useEffect, useState } from 'react';
 import { TWITCH_AUTH_URL } from './constants';
 import { persistedStore, store } from './store/store';
+
+const CopyToClipboardButton = ({ text }: { text: string }) => {
+  const [success, setSuccess] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setSuccess(false), 2000);
+    return () => clearTimeout(timer);
+  }, [success]);
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(text).then(
+      () => {
+        setSuccess(true);
+      },
+      () => {
+        setSuccess(false);
+      },
+    );
+  };
+  return (
+    <button onClick={handleCopy} className="button-secondary">
+      {success ? 'Copied!' : 'Copy URL'}
+    </button>
+  );
+};
 
 export const TwitchConnectPage = () => {
   const accessToken = persistedStore((s) => s.accessToken);
@@ -12,7 +38,7 @@ export const TwitchConnectPage = () => {
     const authStateValue = persistedStore.getState().authStateValue;
     console.log('Generated auth state value:', authStateValue);
     window.location.assign(
-      `${TWITCH_AUTH_URL}authorize?response_type=token&client_id=${clientId}&redirect_uri=http://localhost:5174/auth&scope=user%3Aread%3Achat&state=${authStateValue}`,
+      `${TWITCH_AUTH_URL}authorize?response_type=token&client_id=${clientId}&redirect_uri=${import.meta.env.VITE_AUTH_REDIRECT_URI}&scope=user%3Aread%3Achat&state=${authStateValue}`,
     );
   };
 
@@ -22,10 +48,30 @@ export const TwitchConnectPage = () => {
     window.location.assign('/');
   };
 
+  const chatUrl = `${import.meta.env.VITE_BASE_URI}/chat?access_token=${accessToken}`;
+
   if (accessToken && broadcasterId) {
     return (
-      <div>
-        <button onClick={handleLogout}>Logout</button>
+      <div className="logged-in">
+        <p>
+          You are now connected to Twitch as <strong>{broadcasterId}</strong>.
+        </p>
+        <h2>How to add as a browser source in OBS</h2>
+        <ol>
+          <li>Open OBS and go to the Sources panel.</li>
+          <li>Click the "+" button to add a new source.</li>
+          <li>Select "Browser" from the list of source types.</li>
+          <li>Create a new browser source</li>
+          <li>
+            Paste the following URL into the URL field:
+            <p>
+              <code>{chatUrl}</code> <CopyToClipboardButton text={chatUrl} />
+            </p>
+          </li>
+        </ol>
+        <button className="button-ghost" onClick={handleLogout}>
+          Logout
+        </button>
       </div>
     );
   }
