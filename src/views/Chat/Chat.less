@@ -1,0 +1,254 @@
+.chat {
+  font-size: 22px;
+  box-sizing: border-box;
+  width: 500px;
+  height: 100vh;
+  text-align: left;
+  overflow: hidden;
+
+  ::-webkit-scrollbar {
+    width: 0;
+    /* Remove scrollbar space */
+    background: transparent;
+    /* Optional: just make scrollbar invisible */
+  }
+
+  &-disappearing {
+    display: flex;
+    flex-direction: column;
+    overflow: auto;
+    height: 100%;
+    justify-content: end;
+  }
+
+  &-message {
+    all: unset;
+    box-sizing: border-box;
+    width: 100%;
+    overflow-wrap: anywhere;
+    padding: 0.2rem;
+    line-height: 22px;
+
+    &-body {
+      padding: 0px;
+      border-radius: 3px;
+      border-left: 3px solid transparent;
+      border-right: 3px solid transparent;
+      display: flex;
+      flex-direction: row;
+      background-size: 100% 3px;
+      background-position:
+        0 0,
+        0 100%;
+      background-repeat: no-repeat;
+      line-height: 32px;
+
+      &-subscriber {
+        border-left: 3px solid rgb(114, 90, 30);
+        border-right: 3px solid rgb(255, 249, 171);
+        background-image: linear-gradient(90deg, rgb(114, 90, 30), rgb(255, 249, 171)), linear-gradient(90deg, rgb(114, 90, 30), rgb(255, 249, 171));
+        padding: 6px 4px;
+      }
+
+      &-spotlighted {
+        border-left: 3px solid rgb(190, 54, 236);
+        border-right: 3px solid rgb(7, 55, 176);
+        background: linear-gradient(90deg, rgb(190, 54, 236), rgb(7, 55, 176));
+      }
+
+      &-gigantified>span>span.chat-message-text>img:last-of-type {
+        width: 112px;
+        height: 112px;
+        max-height: unset;
+      }
+
+      &-thick-text-shadow {
+        text-shadow: rgb(0, 0, 0) 2px 0px 0px, rgb(0, 0, 0) 1.75517px 0.958851px 0px, rgb(0, 0, 0) 1.0806px 1.68294px 0px, rgb(0, 0, 0) 0.141474px 1.99499px 0px, rgb(0, 0, 0) -0.832294px 1.81859px 0px, rgb(0, 0, 0) -1.60229px 1.19694px 0px, rgb(0, 0, 0) -1.97998px 0.28224px 0px, rgb(0, 0, 0) -1.87291px -0.701566px 0px, rgb(0, 0, 0) -1.30729px -1.5136px 0px, rgb(0, 0, 0) -0.421592px -1.95506px 0px, rgb(0, 0, 0) 0.567324px -1.91785px 0px, rgb(0, 0, 0) 1.41734px -1.41108px 0px, rgb(0, 0, 0) 1.92034px -0.558831px 0px;
+      }
+    }
+
+    &-nick {
+      font-weight: 700;
+      padding-right: 0.2em;
+      overflow: visible;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      display: inline-block;
+    }
+
+    &-text {
+      word-break: break-word;
+
+      &-action {
+        font-style: italic;
+      }
+    }
+
+    &-badge {
+      height: 1.2rem;
+      width: unset;
+      border-radius: 3px;
+      margin-bottom: 0.3rem;
+      margin-right: 0.3rem;
+      vertical-align: middle;
+    }
+
+    &-avatar-image {
+      border-radius: 4px;
+      height: 36px;
+      width: 36px;
+      display: inline-block;
+      vertical-align: middle;
+      margin-bottom: 0.05rem;
+      margin-right: 0.3rem;
+    }
+  }
+
+  &-emote {
+    max-height: 36px;
+    display: inline-block;
+    vertical-align: middle;
+
+    &--flipy {
+      transform: scaleY(-1);
+    }
+
+    &--flipx {
+      transform: scaleX(-1);
+    }
+
+    &--cursed {
+      filter: grayscale(1) brightness(0.7) contrast(2.5);
+    }
+
+    &--hyperred {
+      filter: brightness(0.2) sepia(1) brightness(2.2) contrast(3) saturate(8);
+    }
+
+    &--party {
+      animation: party 1.5s linear infinite;
+    }
+
+    &--shake {
+      animation: shake .5s step-start infinite;
+    }
+
+    &--rotate {
+      transform: rotate(90deg);
+    }
+
+    &--rotate-left {
+      transform: rotate(-90deg);
+    }
+
+    &--zero-width-wrapper {
+      position: relative;
+      display: inline-block;
+    }
+
+    &--zero-width-span {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      margin: auto;
+      pointer-events: none;
+    }
+
+    &--zero-width-img {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    &--emoji {
+      max-height: 28px;
+    }
+  }
+
+  &-cheer {
+    vertical-align: middle;
+
+    &-amount {
+      font-weight: 700;
+      font-size: rem;
+      margin-left: 0.2rem;
+    }
+  }
+}
+
+.chat-emote--shake.chat-emote--party {
+  animation: shake .5s step-start infinite, party 1.5s linear infinite;
+}
+
+.chat-emote--flipy.chat-emote--flipx {
+  transform: scaleX(-1) scaleY(-1);
+}
+
+@keyframes hide {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes party {
+  0% {
+    filter: sepia(.5) hue-rotate(0deg) saturate(2.5);
+  }
+
+  100% {
+    filter: sepia(.5) hue-rotate(1turn) saturate(2.5);
+  }
+}
+
+@keyframes shake {
+  0% {
+    translate: 0 1px;
+  }
+
+  10% {
+    translate: 2px 0;
+  }
+
+  20% {
+    translate: 1px -2px;
+  }
+
+  30% {
+    translate: -2px 1px;
+  }
+
+  40% {
+    translate: 0 -1px;
+  }
+
+  50% {
+    translate: 2px 2px;
+  }
+
+  60% {
+    translate: -1px -1px;
+  }
+
+  70% {
+    translate: -2px 2px;
+  }
+
+  80% {
+    translate: 2px 1px;
+  }
+
+  90% {
+    translate: -1px -2px;
+  }
+
+  100% {
+    translate: 1px 0;
+  }
+}
