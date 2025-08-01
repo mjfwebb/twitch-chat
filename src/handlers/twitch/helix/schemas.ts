@@ -1,4 +1,4 @@
-import z from "zod";
+import z from 'zod';
 
 export const BadgeSetSchema = z.object({
   set_id: z.string(),
@@ -12,7 +12,7 @@ export const BadgeSetSchema = z.object({
       description: z.string(),
       click_action: z.string().nullable(),
       click_url: z.string().nullable(),
-    })
+    }),
   ),
 });
 
@@ -32,40 +32,40 @@ const CheermoteSchema = z.object({
       images: z.object({
         dark: z.object({
           animated: z.object({
-            "1": z.string(),
-            "1.5": z.string(),
-            "2": z.string(),
-            "3": z.string(),
-            "4": z.string(),
+            '1': z.string(),
+            '1.5': z.string(),
+            '2': z.string(),
+            '3': z.string(),
+            '4': z.string(),
           }),
           static: z.object({
-            "1": z.string(),
-            "1.5": z.string(),
-            "2": z.string(),
-            "3": z.string(),
-            "4": z.string(),
+            '1': z.string(),
+            '1.5': z.string(),
+            '2': z.string(),
+            '3': z.string(),
+            '4': z.string(),
           }),
         }),
         light: z.object({
           animated: z.object({
-            "1": z.string(),
-            "1.5": z.string(),
-            "2": z.string(),
-            "3": z.string(),
-            "4": z.string(),
+            '1': z.string(),
+            '1.5': z.string(),
+            '2': z.string(),
+            '3': z.string(),
+            '4': z.string(),
           }),
           static: z.object({
-            "1": z.string(),
-            "1.5": z.string(),
-            "2": z.string(),
-            "3": z.string(),
-            "4": z.string(),
+            '1': z.string(),
+            '1.5': z.string(),
+            '2': z.string(),
+            '3': z.string(),
+            '4': z.string(),
           }),
         }),
       }),
       can_cheer: z.boolean(),
       show_in_bits_card: z.boolean(),
-    })
+    }),
   ),
   type: z.string(),
   order: z.number(),

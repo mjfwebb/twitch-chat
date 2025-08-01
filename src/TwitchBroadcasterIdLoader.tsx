@@ -1,11 +1,11 @@
-import { useState } from "react";
-import z from "zod";
-import { TWITCH_AUTH_URL } from "./constants";
-import { fetchBadges } from "./handlers/twitch/helix/fetchBadges";
-import { fetchCheers } from "./handlers/twitch/helix/fetchCheers";
-import { useMount } from "./hooks/useMount";
-import { loadEmotes } from "./loadEmotes";
-import { persistedStore, store } from "./store/store";
+import { useState } from 'react';
+import z from 'zod';
+import { TWITCH_AUTH_URL } from './constants';
+import { fetchBadges } from './handlers/twitch/helix/fetchBadges';
+import { fetchCheers } from './handlers/twitch/helix/fetchCheers';
+import { useMount } from './hooks/useMount';
+import { loadEmotes } from './loadEmotes';
+import { persistedStore, store } from './store/store';
 
 const ValidateResponseSchema = z.object({
   client_id: z.string(),
@@ -28,7 +28,7 @@ export const TwitchBroadcasterIdLoader = () => {
         // Fetch broadcaster ID using the access token
         const result = await fetch(`${TWITCH_AUTH_URL}validate`, {
           headers: {
-            Authorization: "OAuth " + accessToken,
+            Authorization: 'OAuth ' + accessToken,
           },
         });
 
@@ -39,12 +39,12 @@ export const TwitchBroadcasterIdLoader = () => {
           const broadcasterId = parsed.data.user_id;
           store.getState().setBroadcasterId(broadcasterId);
 
-          fetchBadges("channel");
-          fetchCheers("channel");
+          fetchBadges('channel');
+          fetchCheers('channel');
           await loadEmotes(broadcasterId);
         } else {
-          setError("Invalid token response: " + parsed.error.message);
-          console.error("Invalid token response:", parsed.error);
+          setError('Invalid token response: ' + parsed.error.message);
+          console.error('Invalid token response:', parsed.error);
         }
       }
     }

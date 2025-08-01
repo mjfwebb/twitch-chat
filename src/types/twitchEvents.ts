@@ -7,10 +7,7 @@ export type EventSubResponse = {
   event: Record<string, unknown>;
 };
 
-export type EventsubEvent =
-  | ChannelChatMessageEvent
-  | ChannelChatMessageDeleteEvent
-  | ChannelChatNotificationEvent;
+export type EventsubEvent = ChannelChatMessageEvent | ChannelChatMessageDeleteEvent | ChannelChatNotificationEvent;
 
 export type EventsubEventBase<EventType extends EventsubSubscriptionType> = {
   eventType: EventType;
@@ -19,9 +16,9 @@ export type EventsubEventBase<EventType extends EventsubSubscriptionType> = {
 export type EventsubSubscriptionType =
   // | 'channel.chat.clear' // A moderator or bot has cleared all messages from the chat room.
   // | 'channel.chat.clear_user_messages' // A moderator or bot has cleared all messages from a specific user.
-  | "channel.chat.message" // Any user sends a message to a specific chat room.
-  | "channel.chat.message_delete" // A moderator has removed a specific message.
-  | "channel.chat.notification"; // A notification for when an event that appears in chat has occurred.
+  | 'channel.chat.message' // Any user sends a message to a specific chat room.
+  | 'channel.chat.message_delete' // A moderator has removed a specific message.
+  | 'channel.chat.notification'; // A notification for when an event that appears in chat has occurred.
 
 interface Cheermote {
   prefix: string; // The name portion of the Cheermote string that you use in chat to cheer Bits. The full Cheermote string is the concatenation of {prefix} + {number of Bits}. For example, if the prefix is “Cheer” and you want to cheer 100 Bits, the full Cheermote string is Cheer100. When the Cheermote string is entered in chat, Twitch converts it to the image associated with the Bits tier that was cheered.
@@ -33,7 +30,7 @@ interface Emote {
   id: string; // An ID that uniquely identifies this emote.
   emote_set_id: string; // An ID that identifies the emote set that the emote belongs to.
   owner_id: string; // The ID of the broadcaster who owns the emote.
-  format: "animated" | "static"; // The formats that the emote is available in. For example, if the emote is available only as a static PNG, the array contains only static. But if the emote is available as a static PNG and an animated GIF, the array contains static and animated. The possible formats are: animated - An animated GIF is available for this emote. static - A static PNG file is available for this emote.
+  format: 'animated' | 'static'; // The formats that the emote is available in. For example, if the emote is available only as a static PNG, the array contains only static. But if the emote is available as a static PNG and an animated GIF, the array contains static and animated. The possible formats are: animated - An animated GIF is available for this emote. static - A static PNG file is available for this emote.
 }
 
 interface Mention {
@@ -43,7 +40,7 @@ interface Mention {
 }
 
 export interface ChatMessageFragment {
-  type: "text" | "cheermote" | "emote" | "mention"; // The type of message fragment.
+  type: 'text' | 'cheermote' | 'emote' | 'mention'; // The type of message fragment.
   text: string; // Message text in fragment.
   cheermote?: Cheermote; // Metadata pertaining to the cheermote.
   emote?: Emote; // Metadata pertaining to the emote.
@@ -79,8 +76,7 @@ interface ChatMessage {
   fragments: ChatMessageFragment[]; // Ordered list of chat message fragments.
 }
 
-export interface ChannelChatMessageEvent
-  extends EventsubEventBase<"channel.chat.message"> {
+export interface ChannelChatMessageEvent extends EventsubEventBase<'channel.chat.message'> {
   broadcaster_user_id: string; // The broadcaster user ID.
   broadcaster_user_name: string; // The broadcaster display name.
   broadcaster_user_login: string; // The broadcaster login.
@@ -89,12 +85,7 @@ export interface ChannelChatMessageEvent
   chatter_user_login: string; // The user login of the user that sent the message.
   message_id: string; // A UUID that identifies the message.
   message: ChatMessage; // The structured chat message.
-  message_type:
-    | "text"
-    | "channel_points_highlighted"
-    | "channel_points_sub_only"
-    | "power_ups_gigantified_emote"
-    | "user_intro"; // The type of message.
+  message_type: 'text' | 'channel_points_highlighted' | 'channel_points_sub_only' | 'power_ups_gigantified_emote' | 'user_intro'; // The type of message.
   badges: ChatBadge[]; // List of chat badges.
   cheer?: Cheer; // Metadata if this message is a cheer.
   color: string; // The color of the user’s name in the chat room.
@@ -102,8 +93,7 @@ export interface ChannelChatMessageEvent
   channel_points_custom_reward_id?: string; // The ID of a channel points custom reward that was redeemed.
 }
 
-export interface ChannelChatMessageDeleteEvent
-  extends EventsubEventBase<"channel.chat.message_delete"> {
+export interface ChannelChatMessageDeleteEvent extends EventsubEventBase<'channel.chat.message_delete'> {
   broadcaster_user_id: string; // The broadcaster user ID.
   broadcaster_user_name: string; // The broadcaster display name.
   broadcaster_user_login: string; // The broadcaster login.
@@ -114,7 +104,7 @@ export interface ChannelChatMessageDeleteEvent
 }
 
 interface ChannelChatNoticeSubscription {
-  sub_tier: "1000" | "2000" | "3000"; // The type of subscription plan being used. Possible values are: 1000 - First level of paid or Prime subscription. 2000 - Second level of paid subscription. 3000 - Third level of paid subscription.
+  sub_tier: '1000' | '2000' | '3000'; // The type of subscription plan being used. Possible values are: 1000 - First level of paid or Prime subscription. 2000 - Second level of paid subscription. 3000 - Third level of paid subscription.
   is_prime: boolean; // Indicates if the subscription was obtained through Amazon Prime.
   duration_months: number; // The number of months the subscription is for.
 }
@@ -123,7 +113,7 @@ interface ChannelChatNoticeResubscription {
   cumulative_months: number; // The total number of months the user has subscribed.
   duration_months: number; // The number of months the subscription is for.
   streak_months: number; // The total number of months the user has subscribed.
-  sub_tier: "1000" | "2000" | "3000"; // The type of subscription plan being used. Possible values are: 1000 - First level of paid or Prime subscription. 2000 - Second level of paid subscription. 3000 - Third level of paid subscription.
+  sub_tier: '1000' | '2000' | '3000'; // The type of subscription plan being used. Possible values are: 1000 - First level of paid or Prime subscription. 2000 - Second level of paid subscription. 3000 - Third level of paid subscription.
   is_prime: boolean; // Indicates if the subscription was obtained through Amazon Prime.
   is_gift: boolean; // Whether or not the resub was a result of a gift.
   gifter_is_anonymous: boolean; // Whether or not the gift was anonymous.
@@ -192,8 +182,7 @@ interface ChannelChatNoticeBitsBadgeTier {
   tier: number; // The tier of the Bits badge the user just earned. For example, 100, 1000, or 10000.
 }
 
-interface ChannelChatNotificationEvent
-  extends EventsubEventBase<"channel.chat.notification"> {
+interface ChannelChatNotificationEvent extends EventsubEventBase<'channel.chat.notification'> {
   broadcaster_user_id: string; // The broadcaster user ID.
   broadcaster_user_name: string; // The broadcaster display name.
   broadcaster_user_login: string; // The broadcaster login.
@@ -207,18 +196,18 @@ interface ChannelChatNotificationEvent
   message_id: string; // A UUID that identifies the message.
   message: ChatMessage; // The structured chat message.
   notice_type:
-    | "sub"
-    | "resub"
-    | "sub_gift"
-    | "community_sub_gift"
-    | "gift_paid_upgrade"
-    | "prime_paid_upgrade"
-    | "raid"
-    | "unraid"
-    | "pay_it_forward"
-    | "announcement"
-    | "bits_badge_tier"
-    | "charity_donation"; // The type of notice.
+    | 'sub'
+    | 'resub'
+    | 'sub_gift'
+    | 'community_sub_gift'
+    | 'gift_paid_upgrade'
+    | 'prime_paid_upgrade'
+    | 'raid'
+    | 'unraid'
+    | 'pay_it_forward'
+    | 'announcement'
+    | 'bits_badge_tier'
+    | 'charity_donation'; // The type of notice.
   sub?: ChannelChatNoticeSubscription; // Information about the sub event. Null if notice_type is not sub.
   resub?: ChannelChatNoticeResubscription; // Information about the resub event. Null if notice_type is not resub.
   sub_gift?: ChannelChatNoticeSubscriptionGift; // Information about the gift sub event. Null if notice_type is not sub_gift.

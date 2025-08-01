@@ -1,11 +1,11 @@
-import { useEffect } from "react";
-import useWebSocket from "react-use-websocket";
-import { TWITCH_WEBSOCKET_EVENTSUB_URL } from "./constants";
-import { subscribeToChat } from "./handlers/twitch/event-sub/subscribers/subscribeToChat";
-import { twitchEventSubHandler } from "./handlers/twitch/twitchEventSubHandler";
-import { store } from "./store/store";
-import { EventsubEvent, EventSubResponse } from "./types/twitchEvents";
-import { hasOwnProperty } from "./utils/hasOwnProperty";
+import { useEffect } from 'react';
+import useWebSocket from 'react-use-websocket';
+import { TWITCH_WEBSOCKET_EVENTSUB_URL } from './constants';
+import { subscribeToChat } from './handlers/twitch/event-sub/subscribers/subscribeToChat';
+import { twitchEventSubHandler } from './handlers/twitch/twitchEventSubHandler';
+import { store } from './store/store';
+import { EventsubEvent, EventSubResponse } from './types/twitchEvents';
+import { hasOwnProperty } from './utils/hasOwnProperty';
 
 export const TwitchWebSocketClient = () => {
   const broadcasterId = store((s) => s.broadcasterId);
@@ -20,13 +20,13 @@ export const TwitchWebSocketClient = () => {
     const data = lastMessage?.data;
 
     if (!data) {
-      console.warn("No data received in last message");
+      console.warn('No data received in last message');
       return;
     }
     const jsonData = JSON.parse(data);
 
     switch (jsonData.metadata.message_type) {
-      case "session_welcome":
+      case 'session_welcome':
         {
           const sessionId = jsonData.payload.session?.id;
           if (sessionId && broadcasterId) {
@@ -36,7 +36,7 @@ export const TwitchWebSocketClient = () => {
 
         break;
 
-      case "notification":
+      case 'notification':
         if (isSubscriptionEvent(jsonData.payload)) {
           // Transform the data first so that we can have a discriminated union type
           const transformedData = {
@@ -57,10 +57,10 @@ export const TwitchWebSocketClient = () => {
 
 function isSubscriptionEvent(payload: unknown): payload is EventSubResponse {
   return (
-    hasOwnProperty(payload, "event") &&
-    typeof payload.event === "object" &&
-    hasOwnProperty(payload, "subscription") &&
-    hasOwnProperty(payload.subscription, "type") &&
-    typeof payload.subscription.type === "string"
+    hasOwnProperty(payload, 'event') &&
+    typeof payload.event === 'object' &&
+    hasOwnProperty(payload, 'subscription') &&
+    hasOwnProperty(payload.subscription, 'type') &&
+    typeof payload.subscription.type === 'string'
   );
 }

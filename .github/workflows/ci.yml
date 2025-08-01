@@ -24,13 +24,15 @@ jobs:
         run: pnpm test
 
   lint:
-    name: 🧹 Lint
+    name: 🧹 Lint & Format
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
       - uses: ./.github/workflows/composites/reusable-install/
       - name: Linting
         run: pnpm lint
+      - name: Formatting
+        run: pnpm format:check
 
   typecheck:
     name: 🔍 Typecheck

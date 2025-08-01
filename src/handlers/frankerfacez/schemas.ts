@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from 'zod';
 
 export const frankerFaceZEmoteSchema = z.object({
   id: z.number(),
@@ -17,8 +17,8 @@ export const frankerFaceZEmoteSetsSchema = z.optional(
       id: z.number(),
       title: z.string(),
       emoticons: z.optional(z.array(frankerFaceZEmoteSchema)),
-    })
-  )
+    }),
+  ),
 );
 
 export const frankerFaceZGlobalEmotesSchema = z.object({
@@ -32,9 +32,5 @@ export const frankerFaceZRoomEmotesSchema = z.object({
 
 export type FrankerFaceZEmote = z.infer<typeof frankerFaceZEmoteSchema>;
 export type FrankerFaceZEmoteSets = z.infer<typeof frankerFaceZEmoteSetsSchema>;
-export type FrankerFaceZGlobalEmotes = z.infer<
-  typeof frankerFaceZGlobalEmotesSchema
->;
-export type FrankerFaceZRoomEmotes = z.infer<
-  typeof frankerFaceZRoomEmotesSchema
->;
+export type FrankerFaceZGlobalEmotes = z.infer<typeof frankerFaceZGlobalEmotesSchema>;
+export type FrankerFaceZRoomEmotes = z.infer<typeof frankerFaceZRoomEmotesSchema>;

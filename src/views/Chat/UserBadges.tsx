@@ -1,15 +1,15 @@
-import { store } from "../../store/store";
-import { ChannelChatMessageEvent } from "../../types/twitchEvents";
+import { store } from '../../store/store';
+import { ChannelChatMessageEvent } from '../../types/twitchEvents';
 
 interface BadgesProps {
-  badges?: ChannelChatMessageEvent["badges"];
+  badges?: ChannelChatMessageEvent['badges'];
 }
 
 export const UserBadges = ({ badges }: BadgesProps) => {
   const chatBadges = store((s) => s.chatBadges);
 
   if (!badges) {
-    console.warn("No badges provided to UserBadges component.");
+    console.warn('No badges provided to UserBadges component.');
     return null;
   }
 
@@ -21,15 +21,7 @@ export const UserBadges = ({ badges }: BadgesProps) => {
       return null;
     }
 
-    return (
-      <img
-        className="chat-message-badge"
-        alt=""
-        key={foundBadge.name}
-        src={foundBadge.url}
-        width={18}
-      ></img>
-    );
+    return <img className="chat-message-badge" alt="" key={foundBadge.name} src={foundBadge.url} width={18}></img>;
   });
 
   return <>{badgeImages}</>;

@@ -1,11 +1,8 @@
-import { create } from "zustand";
-import { createJSONStorage, persist } from "zustand/middleware";
-import { UserInformation } from "../handlers/twitch/helix/schemas";
-import {
-  ChannelChatMessageDeleteEvent,
-  ChannelChatMessageEvent,
-} from "../types/twitchEvents";
-import { ChatBadge, ChatCheer, ChatEmote } from "../types/types";
+import { create } from 'zustand';
+import { createJSONStorage, persist } from 'zustand/middleware';
+import { UserInformation } from '../handlers/twitch/helix/schemas';
+import { ChannelChatMessageDeleteEvent, ChannelChatMessageEvent } from '../types/twitchEvents';
+import { ChatBadge, ChatCheer, ChatEmote } from '../types/types';
 
 interface StoreState {
   clientId: string;
@@ -32,7 +29,7 @@ export const store = create<StoreState>((set) => ({
   chatBadges: {},
   chatCheers: {},
   chatEmotes: {},
-  clientId: "nl4u7l1h4dt48e8hj58yha0we527kg",
+  clientId: 'nl4u7l1h4dt48e8hj58yha0we527kg',
   chatMessageEvents: [],
   userInformation: {},
   addUserInformation: (userInfo: UserInformation) => {
@@ -52,35 +49,24 @@ export const store = create<StoreState>((set) => ({
   deleteChatMessage: (chatMessage: ChannelChatMessageDeleteEvent) => {
     set((state) => ({
       ...state,
-      chatMessageEvents: state.chatMessageEvents.filter(
-        (message) => message.message_id !== chatMessage.message_id
-      ),
+      chatMessageEvents: state.chatMessageEvents.filter((message) => message.message_id !== chatMessage.message_id),
     }));
   },
   removeChatMessage: (chatMessage: ChannelChatMessageEvent) => {
     set((state) => ({
       ...state,
-      chatMessageEvents: state.chatMessageEvents.filter(
-        (message) => message.message_id !== chatMessage.message_id
-      ),
+      chatMessageEvents: state.chatMessageEvents.filter((message) => message.message_id !== chatMessage.message_id),
     }));
   },
   removeChatEmote: (emoteId: string) => {
     set((state) => ({
-      chatEmotes: Object.fromEntries(
-        Object.entries(state.chatEmotes).filter(
-          ([, emote]) => emote.id !== emoteId
-        )
-      ),
+      chatEmotes: Object.fromEntries(Object.entries(state.chatEmotes).filter(([, emote]) => emote.id !== emoteId)),
     }));
   },
   setBroadcasterId: (id: string | null) => set({ broadcasterId: id }),
-  setChatCheers: (cheers: Record<string, ChatCheer>) =>
-    set((state) => ({ chatCheers: { ...state.chatCheers, ...cheers } })),
-  setChatBadges: (badges: Record<string, ChatBadge>) =>
-    set((state) => ({ chatBadges: { ...state.chatBadges, ...badges } })),
-  setChatEmotes: (emotes: Record<string, ChatEmote>) =>
-    set((state) => ({ chatEmotes: { ...state.chatEmotes, ...emotes } })),
+  setChatCheers: (cheers: Record<string, ChatCheer>) => set((state) => ({ chatCheers: { ...state.chatCheers, ...cheers } })),
+  setChatBadges: (badges: Record<string, ChatBadge>) => set((state) => ({ chatBadges: { ...state.chatBadges, ...badges } })),
+  setChatEmotes: (emotes: Record<string, ChatEmote>) => set((state) => ({ chatEmotes: { ...state.chatEmotes, ...emotes } })),
 }));
 
 interface PersistedStoreState {
@@ -100,30 +86,27 @@ interface PersistedStoreState {
 export const persistedStore = create<PersistedStoreState>()(
   persist(
     (set) => ({
-      accessToken: "",
-      authStateValue: "",
+      accessToken: '',
+      authStateValue: '',
       frankerFaceZEnabled: true,
       betterTTVEnabled: true,
       sevenTVEnabled: true,
-      setFrankerFaceZEnabled: (enabled: boolean) =>
-        set({ frankerFaceZEnabled: enabled }),
-      setBetterTTVEnabled: (enabled: boolean) =>
-        set({ betterTTVEnabled: enabled }),
+      setFrankerFaceZEnabled: (enabled: boolean) => set({ frankerFaceZEnabled: enabled }),
+      setBetterTTVEnabled: (enabled: boolean) => set({ betterTTVEnabled: enabled }),
       setSevenTVEnabled: (enabled: boolean) => set({ sevenTVEnabled: enabled }),
-      setAuthStateValue: (newAuthStateValue: string) =>
-        set({ authStateValue: newAuthStateValue }),
+      setAuthStateValue: (newAuthStateValue: string) => set({ authStateValue: newAuthStateValue }),
       setAccessToken: (token: string) => set({ accessToken: token }),
       getAccessToken: (): string => {
         const at = persistedStore.getState().accessToken;
         if (!at) {
-          throw new Error("Access token is not set.");
+          throw new Error('Access token is not set.');
         }
         return at;
       },
     }),
     {
-      name: "athano-chat-overlay", // name of the item in the storage (must be unique)
+      name: 'athano-chat-overlay', // name of the item in the storage (must be unique)
       storage: createJSONStorage(() => sessionStorage), // (optional) by default, 'localStorage' is used
-    }
-  )
+    },
+  ),
 );

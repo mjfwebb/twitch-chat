@@ -1,5 +1,5 @@
 export type ChatEmote = {
-  origin: "sevenTV" | "betterTTV" | "frankerFaceZ" | "twitch" | "emoji";
+  origin: 'sevenTV' | 'betterTTV' | 'frankerFaceZ' | 'twitch' | 'emoji';
   src: string;
   srcSet?: string;
   width: number | null;

@@ -56,14 +56,27 @@
         background: linear-gradient(90deg, rgb(190, 54, 236), rgb(7, 55, 176));
       }
 
-      &-gigantified>span>span.chat-message-text>img:last-of-type {
+      &-gigantified > span > span.chat-message-text > img:last-of-type {
         width: 112px;
         height: 112px;
         max-height: unset;
       }
 
       &-thick-text-shadow {
-        text-shadow: rgb(0, 0, 0) 2px 0px 0px, rgb(0, 0, 0) 1.75517px 0.958851px 0px, rgb(0, 0, 0) 1.0806px 1.68294px 0px, rgb(0, 0, 0) 0.141474px 1.99499px 0px, rgb(0, 0, 0) -0.832294px 1.81859px 0px, rgb(0, 0, 0) -1.60229px 1.19694px 0px, rgb(0, 0, 0) -1.97998px 0.28224px 0px, rgb(0, 0, 0) -1.87291px -0.701566px 0px, rgb(0, 0, 0) -1.30729px -1.5136px 0px, rgb(0, 0, 0) -0.421592px -1.95506px 0px, rgb(0, 0, 0) 0.567324px -1.91785px 0px, rgb(0, 0, 0) 1.41734px -1.41108px 0px, rgb(0, 0, 0) 1.92034px -0.558831px 0px;
+        text-shadow:
+          rgb(0, 0, 0) 2px 0px 0px,
+          rgb(0, 0, 0) 1.75517px 0.958851px 0px,
+          rgb(0, 0, 0) 1.0806px 1.68294px 0px,
+          rgb(0, 0, 0) 0.141474px 1.99499px 0px,
+          rgb(0, 0, 0) -0.832294px 1.81859px 0px,
+          rgb(0, 0, 0) -1.60229px 1.19694px 0px,
+          rgb(0, 0, 0) -1.97998px 0.28224px 0px,
+          rgb(0, 0, 0) -1.87291px -0.701566px 0px,
+          rgb(0, 0, 0) -1.30729px -1.5136px 0px,
+          rgb(0, 0, 0) -0.421592px -1.95506px 0px,
+          rgb(0, 0, 0) 0.567324px -1.91785px 0px,
+          rgb(0, 0, 0) 1.41734px -1.41108px 0px,
+          rgb(0, 0, 0) 1.92034px -0.558831px 0px;
       }
     }
 
@@ -130,7 +143,7 @@
     }
 
     &--shake {
-      animation: shake .5s step-start infinite;
+      animation: shake 0.5s step-start infinite;
     }
 
     &--rotate {
@@ -180,7 +193,9 @@
 }
 
 .chat-emote--shake.chat-emote--party {
-  animation: shake .5s step-start infinite, party 1.5s linear infinite;
+  animation:
+    shake 0.5s step-start infinite,
+    party 1.5s linear infinite;
 }
 
 .chat-emote--flipy.chat-emote--flipx {
@@ -199,11 +214,11 @@
 
 @keyframes party {
   0% {
-    filter: sepia(.5) hue-rotate(0deg) saturate(2.5);
+    filter: sepia(0.5) hue-rotate(0deg) saturate(2.5);
   }
 
   100% {
-    filter: sepia(.5) hue-rotate(1turn) saturate(2.5);
+    filter: sepia(0.5) hue-rotate(1turn) saturate(2.5);
   }
 }
 

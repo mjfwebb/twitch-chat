@@ -1,20 +1,20 @@
-import pc from "picocolors";
-import { runBetterTTVWebsocket } from "./handlers/bttv/betterTTVWebsocket";
-import { fetchBetterTTVGlobalEmotes } from "./handlers/bttv/fetchBetterTTVGlobalEmotes";
-import { fetchBetterTTVUser } from "./handlers/bttv/fetchBetterTTVUser";
-import { BttvEmote } from "./handlers/bttv/schemas";
-import { fetchFrankerFaceZGlobalEmotes } from "./handlers/frankerfacez/fetchFrankerFaceZGlobalEmotes";
-import { fetchFrankerFaceZRoomEmotes } from "./handlers/frankerfacez/fetchFrankerFaceZRoomEmotes";
-import { FrankerFaceZEmote } from "./handlers/frankerfacez/schemas";
-import { fetchSevenTVEmote } from "./handlers/sevenTV/fetchSevenTVEmote";
-import { fetchSevenTVEmoteSet } from "./handlers/sevenTV/fetchSevenTVEmoteSets";
-import { fetchSevenTVTwitchUser } from "./handlers/sevenTV/fetchSevenTVTwitchUser";
-import { SevenTVEmote } from "./handlers/sevenTV/schemas";
-import { getSevenTVUser, setSevenTVUser } from "./handlers/sevenTV/sevenTVUser";
-import { runSevenTVWebsocket } from "./handlers/sevenTV/sevenTVWebsocket";
-import { persistedStore, store } from "./store/store";
-import { ChatEmote } from "./types/types";
-import { logger } from "./utils/logger";
+import pc from 'picocolors';
+import { runBetterTTVWebsocket } from './handlers/bttv/betterTTVWebsocket';
+import { fetchBetterTTVGlobalEmotes } from './handlers/bttv/fetchBetterTTVGlobalEmotes';
+import { fetchBetterTTVUser } from './handlers/bttv/fetchBetterTTVUser';
+import { BttvEmote } from './handlers/bttv/schemas';
+import { fetchFrankerFaceZGlobalEmotes } from './handlers/frankerfacez/fetchFrankerFaceZGlobalEmotes';
+import { fetchFrankerFaceZRoomEmotes } from './handlers/frankerfacez/fetchFrankerFaceZRoomEmotes';
+import { FrankerFaceZEmote } from './handlers/frankerfacez/schemas';
+import { fetchSevenTVEmote } from './handlers/sevenTV/fetchSevenTVEmote';
+import { fetchSevenTVEmoteSet } from './handlers/sevenTV/fetchSevenTVEmoteSets';
+import { fetchSevenTVTwitchUser } from './handlers/sevenTV/fetchSevenTVTwitchUser';
+import { SevenTVEmote } from './handlers/sevenTV/schemas';
+import { getSevenTVUser, setSevenTVUser } from './handlers/sevenTV/sevenTVUser';
+import { runSevenTVWebsocket } from './handlers/sevenTV/sevenTVWebsocket';
+import { persistedStore, store } from './store/store';
+import { ChatEmote } from './types/types';
+import { logger } from './utils/logger';
 
 export const loadEmotes = async (broadcasterId: string) => {
   const frankerFaceZEnabled = persistedStore.getState().frankerFaceZEnabled;
@@ -25,7 +25,7 @@ export const loadEmotes = async (broadcasterId: string) => {
     const sevenTVUser = await fetchSevenTVTwitchUser(broadcasterId);
     if (sevenTVUser) {
       setSevenTVUser(sevenTVUser);
-      logger.info(`${pc.green("[7TV enabled]")} Running 7TV WebSocket client`);
+      logger.info(`${pc.green('[7TV enabled]')} Running 7TV WebSocket client`);
       runSevenTVWebsocket(sevenTVUser);
     }
     await loadSevenTVEmotes();
@@ -45,11 +45,11 @@ export const loadEmotes = async (broadcasterId: string) => {
 
 export const addFrankerFaceZEmote = (emote: FrankerFaceZEmote) => {
   const name = emote.name;
-  const imageUrl = emote.urls["1"];
+  const imageUrl = emote.urls['1'];
 
   const frankerFaceZEmotesForClient: Record<string, ChatEmote> = {};
   frankerFaceZEmotesForClient[name] = {
-    origin: "frankerFaceZ",
+    origin: 'frankerFaceZ',
     src: imageUrl,
     width: emote.width,
     height: emote.height,
@@ -69,23 +69,17 @@ const loadFrankerFaceZGlobalEmotes = async () => {
     for (const emoteSet of emoteSets) {
       const frankerFaceZEmoteSet = frankerFaceZGlobalEmotes.sets[emoteSet];
       if (frankerFaceZEmoteSet) {
-        Object.values(frankerFaceZEmoteSet.emoticons || []).forEach((emote) =>
-          addFrankerFaceZEmote(emote)
-        );
+        Object.values(frankerFaceZEmoteSet.emoticons || []).forEach((emote) => addFrankerFaceZEmote(emote));
       }
     }
   }
 };
 
 const loadFrankerFaceZRoomEmotes = async (broadcasterId: string) => {
-  const frankerFaceZRoomEmotes = await fetchFrankerFaceZRoomEmotes(
-    broadcasterId
-  );
+  const frankerFaceZRoomEmotes = await fetchFrankerFaceZRoomEmotes(broadcasterId);
   if (frankerFaceZRoomEmotes && frankerFaceZRoomEmotes.sets) {
     for (const emoteSet of Object.values(frankerFaceZRoomEmotes.sets)) {
-      Object.values(emoteSet.emoticons || []).forEach((emote) =>
-        addFrankerFaceZEmote(emote)
-      );
+      Object.values(emoteSet.emoticons || []).forEach((emote) => addFrankerFaceZEmote(emote));
     }
   }
 };
@@ -98,15 +92,13 @@ export const addSevenTVEmote = async (emote: SevenTVEmote) => {
   const sevenTVEmotesForClient: Record<string, ChatEmote> = {};
   const name = emote.name;
   // Use the largest emote for that 4K crispiness
-  const file = emote.data.host.files.find(
-    (file) => file.name === "3x.webp" || file.name === "3x.avif"
-  );
+  const file = emote.data.host.files.find((file) => file.name === '3x.webp' || file.name === '3x.avif');
 
   if (file) {
     const imageUrl = `${emote.data.host.url}/${file.name}`;
 
     sevenTVEmotesForClient[name] = {
-      origin: "sevenTV",
+      origin: 'sevenTV',
       src: imageUrl,
       width: file.width,
       height: file.height,
@@ -128,7 +120,7 @@ export const addSevenTVEmote = async (emote: SevenTVEmote) => {
     const imageUrl = `${emoteData.host.url}/${file.name}`;
 
     sevenTVEmotesForClient[emoteData.name] = {
-      origin: "sevenTV",
+      origin: 'sevenTV',
       src: imageUrl,
       width: file.width,
       height: file.height,
@@ -146,7 +138,7 @@ export const addSevenTVEmote = async (emote: SevenTVEmote) => {
 const loadSevenTVEmotes = async () => {
   const sevenTVUser = getSevenTVUser();
   if (sevenTVUser) {
-    const emoteSets = [sevenTVUser.emote_set.id, "global"];
+    const emoteSets = [sevenTVUser.emote_set.id, 'global'];
     for (const emoteSet of emoteSets) {
       const sevenTVEmoteSet = await fetchSevenTVEmoteSet(emoteSet);
       if (sevenTVEmoteSet) {
@@ -160,20 +152,16 @@ const loadSevenTVEmotes = async () => {
 
 export const removeBetterTTVEmote = (emoteId: string) => {
   const betterTTVEmotesForClient: Record<string, ChatEmote> = {};
-  const foundEmote = Object.values(betterTTVEmotesForClient).find(
-    (emote) => emote.id === emoteId
-  );
+  const foundEmote = Object.values(betterTTVEmotesForClient).find((emote) => emote.id === emoteId);
   if (!foundEmote) return;
 
   delete betterTTVEmotesForClient[foundEmote.name];
 };
 
-export const addBetterTTVEmote = (
-  emote: Pick<BttvEmote, "code" | "id" | "imageType">
-) => {
+export const addBetterTTVEmote = (emote: Pick<BttvEmote, 'code' | 'id' | 'imageType'>) => {
   const betterTTVEmotesForClient: Record<string, ChatEmote> = {};
   betterTTVEmotesForClient[emote.code] = {
-    origin: "betterTTV",
+    origin: 'betterTTV',
     src: `https://cdn.betterttv.net/emote/${emote.id}/2x.${emote.imageType}`,
     width: null,
     height: null,

@@ -1,28 +1,23 @@
 // https://api.twitch.tv/helix/chat/badges
 
-import { TWITCH_HELIX_URL } from "../../../constants";
-import { persistedStore, store } from "../../../store/store";
-import { ChatBadge } from "../../../types/types";
-import { logger } from "../../../utils/logger";
-import { BadgeSet, BadgesResponseSchema } from "./schemas";
+import { TWITCH_HELIX_URL } from '../../../constants';
+import { persistedStore, store } from '../../../store/store';
+import { ChatBadge } from '../../../types/types';
+import { logger } from '../../../utils/logger';
+import { BadgeSet, BadgesResponseSchema } from './schemas';
 
-export const fetchBadges = async (
-  type: "global" | "channel"
-): Promise<void> => {
+export const fetchBadges = async (type: 'global' | 'channel'): Promise<void> => {
   try {
     const broadcasterId = store.getState().broadcasterId;
     // If type is 'global', we fetch global badges, otherwise we fetch channel-specific badges
-    const url =
-      type === "global"
-        ? `${TWITCH_HELIX_URL}chat/badges/global`
-        : `${TWITCH_HELIX_URL}chat/badges?broadcaster_id=${broadcasterId}`;
+    const url = type === 'global' ? `${TWITCH_HELIX_URL}chat/badges/global` : `${TWITCH_HELIX_URL}chat/badges?broadcaster_id=${broadcasterId}`;
     const accessToken = persistedStore.getState().getAccessToken();
     const clientId = store.getState().clientId;
 
     const response = await fetch(url, {
-      method: "GET",
+      method: 'GET',
       headers: {
-        "Client-Id": clientId,
+        'Client-Id': clientId,
         Authorization: `Bearer ${accessToken}`,
       },
     });
@@ -33,13 +28,13 @@ export const fetchBadges = async (
     if (parsed.success) {
       const data = parsed.data.data;
       if (Array.isArray(data) && data.length > 0) {
-        console.log("Fetched badges:", data);
+        console.log('Fetched badges:', data);
         saveBadges(data);
       } else {
-        logger.warn("No badges found or data is not an array.");
+        logger.warn('No badges found or data is not an array.');
       }
     } else {
-      logger.error("Failed to parse badges response:", parsed.error);
+      logger.error('Failed to parse badges response:', parsed.error);
     }
   } catch (error) {
     logger.error(error);
