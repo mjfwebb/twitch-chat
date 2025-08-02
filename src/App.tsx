@@ -11,12 +11,13 @@ import { TwitchWebSocketClient } from './TwitchWebSocketClient';
 import { Chat } from './views/Chat/Chat';
 
 function App() {
+  const accessToken = persistedStore((s) => s.accessToken);
+  const [searchParams] = useSearchParams();
+
   useMount(() => {
     fetchBadges('global');
     fetchCheers('global');
   });
-  const [searchParams] = useSearchParams();
-  const accessToken = persistedStore((s) => s.accessToken);
 
   if (!accessToken) {
     // Try to get the access token from the URL hash
@@ -24,6 +25,15 @@ function App() {
     if (token) {
       persistedStore.getState().setAccessToken(token);
     }
+  }
+
+  // Try to get the channel name from the URL hash
+  const channelFromParams = searchParams.get('channel');
+  if (channelFromParams) {
+    persistedStore.getState().setChannel(channelFromParams);
+  } else {
+    // If no channel is specified, default to the broadcaster's channel
+    persistedStore.getState().setChannel('');
   }
 
   return (

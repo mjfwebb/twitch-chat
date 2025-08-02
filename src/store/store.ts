@@ -5,41 +5,47 @@ import { ChannelChatMessageDeleteEvent, ChannelChatMessageEvent } from '../types
 import { ChatBadge, ChatCheer, ChatEmote } from '../types/types';
 
 interface StoreState {
-  clientId: string;
   broadcasterId: string | null;
+
+  setBroadcasterId: (id: string | null) => void;
+  clientId: string;
   chatBadges: Record<string, ChatBadge>;
+
+  setChatBadges: (badges: Record<string, ChatBadge>) => void;
   chatCheers: Record<string, ChatCheer>;
+
+  setChatCheers: (cheers: Record<string, ChatCheer>) => void;
   chatEmotes: Record<string, ChatEmote>;
+
+  setChatEmotes: (emotes: Record<string, ChatEmote>) => void;
+
+  removeChatEmote: (emoteId: string) => void;
   chatMessageEvents: ChannelChatMessageEvent[];
-  userInformation: Record<string, UserInformation>;
   addChatMessage: (event: ChannelChatMessageEvent) => void;
-  addUserInformation: (userInfo: UserInformation) => void;
   deleteChatMessage: (event: ChannelChatMessageDeleteEvent) => void;
   removeChatMessage: (event: ChannelChatMessageEvent) => void;
-  removeChatEmote: (emoteId: string) => void;
-  setBroadcasterId: (id: string | null) => void;
-  setChatBadges: (badges: Record<string, ChatBadge>) => void;
-  setChatCheers: (cheers: Record<string, ChatCheer>) => void;
-  setChatEmotes: (emotes: Record<string, ChatEmote>) => void;
+  userId: string | null;
+  setUserId: (id: string | null) => void;
+  userInformation: Record<string, UserInformation>;
+  addUserInformation: (userInfo: UserInformation) => void;
 }
 
 export const store = create<StoreState>((set) => ({
-  accessToken: null,
   broadcasterId: null,
-  chatBadges: {},
-  chatCheers: {},
-  chatEmotes: {},
+  setBroadcasterId: (id: string | null) => set({ broadcasterId: id }),
   clientId: 'nl4u7l1h4dt48e8hj58yha0we527kg',
-  chatMessageEvents: [],
-  userInformation: {},
-  addUserInformation: (userInfo: UserInformation) => {
+  chatBadges: {},
+  setChatBadges: (badges: Record<string, ChatBadge>) => set((state) => ({ chatBadges: { ...state.chatBadges, ...badges } })),
+  chatCheers: {},
+  setChatCheers: (cheers: Record<string, ChatCheer>) => set((state) => ({ chatCheers: { ...state.chatCheers, ...cheers } })),
+  chatEmotes: {},
+  setChatEmotes: (emotes: Record<string, ChatEmote>) => set((state) => ({ chatEmotes: { ...state.chatEmotes, ...emotes } })),
+  removeChatEmote: (emoteId: string) => {
     set((state) => ({
-      userInformation: {
-        ...state.userInformation,
-        [userInfo.id]: userInfo,
-      },
+      chatEmotes: Object.fromEntries(Object.entries(state.chatEmotes).filter(([, emote]) => emote.id !== emoteId)),
     }));
   },
+  chatMessageEvents: [],
   addChatMessage: (chatMessage: ChannelChatMessageEvent) => {
     set((state) => ({
       ...state,
@@ -58,44 +64,40 @@ export const store = create<StoreState>((set) => ({
       chatMessageEvents: state.chatMessageEvents.filter((message) => message.message_id !== chatMessage.message_id),
     }));
   },
-  removeChatEmote: (emoteId: string) => {
+  userId: null,
+  setUserId: (id: string | null) => set({ userId: id }),
+  userInformation: {},
+  addUserInformation: (userInfo: UserInformation) => {
     set((state) => ({
-      chatEmotes: Object.fromEntries(Object.entries(state.chatEmotes).filter(([, emote]) => emote.id !== emoteId)),
+      userInformation: {
+        ...state.userInformation,
+        [userInfo.id]: userInfo,
+      },
     }));
   },
-  setBroadcasterId: (id: string | null) => set({ broadcasterId: id }),
-  setChatCheers: (cheers: Record<string, ChatCheer>) => set((state) => ({ chatCheers: { ...state.chatCheers, ...cheers } })),
-  setChatBadges: (badges: Record<string, ChatBadge>) => set((state) => ({ chatBadges: { ...state.chatBadges, ...badges } })),
-  setChatEmotes: (emotes: Record<string, ChatEmote>) => set((state) => ({ chatEmotes: { ...state.chatEmotes, ...emotes } })),
 }));
 
 interface PersistedStoreState {
   accessToken: string;
-  authStateValue: string;
-  frankerFaceZEnabled: boolean;
-  betterTTVEnabled: boolean;
-  sevenTVEnabled: boolean;
-  setFrankerFaceZEnabled: (enabled: boolean) => void;
-  setBetterTTVEnabled: (enabled: boolean) => void;
-  setSevenTVEnabled: (enabled: boolean) => void;
-  setAuthStateValue: (newAuthStateValue: string) => void;
   getAccessToken: () => string;
   setAccessToken: (token: string) => void;
+  authStateValue: string;
+
+  setAuthStateValue: (newAuthStateValue: string) => void;
+  betterTTVEnabled: boolean;
+  setBetterTTVEnabled: (enabled: boolean) => void;
+  channel: string;
+  setChannel: (channel: string) => void;
+  frankerFaceZEnabled: boolean;
+  setFrankerFaceZEnabled: (enabled: boolean) => void;
+  sevenTVEnabled: boolean;
+  setSevenTVEnabled: (enabled: boolean) => void;
 }
 
 export const persistedStore = create<PersistedStoreState>()(
   persist(
     (set) => ({
       accessToken: '',
-      authStateValue: '',
-      frankerFaceZEnabled: true,
-      betterTTVEnabled: true,
-      sevenTVEnabled: true,
-      setFrankerFaceZEnabled: (enabled: boolean) => set({ frankerFaceZEnabled: enabled }),
-      setBetterTTVEnabled: (enabled: boolean) => set({ betterTTVEnabled: enabled }),
-      setSevenTVEnabled: (enabled: boolean) => set({ sevenTVEnabled: enabled }),
-      setAuthStateValue: (newAuthStateValue: string) => set({ authStateValue: newAuthStateValue }),
-      setAccessToken: (token: string) => set({ accessToken: token }),
       getAccessToken: (): string => {
         const at = persistedStore.getState().accessToken;
         if (!at) {
@@ -103,10 +105,21 @@ export const persistedStore = create<PersistedStoreState>()(
         }
         return at;
       },
+      setAccessToken: (token: string) => set({ accessToken: token }),
+      authStateValue: '',
+      setAuthStateValue: (newAuthStateValue: string) => set({ authStateValue: newAuthStateValue }),
+      betterTTVEnabled: true,
+      setBetterTTVEnabled: (enabled: boolean) => set({ betterTTVEnabled: enabled }),
+      channel: '',
+      setChannel: (channel: string) => set({ channel }),
+      frankerFaceZEnabled: true,
+      setFrankerFaceZEnabled: (enabled: boolean) => set({ frankerFaceZEnabled: enabled }),
+      sevenTVEnabled: true,
+      setSevenTVEnabled: (enabled: boolean) => set({ sevenTVEnabled: enabled }),
     }),
     {
-      name: 'athano-chat-overlay', // name of the item in the storage (must be unique)
-      storage: createJSONStorage(() => sessionStorage), // (optional) by default, 'localStorage' is used
+      name: 'athano-chat-overlay',
+      storage: createJSONStorage(() => sessionStorage),
     },
   ),
 );

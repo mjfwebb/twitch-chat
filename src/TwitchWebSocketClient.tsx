@@ -9,6 +9,7 @@ import { hasOwnProperty } from './utils/hasOwnProperty';
 
 export const TwitchWebSocketClient = () => {
   const broadcasterId = store((s) => s.broadcasterId);
+  const userId = store((s) => s.userId);
 
   const { lastMessage } = useWebSocket<string>(TWITCH_WEBSOCKET_EVENTSUB_URL, {
     shouldReconnect: () => true,
@@ -29,8 +30,8 @@ export const TwitchWebSocketClient = () => {
       case 'session_welcome':
         {
           const sessionId = jsonData.payload.session?.id;
-          if (sessionId && broadcasterId) {
-            subscribeToChat(broadcasterId, sessionId);
+          if (sessionId && broadcasterId && userId) {
+            subscribeToChat(broadcasterId, userId, sessionId);
           }
         }
 
@@ -50,7 +51,7 @@ export const TwitchWebSocketClient = () => {
       default:
         break;
     }
-  }, [broadcasterId, lastMessage]);
+  }, [broadcasterId, lastMessage, userId]);
 
   return null; // This component does not render anything
 };

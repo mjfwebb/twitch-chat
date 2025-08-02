@@ -1,59 +1,69 @@
-import { useState } from 'react';
-import z from 'zod';
-import { TWITCH_AUTH_URL } from './constants';
 import { fetchBadges } from './handlers/twitch/helix/fetchBadges';
 import { fetchCheers } from './handlers/twitch/helix/fetchCheers';
+import { fetchUserInformation } from './handlers/twitch/helix/fetchUserInformation';
+import { validateAccessToken } from './handlers/twitch/id/validateAccessToken';
 import { useMount } from './hooks/useMount';
 import { loadEmotes } from './loadEmotes';
 import { persistedStore, store } from './store/store';
 
-const ValidateResponseSchema = z.object({
-  client_id: z.string(),
-  login: z.string(),
-  scopes: z.array(z.string()),
-  user_id: z.string(),
-  expires_in: z.number(),
-});
+async function getBroadcasterIdFromAccessToken(): Promise<string | null> {
+  const result = await validateAccessToken();
+  if (result) {
+    return result.user_id;
+  }
 
-// We use the validate endpoint to check if the access token is valid and to retrieve the broadcaster ID
+  return null;
+}
+
+async function getBroadcasterIdFromChannel(channel: string): Promise<string | null> {
+  const data = await fetchUserInformation(channel);
+  if (data) {
+    return data.id;
+  }
+
+  return null;
+}
 
 export const TwitchBroadcasterIdLoader = () => {
   const accessToken = persistedStore((s) => s.accessToken);
-  const [error, setError] = useState<string | null>(null);
   const broadcasterId = store((s) => s.broadcasterId);
+  const userId = store((s) => s.userId);
+  const channel = persistedStore((s) => s.channel);
 
   useMount(() => {
-    async function validateToken() {
-      if (accessToken && !broadcasterId) {
-        // Fetch broadcaster ID using the access token
-        const result = await fetch(`${TWITCH_AUTH_URL}validate`, {
-          headers: {
-            Authorization: 'OAuth ' + accessToken,
-          },
-        });
+    async function getBroadcasterId() {
+      if (!accessToken) {
+        return;
+      }
+      let loadedBroadcasterId: string | null = broadcasterId;
 
-        const data = await result.json();
-        const parsed = ValidateResponseSchema.safeParse(data);
-        if (parsed.success) {
-          // If validation is successful, update the store with the broadcaster ID
-          const broadcasterId = parsed.data.user_id;
-          store.getState().setBroadcasterId(broadcasterId);
+      // If a channel is specified, try to get the broadcaster ID from the channel name
+      if (channel) {
+        loadedBroadcasterId = await getBroadcasterIdFromChannel(channel);
+        console.log('Loaded broadcaster ID:', loadedBroadcasterId, 'from channel:', channel);
+      }
 
-          fetchBadges('channel');
-          fetchCheers('channel');
-          await loadEmotes(broadcasterId);
-        } else {
-          setError('Invalid token response: ' + parsed.error.message);
-          console.error('Invalid token response:', parsed.error);
+      // If we still don't have a broadcaster ID, try to get it from the access token,
+      // which will also set the user ID
+      if (!loadedBroadcasterId || !userId) {
+        const id = await getBroadcasterIdFromAccessToken();
+        if (id) {
+          console.log('Loaded broadcaster ID:', id, 'from access token');
+          loadedBroadcasterId ??= id;
+          console.log('Loaded user ID:', id, 'from access token');
+          store.getState().setUserId(id);
         }
       }
-    }
-    void validateToken();
-  });
 
-  if (error) {
-    return <span>Error: {error}</span>;
-  }
+      if (loadedBroadcasterId) {
+        store.getState().setBroadcasterId(loadedBroadcasterId);
+        fetchBadges('channel');
+        fetchCheers('channel');
+        await loadEmotes(loadedBroadcasterId);
+      }
+    }
+    void getBroadcasterId();
+  });
 
   return null;
 };

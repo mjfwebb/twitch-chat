@@ -7,6 +7,7 @@ export async function twitchEventSubHandler(data: EventsubEvent) {
   switch (data.eventType) {
     case 'channel.chat.message': {
       const currentUserInfo = store.getState().userInformation[data.chatter_user_id];
+
       if (!currentUserInfo) {
         const userInfo = await fetchUserInformation(data.chatter_user_login);
         if (userInfo === null) {
