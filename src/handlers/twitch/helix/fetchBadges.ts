@@ -28,7 +28,6 @@ export const fetchBadges = async (type: 'global' | 'channel'): Promise<void> => 
     if (parsed.success) {
       const data = parsed.data.data;
       if (Array.isArray(data) && data.length > 0) {
-        console.log('Fetched badges:', data);
         saveBadges(data);
       } else {
         logger.warn('No badges found or data is not an array.');
