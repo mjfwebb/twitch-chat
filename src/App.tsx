@@ -27,7 +27,7 @@ function App() {
   }
 
   return (
-    <>
+    <main>
       {accessToken && (
         <>
           <TwitchBroadcasterIdLoader />
@@ -38,7 +38,7 @@ function App() {
         <Route
           path="/"
           component={() => (
-            <main>
+            <>
               <h1>Athano's Twitch Chat Overlay</h1>
               <TwitchConnectPage />
               <p>Connect your Twitch account to start using the chat overlay.</p>
@@ -53,14 +53,14 @@ function App() {
               <p>
                 Made with 🧟 by <a href="https://twitch.tv/athano">Athano</a>
               </p>
-            </main>
+            </>
           )}
         />
         <Route path="/auth" component={TwitchAuthHandler} />
         <Route path="/chat" component={Chat} />
         <Route>404: No such page!</Route>
       </Switch>
-    </>
+    </main>
   );
 }
 
