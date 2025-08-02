@@ -17,12 +17,6 @@ export async function twitchEventSubHandler(data: EventsubEvent) {
         }
       }
       store.getState().addChatMessage(data);
-      switch (data.message_type) {
-        case 'text': {
-          logger.info(`Received chat message from ${data.chatter_user_name}: ${data.message.text}`);
-          break;
-        }
-      }
       break;
     }
     case 'channel.chat.message_delete': {
