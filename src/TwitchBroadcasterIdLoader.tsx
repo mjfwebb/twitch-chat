@@ -51,10 +51,6 @@ export const TwitchBroadcasterIdLoader = () => {
     void validateToken();
   });
 
-  if (!broadcasterId) {
-    return <span>Loading broadcaster information...</span>;
-  }
-
   if (error) {
     return <span>Error: {error}</span>;
   }
