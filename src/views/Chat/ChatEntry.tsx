@@ -36,8 +36,9 @@ export const ChatEntry = ({
   const actionMessage = chatMessage.message.text.startsWith('\u0001ACTION');
 
   // Set default user if no user
-  const user: { displayName: string; avatarUrl: string } = {
+  const user: { displayName: string; alias?: string; avatarUrl: string } = {
     displayName: chatMessage.chatter_user_name,
+    alias: chatMessage.chatter_user_name !== chatMessage.chatter_user_login ? chatMessage.chatter_user_login : undefined,
     avatarUrl: store.getState().userInformation[chatMessage.chatter_user_id]?.profile_image_url || '',
   };
 
@@ -73,7 +74,7 @@ export const ChatEntry = ({
               color: contrastCorrected(chatMessage.color || '#fff', backgroundColor),
             }}
           >
-            {user.displayName}
+            {user.displayName} {user.alias && `(${user.alias})`}
           </span>
           {showColonAfterDisplayName && !actionMessage && ': '}
           <span className={classNames('chat-message-text', actionMessage && 'chat-message-text-action')}>
