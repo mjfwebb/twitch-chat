@@ -38,7 +38,7 @@ export const ChatEntry = ({
   // Set default user if no user
   const user: { displayName: string; alias?: string; avatarUrl: string } = {
     displayName: chatMessage.chatter_user_name,
-    alias: chatMessage.chatter_user_name !== chatMessage.chatter_user_login ? chatMessage.chatter_user_login : undefined,
+    alias: chatMessage.chatter_user_name.toLowerCase() !== chatMessage.chatter_user_login.toLowerCase() ? chatMessage.chatter_user_login : undefined,
     avatarUrl: store.getState().userInformation[chatMessage.chatter_user_id]?.profile_image_url || '',
   };
 
