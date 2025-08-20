@@ -11,6 +11,10 @@ Use it right now at [chat.nice.gg](https://chat.nice.gg/).
 - Supports Twitch, BTTV, FrankerFaceZ, and 7TV emotes
 - Shows user badges and cheers
 
+## URL Parameters & Customization
+
+For a full list of URL parameters and customization options, see [URL_PARAMETERS.md](./URL_PARAMETERS.md).
+
 ## Getting Started
 
 1. **Install dependencies**
