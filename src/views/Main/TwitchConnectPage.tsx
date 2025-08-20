@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import { TWITCH_AUTH_URL } from './constants';
-import { persistedStore, store } from './store/store';
+import { TWITCH_AUTH_URL } from '../../constants';
+import { persistedStore, store } from '../../store/store';
 
 const CopyToClipboardButton = ({ text }: { text: string }) => {
   const [success, setSuccess] = useState(false);
