@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { TWITCH_AUTH_URL } from '../../constants';
 import { persistedStore, store } from '../../store/store';
+import { ChatSettings } from './ChatSettings';
 
 const CopyToClipboardButton = ({ text }: { text: string }) => {
   const [success, setSuccess] = useState(false);
@@ -49,7 +50,7 @@ export const TwitchConnectPage = () => {
     window.location.assign('/');
   };
 
-  const chatUrl = `${import.meta.env.VITE_BASE_URI}/chat?access_token=${accessToken}`;
+  const [chatUrl, setChatUrl] = useState(`${import.meta.env.VITE_BASE_URI}/chat?access_token=${accessToken}`);
 
   if (accessToken && userLogin && userId) {
     return (
@@ -74,6 +75,7 @@ export const TwitchConnectPage = () => {
             </p>
           </li>
         </ol>
+        <ChatSettings chatUrl={chatUrl} setChatUrl={setChatUrl} />
         <button className="button-ghost" onClick={handleLogout}>
           Logout
         </button>
