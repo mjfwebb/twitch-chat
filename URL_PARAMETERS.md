@@ -11,28 +11,29 @@ This document describes the URL parameters you can use to customize the chat ove
 
 ## Parameters
 
-| Parameter                       | Description                                                    | Example Value       |
-| ------------------------------- | -------------------------------------------------------------- | ------------------- |
-| `access_token`                  | Twitch OAuth access token for authentication                   | `abcdef123456`      |
-| `channel`                       | Twitch channel name to connect to (**case sensitive**)         | `Athano`            |
-| `animated-entry`                | Enable/disable animated entry of chat messages                 | `true` / `false`    |
-| `background-color`              | Background color of the chat overlay                           | `#000000`           |
-| `height`                        | Height of the chat overlay (with unit)                         | `400px`             |
-| `width`                         | Width of the chat overlay (with unit)                          | `600px`             |
-| `animated-exit`                 | Enable/disable animated exit of chat messages                  | `true` / `false`    |
-| `seconds-before-exit`           | Seconds before a message disappears (if animated exit enabled) | `10`                |
-| `drop-shadow`                   | Enable/disable drop shadow on chat messages                    | `true` / `false`    |
-| `drop-shadow-settings`          | CSS drop-shadow settings                                       | `0 2px 8px #000`    |
-| `thick-text-shadow`             | Enable/disable thick text shadow                               | `true` / `false`    |
-| `foreground-color`              | Text color for chat messages                                   | `#ffffff`           |
-| `show-avatars`                  | Show/hide user avatars                                         | `true` / `false`    |
-| `show-borders`                  | Show/hide borders around chat messages                         | `true` / `false`    |
-| `show-colon-after-display-name` | Show colon after display name                                  | `true` / `false`    |
-| `text-stroke-enabled`           | Enable/disable text stroke                                     | `true` / `false`    |
-| `text-stroke`                   | CSS text stroke settings                                       | `1px #000`          |
-| `font-size`                     | Font size for chat messages (with unit)                        | `18px`              |
-| `font-family`                   | Font family for chat messages                                  | `Arial, sans-serif` |
-| `chat-message-padding`          | Padding for chat messages (with unit)                          | `8px`               |
+| Parameter                       | Description                                                    | Example Value       | Default Value           |
+| ------------------------------- | -------------------------------------------------------------- | ------------------- | ----------------------- |
+| `access_token`                  | Twitch OAuth access token for authentication                   | `abcdef123456`      |                         |
+| `channel`                       | Twitch channel name to connect to (**case sensitive**)         | `Athano`            | User's own channel      |
+| `animated-entry`                | Enable/disable animated entry of chat messages                 | `true` / `false`    | `true`                  |
+| `animated-exit`                 | Enable/disable animated exit of chat messages                  | `true` / `false`    | `false`                 |
+| `background-color`              | Background color of the chat overlay                           | `#000000`           | `transparent`           |
+| `chat-message-padding`          | Padding for chat messages (with unit)                          | `8px`               | `5px`                   |
+| `drop-shadow`                   | Enable/disable drop shadow on chat messages                    | `true` / `false`    | `false`                 |
+| `drop-shadow-settings`          | CSS drop-shadow settings                                       | `0 2px 8px #000`    | `1px 1px 2px #000000ff` |
+| `height`                        | Height of the chat overlay (with unit)                         | `400px`             | `100vh`                 |
+| `font-size`                     | Font size for chat messages (with unit)                        | `18px`              | `1em`                   |
+| `font-family`                   | Font family for chat messages                                  | `Arial, sans-serif` | `Sans-Serif`            |
+| `foreground-color`              | Text color for chat messages                                   | `#ffffff`           | `#ffffff`               |
+| `seconds-before-exit`           | Seconds before a message disappears (if animated exit enabled) | `10`                | `10`                    |
+| `show-avatars`                  | Show/hide user avatars                                         | `true` / `false`    | `true`                  |
+| `show-borders`                  | Show/hide borders around chat messages                         | `true` / `false`    | `true`                  |
+| `show-colon-after-display-name` | Show colon after display name                                  | `true` / `false`    | `false`                 |
+| `show-name-alias`               | Show/hide name alias for users                                 | `true` / `false`    | `true`                  |
+| `text-stroke-enabled`           | Enable/disable text stroke                                     | `true` / `false`    | `false`                 |
+| `text-stroke`                   | CSS text stroke settings                                       | `1px #000`          | `1px black`             |
+| `thick-text-shadow`             | Enable/disable thick text shadow                               | `true` / `false`    | `false`                 |
+| `width`                         | Width of the chat overlay (with unit)                          | `600px`             | `500px`                 |
 
 ## Usage Example
 
@@ -41,22 +42,3 @@ https://chat.nice.gg/chat?background-color=%23000000&font-size=20px&show-avatars
 ```
 
 This will set the background color to black, font size to 20px, and hide user avatars.
-
----
-
-## Default Values
-
-| Parameter              | Default Value           |
-| ---------------------- | ----------------------- |
-| `height`               | `100vh`                 |
-| `width`                | `500px`                 |
-| `seconds-before-exit`  | `10`                    |
-| `background-color`     | `transparent`           |
-| `foreground-color`     | `#ffffff`               |
-| `drop-shadow-settings` | `1px 1px 2px #000000ff` |
-| `text-stroke`          | `1px black`             |
-| `font-size`            | `1em`                   |
-| `font-family`          | `Sans-Serif`            |
-| `chat-message-padding` | `5px`                   |
-
-For more, see `src/constants.ts`.

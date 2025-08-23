@@ -39,4 +39,13 @@ export const DEFAULT_CHAT_SETTINGS_VALUES = {
   fontFamily: 'Sans-Serif',
   chatMessagePaddingValue: 5,
   chatMessagePaddingUnit: 'px',
+  animatedExit: false,
+  dropShadowEnabled: false,
+  thickTextShadowEnabled: false,
+  showAvatars: true,
+  showBorders: true,
+  showColonAfterDisplayName: false,
+  textStrokeEnabled: false,
+  showNameAlias: true,
+  animatedEntry: true,
 };
