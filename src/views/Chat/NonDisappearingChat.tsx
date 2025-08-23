@@ -27,6 +27,7 @@ export const NonDisappearingChat = () => {
         textStrokeEnabled={chatSearchParams.textStrokeEnabled}
         textStrokeSettings={chatSearchParams.textStrokeSettings}
         showColonAfterDisplayName={chatSearchParams.showColonAfterDisplayName}
+        showNameAlias={chatSearchParams.showNameAlias}
         chatMessagePadding={chatSearchParams.chatMessagePadding}
       />
     );

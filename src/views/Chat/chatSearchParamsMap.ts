@@ -17,4 +17,5 @@ export const chatSearchParamsMap = {
   fontSize: 'font-size',
   fontFamily: 'font-family',
   chatMessagePadding: 'chat-message-padding',
+  showNameAlias: 'show-name-alias',
 };
