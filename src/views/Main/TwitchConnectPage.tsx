@@ -29,7 +29,8 @@ const CopyToClipboardButton = ({ text }: { text: string }) => {
 
 export const TwitchConnectPage = () => {
   const accessToken = persistedStore((s) => s.accessToken);
-  const broadcasterId = store((s) => s.broadcasterId);
+  const userId = store((s) => s.userId);
+  const userLogin = store((s) => s.userLogin);
   const clientId = store((s) => s.clientId);
 
   const handleLogin = () => {
@@ -44,17 +45,21 @@ export const TwitchConnectPage = () => {
 
   const handleLogout = () => {
     persistedStore.getState().setAccessToken('');
-    store.getState().setBroadcasterId(null);
+    store.getState().reset();
     window.location.assign('/');
   };
 
   const chatUrl = `${import.meta.env.VITE_BASE_URI}/chat?access_token=${accessToken}`;
 
-  if (accessToken && broadcasterId) {
+  if (accessToken && userLogin && userId) {
     return (
       <div className="logged-in">
         <p>
-          You are now connected to Twitch as <strong>{broadcasterId}</strong>.
+          You are now connected to Twitch as{' '}
+          <strong>
+            {userLogin} ({userId})
+          </strong>
+          .
         </p>
         <h2>How to add as a browser source in OBS</h2>
         <ol>

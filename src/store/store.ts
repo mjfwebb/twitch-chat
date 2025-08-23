@@ -4,6 +4,8 @@ import { UserInformation } from '../handlers/twitch/helix/schemas';
 import { ChannelChatMessageDeleteEvent, ChannelChatMessageEvent } from '../types/twitchEvents';
 import { ChatBadge, ChatCheer, ChatEmote } from '../types/types';
 
+const CLIENT_ID = 'nl4u7l1h4dt48e8hj58yha0we527kg';
+
 interface StoreState {
   broadcasterId: string | null;
 
@@ -26,14 +28,17 @@ interface StoreState {
   removeChatMessage: (event: ChannelChatMessageEvent) => void;
   userId: string | null;
   setUserId: (id: string | null) => void;
+  userLogin: string | null;
+  setUserLogin: (login: string | null) => void;
   userInformation: Record<string, UserInformation>;
   addUserInformation: (userInfo: UserInformation) => void;
+  reset: () => void;
 }
 
 export const store = create<StoreState>((set) => ({
   broadcasterId: null,
   setBroadcasterId: (id: string | null) => set({ broadcasterId: id }),
-  clientId: 'nl4u7l1h4dt48e8hj58yha0we527kg',
+  clientId: CLIENT_ID,
   chatBadges: {},
   setChatBadges: (badges: Record<string, ChatBadge>) => set((state) => ({ chatBadges: { ...state.chatBadges, ...badges } })),
   chatCheers: {},
@@ -65,7 +70,9 @@ export const store = create<StoreState>((set) => ({
     }));
   },
   userId: null,
+  userLogin: null,
   setUserId: (id: string | null) => set({ userId: id }),
+  setUserLogin: (login: string | null) => set({ userLogin: login }),
   userInformation: {},
   addUserInformation: (userInfo: UserInformation) => {
     set((state) => ({
@@ -75,6 +82,18 @@ export const store = create<StoreState>((set) => ({
       },
     }));
   },
+  reset: () =>
+    set({
+      broadcasterId: null,
+      clientId: CLIENT_ID,
+      chatBadges: {},
+      chatCheers: {},
+      chatEmotes: {},
+      chatMessageEvents: [],
+      userId: null,
+      userLogin: null,
+      userInformation: {},
+    }),
 }));
 
 interface PersistedStoreState {

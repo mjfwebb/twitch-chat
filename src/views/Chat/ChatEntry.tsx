@@ -16,8 +16,18 @@ interface ChatEntryProps {
   textStrokeEnabled: boolean;
   textStrokeSettings: string;
   showColonAfterDisplayName: boolean;
+  showNameAlias: boolean;
   chatMessagePadding: string;
 }
+
+const Username = ({ user, showNameAlias }: { user: { displayName: string; alias?: string }; showNameAlias: boolean }) => {
+  return (
+    <>
+      {user.displayName}
+      {showNameAlias && user.alias ? ` (${user.alias})` : null}
+    </>
+  );
+};
 
 export const ChatEntry = ({
   chatMessage,
@@ -30,6 +40,7 @@ export const ChatEntry = ({
   textStrokeSettings,
   thickTextShadowEnabled,
   showColonAfterDisplayName,
+  showNameAlias,
   chatMessagePadding,
 }: ChatEntryProps) => {
   const gigantified = chatMessage.message_type === 'power_ups_gigantified_emote';
@@ -74,7 +85,7 @@ export const ChatEntry = ({
               color: contrastCorrected(chatMessage.color || '#fff', backgroundColor),
             }}
           >
-            {user.displayName} {user.alias && `(${user.alias})`}
+            <Username user={user} showNameAlias={showNameAlias} />
           </span>
           {showColonAfterDisplayName && !actionMessage && ': '}
           <span className={classNames('chat-message-text', actionMessage && 'chat-message-text-action')}>

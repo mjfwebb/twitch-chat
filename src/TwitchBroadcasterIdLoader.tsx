@@ -6,10 +6,13 @@ import { useMount } from './hooks/useMount';
 import { loadEmotes } from './loadEmotes';
 import { persistedStore, store } from './store/store';
 
-async function getBroadcasterIdFromAccessToken(): Promise<string | null> {
+async function getBroadcasterIdFromAccessToken(): Promise<{ id: string; login: string } | null> {
   const result = await validateAccessToken();
   if (result) {
-    return result.user_id;
+    return {
+      id: result.user_id,
+      login: result.login,
+    };
   }
 
   return null;
@@ -28,6 +31,7 @@ export const TwitchBroadcasterIdLoader = () => {
   const accessToken = persistedStore((s) => s.accessToken);
   const broadcasterId = store((s) => s.broadcasterId);
   const userId = store((s) => s.userId);
+  const userLogin = store((s) => s.userLogin);
   const channel = persistedStore((s) => s.channel);
 
   useMount(() => {
@@ -45,13 +49,18 @@ export const TwitchBroadcasterIdLoader = () => {
 
       // If we still don't have a broadcaster ID, try to get it from the access token,
       // which will also set the user ID
-      if (!loadedBroadcasterId || !userId) {
-        const id = await getBroadcasterIdFromAccessToken();
-        if (id) {
-          console.log('Loaded broadcaster ID:', id, 'from access token');
-          loadedBroadcasterId ??= id;
-          console.log('Loaded user ID:', id, 'from access token');
-          store.getState().setUserId(id);
+      if (!loadedBroadcasterId || !userId || !userLogin) {
+        const res = await getBroadcasterIdFromAccessToken();
+        if (!res) {
+          console.error('Failed to get broadcaster ID from access token');
+          return;
+        }
+        if (res.id && res.login) {
+          console.log('Loaded broadcaster ID:', res.id, 'from access token');
+          loadedBroadcasterId ??= res.id;
+          console.log('Loaded user ID:', res.id, 'from access token');
+          store.getState().setUserId(res.id);
+          store.getState().setUserLogin(res.login);
         }
       }
 
