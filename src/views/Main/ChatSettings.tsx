@@ -132,8 +132,13 @@ export const ChatSettings = ({ chatUrl, setChatUrl }: { chatUrl: string; setChat
           }
         }
 
-        console.log(`Loaded ${key}: ${value}`);
-        setOverlayParameters((prev) => ({ ...prev, [key]: value }));
+        const isBooleanSetting = typeof DEFAULT_CHAT_SETTINGS_VALUES[key as keyof typeof DEFAULT_CHAT_SETTINGS_VALUES] === 'boolean';
+        // If the setting is a boolean, convert the string value to a boolean so it can be used correctly
+        if (isBooleanSetting) {
+          setOverlayParameters((prev) => ({ ...prev, [key]: value === 'true' }));
+        } else {
+          setOverlayParameters((prev) => ({ ...prev, [key]: value }));
+        }
       }
     } catch (error) {
       setLoadSettingsError(`Are you sure you put that in properly? (${(error as Error).message})`);

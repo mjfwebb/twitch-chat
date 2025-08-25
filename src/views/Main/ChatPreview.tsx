@@ -3,7 +3,7 @@ import { ChannelChatMessageEvent } from '../../types/twitchEvents';
 import { ChatEntry } from '../Chat/ChatEntry';
 
 const fakesTwitchMessages = [
-  "Pog That's awesome!",
+  'Wow so awesome!',
   'This is so cool peepoWow',
   'Did you see that? Unbeleafable! haHAA',
   'Loving the stream, keep it up!',
