@@ -1,13 +1,14 @@
 import { useRef, useState } from 'react';
 
-import { DEFAULT_CHAT_SETTINGS_VALUES } from '../../constants';
+import { chatSearchParamsMap, DEFAULT_CHAT_SETTINGS_VALUES } from '../../constants';
 import { ChannelChatMessageEvent } from '../../types/twitchEvents';
 import { ChatEntry } from '../Chat/ChatEntry';
 import './ChatSettings.less';
 import { ColorPicker } from './ColorPicker';
+import { ConfirmModal } from './ConfirmModal';
 
 const fakesTwitchMessages = [
-  'Pog Thats awesome!',
+  "Pog That's awesome!",
   'This is so cool peepoWow',
   'Did you see that? Unbeleafable! haHAA',
   'Loving the stream, keep it up!',
@@ -32,8 +33,8 @@ const ChatPreview = ({ overlayParameters }: { overlayParameters: typeof DEFAULT_
     backgroundColor: overlayParameters.backgroundColor,
     fontFamily: overlayParameters.fontFamily,
     fontSize: `${overlayParameters.fontSizeValue}${overlayParameters.fontSizeUnit}`,
-    width: `${overlayParameters.widthSizeValue}${overlayParameters.widthSizeUnit}`,
-    height: `${overlayParameters.heightSizeValue}${overlayParameters.heightSizeUnit}`,
+    width: `${overlayParameters.widthValue}${overlayParameters.widthUnit}`,
+    height: `${overlayParameters.heightValue}${overlayParameters.heightUnit}`,
     animatedEntry: overlayParameters.animatedEntry,
     animatedExit: overlayParameters.animatedExit,
     secondsBeforeExit: overlayParameters.secondsBeforeExit,
@@ -105,24 +106,33 @@ const ChatPreview = ({ overlayParameters }: { overlayParameters: typeof DEFAULT_
   );
 };
 
+const multiPartSettingsMap = {
+  'font-size': ['fontSizeValue', 'fontSizeUnit'],
+  width: ['widthValue', 'widthUnit'],
+  height: ['heightValue', 'heightUnit'],
+  'chat-message-padding': ['chatMessagePaddingValue', 'chatMessagePaddingUnit'],
+};
+
+const multiPartRegex = /^(?<value>[\d.]+)(?<unit>px|em|rem|vh|vw|ch)$/;
+
 export const ChatSettings = ({ chatUrl, setChatUrl }: { chatUrl: string; setChatUrl: (url: string) => void }) => {
   const [overlayParameters, setOverlayParameters] = useState(DEFAULT_CHAT_SETTINGS_VALUES);
   const [loadSettingsError, setLoadSettingsError] = useState('');
   const [loadingUrl, setLoadingUrl] = useState('');
+  const [confirmResetOpen, setConfirmResetOpen] = useState(false);
   const detailsRef = useRef<HTMLDetailsElement>(null);
-
-  console.log('Overlay parameters animatedEntry', overlayParameters.animatedEntry);
 
   const handleUpdateUrl = () => {
     const url = new URL(chatUrl);
     Object.entries(overlayParameters).forEach(([key, value]) => {
       // If the value is the default value, either remove the key from the chatURL, or just don't add it in the first place
       const defaultValue = DEFAULT_CHAT_SETTINGS_VALUES[key as keyof typeof DEFAULT_CHAT_SETTINGS_VALUES];
+      const param = chatSearchParamsMap[key as keyof typeof chatSearchParamsMap];
       if (value !== defaultValue) {
         console.log(`Setting ${key} to ${value} (default is ${defaultValue})`);
-        url.searchParams.set(key, String(value));
+        url.searchParams.set(param, String(value));
       } else {
-        url.searchParams.delete(key);
+        url.searchParams.delete(param);
       }
     });
     setChatUrl(url.toString());
@@ -130,14 +140,45 @@ export const ChatSettings = ({ chatUrl, setChatUrl }: { chatUrl: string; setChat
     detailsRef.current?.scrollIntoView();
   };
 
+  const setParametersToDefault = () => {
+    setOverlayParameters(DEFAULT_CHAT_SETTINGS_VALUES);
+  };
+
+  const openConfirmReset = () => setConfirmResetOpen(true);
+  const cancelConfirmReset = () => setConfirmResetOpen(false);
+  const confirmReset = () => {
+    setParametersToDefault();
+    setConfirmResetOpen(false);
+  };
+
   const handleLoadUrl = () => {
     setLoadSettingsError('');
     if (!loadingUrl) return;
     try {
       const url = new URL(loadingUrl);
-      for (const [key, defaultValue] of Object.entries(DEFAULT_CHAT_SETTINGS_VALUES)) {
-        const value = url.searchParams.get(key) ?? defaultValue;
-        // console.log(`Loaded ${key}: ${value}`);
+
+      // Set all values to defaults to normalize
+      setParametersToDefault();
+
+      // Now load the chat settings from the URL
+      for (const [key, urlParam] of Object.entries(chatSearchParamsMap)) {
+        const value = url.searchParams.get(urlParam) ?? DEFAULT_CHAT_SETTINGS_VALUES[key as keyof typeof DEFAULT_CHAT_SETTINGS_VALUES];
+
+        if (Object.keys(multiPartSettingsMap).includes(urlParam)) {
+          const match = String(value).match(multiPartRegex);
+          if (match) {
+            const sizeValue = Number(match.groups?.value);
+            const sizeUnit = match.groups?.unit;
+            setOverlayParameters((prev) => ({
+              ...prev,
+              [multiPartSettingsMap[urlParam as keyof typeof multiPartSettingsMap][0]]: sizeValue,
+              [multiPartSettingsMap[urlParam as keyof typeof multiPartSettingsMap][1]]: sizeUnit,
+            }));
+            continue;
+          }
+        }
+
+        console.log(`Loaded ${key}: ${value}`);
         setOverlayParameters((prev) => ({ ...prev, [key]: value }));
       }
     } catch (error) {
@@ -164,6 +205,15 @@ export const ChatSettings = ({ chatUrl, setChatUrl }: { chatUrl: string; setChat
               Load settings from URL
             </button>
             {loadSettingsError && <p className="error">{loadSettingsError}</p>}
+          </div>
+        </section>
+        <section>
+          <h3>Reset to default settings</h3>
+          <div className="chat-settings-section chat-settings-reset">
+            <p>This will reset all settings to their default values.</p>
+            <button onClick={openConfirmReset} className="button button-secondary">
+              Reset to default settings
+            </button>
           </div>
         </section>
         <section>
@@ -236,14 +286,14 @@ export const ChatSettings = ({ chatUrl, setChatUrl }: { chatUrl: string; setChat
             <label htmlFor="width">Overlay width:</label>
             <div className="chat-settings-size-inputs">
               <input
-                id="width-size-value"
+                id="width-value"
                 type="text"
-                placeholder={String(DEFAULT_CHAT_SETTINGS_VALUES.widthSizeValue)}
-                value={overlayParameters.widthSizeValue}
+                placeholder={String(DEFAULT_CHAT_SETTINGS_VALUES.widthValue)}
+                value={overlayParameters.widthValue}
                 onChange={(e) =>
                   setOverlayParameters((prev) => {
                     if (!isNaN(Number(e.target.value))) {
-                      return { ...prev, widthSizeValue: Number(e.target.value) };
+                      return { ...prev, widthValue: Number(e.target.value) };
                     }
                     return prev;
                   })
@@ -251,11 +301,11 @@ export const ChatSettings = ({ chatUrl, setChatUrl }: { chatUrl: string; setChat
                 autoComplete="off"
               />
               <select
-                id="width-size-unit"
-                value={overlayParameters.widthSizeUnit}
-                onChange={(e) => setOverlayParameters((prev) => ({ ...prev, widthSizeUnit: e.target.value }))}
+                id="width-unit"
+                value={overlayParameters.widthUnit}
+                onChange={(e) => setOverlayParameters((prev) => ({ ...prev, widthUnit: e.target.value }))}
                 autoComplete="off"
-                defaultValue={DEFAULT_CHAT_SETTINGS_VALUES.widthSizeUnit}
+                defaultValue={DEFAULT_CHAT_SETTINGS_VALUES.widthUnit}
               >
                 <option value="px">px</option>
                 <option value="em">em</option>
@@ -267,14 +317,14 @@ export const ChatSettings = ({ chatUrl, setChatUrl }: { chatUrl: string; setChat
             <label htmlFor="chat-height">Overlay height:</label>
             <div className="chat-settings-size-inputs">
               <input
-                id="height-size-value"
+                id="height-value"
                 type="text"
-                placeholder={String(DEFAULT_CHAT_SETTINGS_VALUES.heightSizeValue)}
-                value={overlayParameters.heightSizeValue}
+                placeholder={String(DEFAULT_CHAT_SETTINGS_VALUES.heightValue)}
+                value={overlayParameters.heightValue}
                 onChange={(e) =>
                   setOverlayParameters((prev) => {
                     if (!isNaN(Number(e.target.value))) {
-                      return { ...prev, heightSizeValue: Number(e.target.value) };
+                      return { ...prev, heightValue: Number(e.target.value) };
                     }
                     return prev;
                   })
@@ -282,11 +332,11 @@ export const ChatSettings = ({ chatUrl, setChatUrl }: { chatUrl: string; setChat
                 autoComplete="off"
               />
               <select
-                id="height-size-unit"
-                value={overlayParameters.heightSizeUnit}
-                onChange={(e) => setOverlayParameters((prev) => ({ ...prev, heightSizeUnit: e.target.value }))}
+                id="height-unit"
+                value={overlayParameters.heightUnit}
+                onChange={(e) => setOverlayParameters((prev) => ({ ...prev, heightUnit: e.target.value }))}
                 autoComplete="off"
-                defaultValue={DEFAULT_CHAT_SETTINGS_VALUES.heightSizeUnit}
+                defaultValue={DEFAULT_CHAT_SETTINGS_VALUES.heightUnit}
               >
                 <option value="px">px</option>
                 <option value="em">em</option>
@@ -344,6 +394,15 @@ export const ChatSettings = ({ chatUrl, setChatUrl }: { chatUrl: string; setChat
           Update Chat URL
         </button>
       </details>
+      <ConfirmModal
+        open={confirmResetOpen}
+        title="Reset settings?"
+        message="This will reset all settings to their default values."
+        confirmText="Reset"
+        cancelText="Cancel"
+        onConfirm={confirmReset}
+        onCancel={cancelConfirmReset}
+      />
     </div>
   );
 };

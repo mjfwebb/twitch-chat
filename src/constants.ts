@@ -25,10 +25,10 @@ const PRESET_CHAT_SETTINGS_VALUES = {
 };
 
 export const DEFAULT_CHAT_SETTINGS_VALUES = {
-  heightSizeValue: 100,
-  heightSizeUnit: 'vh',
-  widthSizeValue: 500,
-  widthSizeUnit: 'px',
+  heightValue: 100,
+  heightUnit: 'vh',
+  widthValue: 500,
+  widthUnit: 'px',
   secondsBeforeExit: 10,
   backgroundColor: 'transparent',
   foregroundColor: '#ffffff',
