@@ -25,10 +25,10 @@ const PRESET_CHAT_SETTINGS_VALUES = {
 };
 
 export const DEFAULT_CHAT_SETTINGS_VALUES = {
-  heightValue: 100,
-  heightUnit: 'vh',
-  widthValue: 500,
-  widthUnit: 'px',
+  heightSizeValue: 100,
+  heightSizeUnit: 'vh',
+  widthSizeValue: 500,
+  widthSizeUnit: 'px',
   secondsBeforeExit: 10,
   backgroundColor: 'transparent',
   foregroundColor: '#ffffff',
@@ -48,4 +48,26 @@ export const DEFAULT_CHAT_SETTINGS_VALUES = {
   textStrokeEnabled: false,
   showNameAlias: true,
   animatedEntry: true,
+};
+
+export const chatSearchParamsMap = {
+  animatedEntry: 'animated-entry',
+  backgroundColor: 'background-color',
+  height: 'height',
+  width: 'width',
+  animatedExit: 'animated-exit',
+  secondsBeforeExit: 'seconds-before-exit',
+  dropShadowEnabled: 'drop-shadow',
+  dropShadowSettings: 'drop-shadow-settings',
+  thickTextShadowEnabled: 'thick-text-shadow',
+  foregroundColor: 'foreground-color',
+  showAvatars: 'show-avatars',
+  showBorders: 'show-borders',
+  showColonAfterDisplayName: 'show-colon-after-display-name',
+  textStrokeEnabled: 'text-stroke-enabled',
+  textStrokeSettings: 'text-stroke',
+  fontSize: 'font-size',
+  fontFamily: 'font-family',
+  chatMessagePadding: 'chat-message-padding',
+  showNameAlias: 'show-name-alias',
 };

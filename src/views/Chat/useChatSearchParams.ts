@@ -1,5 +1,4 @@
-import { DEFAULT_CHAT_SETTINGS_VALUES } from '../../constants';
-import { chatSearchParamsMap } from './chatSearchParamsMap';
+import { chatSearchParamsMap, DEFAULT_CHAT_SETTINGS_VALUES } from '../../constants';
 
 export const useChatSearchParams = () => {
   const searchParams = new URLSearchParams(window.location.search);
@@ -12,10 +11,11 @@ export const useChatSearchParams = () => {
 
   // Height of the chat container with unit (e.g., '100vh'). Defaults to '100vh'.
   const height =
-    searchParams.get(chatSearchParamsMap.height) || `${DEFAULT_CHAT_SETTINGS_VALUES.heightValue}${DEFAULT_CHAT_SETTINGS_VALUES.heightUnit}`;
+    searchParams.get(chatSearchParamsMap.height) || `${DEFAULT_CHAT_SETTINGS_VALUES.heightSizeValue}${DEFAULT_CHAT_SETTINGS_VALUES.heightSizeUnit}`;
 
   // Width of the chat container with unit (e.g., '500px'). Defaults to '500px'.
-  const width = searchParams.get(chatSearchParamsMap.width) || `${DEFAULT_CHAT_SETTINGS_VALUES.widthValue}${DEFAULT_CHAT_SETTINGS_VALUES.widthUnit}`;
+  const width =
+    searchParams.get(chatSearchParamsMap.width) || `${DEFAULT_CHAT_SETTINGS_VALUES.widthSizeValue}${DEFAULT_CHAT_SETTINGS_VALUES.widthSizeUnit}`;
 
   // Controls whether chat entries animate out after a delay. Defaults to false.
   const animatedExit = searchParams.get(chatSearchParamsMap.animatedExit) === 'true' ? true : DEFAULT_CHAT_SETTINGS_VALUES.animatedExit;
