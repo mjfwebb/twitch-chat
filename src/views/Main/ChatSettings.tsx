@@ -1,110 +1,12 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { chatSearchParamsMap, DEFAULT_CHAT_SETTINGS_VALUES } from '../../constants';
-import { ChannelChatMessageEvent } from '../../types/twitchEvents';
-import { ChatEntry } from '../Chat/ChatEntry';
+import { useDebounce } from '../../hooks/useDebounce';
+import { ChatPreview } from './ChatPreview';
 import './ChatSettings.less';
 import { ColorPicker } from './ColorPicker';
 import { ConfirmModal } from './ConfirmModal';
-
-const fakesTwitchMessages = [
-  "Pog That's awesome!",
-  'This is so cool peepoWow',
-  'Did you see that? Unbeleafable! haHAA',
-  'Loving the stream, keep it up!',
-  'Can we get some hype in the chat? catJAM',
-];
-
-const fakeUsers: {
-  name: string;
-  color: string;
-  avatarUrl: string;
-}[] = [
-  { name: 'Alice', color: '#ff5733', avatarUrl: 'https://i.pravatar.cc/256?img=10' },
-  { name: 'Bob', color: '#33ff57', avatarUrl: 'https://i.pravatar.cc/256?img=15' },
-  { name: 'Charlie', color: '#3357ff', avatarUrl: 'https://i.pravatar.cc/256?img=11' },
-  { name: 'Diana', color: '#f333ff', avatarUrl: 'https://i.pravatar.cc/256?img=28' },
-  { name: 'Eve', color: '#33fff5', avatarUrl: 'https://i.pravatar.cc/256?img=21' },
-];
-
-const ChatPreview = ({ overlayParameters }: { overlayParameters: typeof DEFAULT_CHAT_SETTINGS_VALUES }) => {
-  const overlayParametersToChatEntryProps = {
-    foregroundColor: overlayParameters.foregroundColor,
-    backgroundColor: overlayParameters.backgroundColor,
-    fontFamily: overlayParameters.fontFamily,
-    fontSize: `${overlayParameters.fontSizeValue}${overlayParameters.fontSizeUnit}`,
-    width: `${overlayParameters.widthValue}${overlayParameters.widthUnit}`,
-    height: `${overlayParameters.heightValue}${overlayParameters.heightUnit}`,
-    animatedEntry: overlayParameters.animatedEntry,
-    animatedExit: overlayParameters.animatedExit,
-    secondsBeforeExit: overlayParameters.secondsBeforeExit,
-    showAvatars: overlayParameters.showAvatars,
-    showBorders: overlayParameters.showBorders,
-    showColonAfterDisplayName: overlayParameters.showColonAfterDisplayName,
-    showNameAlias: overlayParameters.showNameAlias,
-    dropShadowEnabled: overlayParameters.dropShadowEnabled,
-    dropShadowSettings: overlayParameters.dropShadowSettings,
-    thickTextShadowEnabled: overlayParameters.thickTextShadowEnabled,
-    textStrokeEnabled: overlayParameters.textStrokeEnabled,
-    textStrokeSettings: overlayParameters.textStrokeSettings,
-    chatMessagePadding: `${overlayParameters.chatMessagePaddingValue}${overlayParameters.chatMessagePaddingUnit}`,
-  };
-
-  const fakeChatMessageEvents = Array.from({ length: 5 }, (_, idx: number) => {
-    {
-      const user = fakeUsers[idx];
-      const message = fakesTwitchMessages[idx];
-      const chatMessage: ChannelChatMessageEvent['message'] = {
-        text: message,
-        fragments: [{ text: message, type: 'text' }],
-      };
-      return {
-        broadcaster_user_id: '0',
-        broadcaster_user_login: 'athano',
-        broadcaster_user_name: 'Athano',
-        chatter_user_id: '0',
-        chatter_user_login: user.name.toLowerCase(),
-        chatter_user_name: user.name,
-        message_id: String(Math.floor(Math.random() * 10000)),
-        message: chatMessage,
-        message_type: 'text',
-        badges: [],
-        color: user.color,
-        eventType: 'channel.chat.message',
-      } satisfies ChannelChatMessageEvent;
-    }
-  });
-
-  return (
-    <div className="chat-preview-container">
-      <h2>Overlay preview</h2>
-      <div className="chat-preview">
-        <div
-          style={{
-            background: overlayParametersToChatEntryProps.backgroundColor,
-            width: overlayParametersToChatEntryProps.width,
-            color: overlayParametersToChatEntryProps.foregroundColor,
-            fontSize: overlayParametersToChatEntryProps.fontSize,
-            fontFamily: overlayParametersToChatEntryProps.fontFamily,
-          }}
-        >
-          {fakeChatMessageEvents.map((fakeChatMessageEvent) => (
-            <ChatEntry
-              key={fakeChatMessageEvent.message_id}
-              {...overlayParametersToChatEntryProps}
-              chatMessage={fakeChatMessageEvent}
-              userInformationStore={{
-                [fakeChatMessageEvent.chatter_user_id]: {
-                  profile_image_url: fakeUsers.find((u) => u.name === fakeChatMessageEvent.chatter_user_name)?.avatarUrl,
-                },
-              }}
-            />
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-};
+import { TextShadowPicker } from './TextShadowPicker/TextShadowPicker';
 
 const multiPartSettingsMap = {
   'font-size': ['fontSizeValue', 'fontSizeUnit'],
@@ -121,6 +23,15 @@ export const ChatSettings = ({ chatUrl, setChatUrl }: { chatUrl: string; setChat
   const [loadingUrl, setLoadingUrl] = useState('');
   const [confirmResetOpen, setConfirmResetOpen] = useState(false);
   const detailsRef = useRef<HTMLDetailsElement>(null);
+  const [dropShadowSettings, setDropShadowSettings] = useState(overlayParameters.dropShadowSettings);
+  const debouncedDropShadowSettings = useDebounce(dropShadowSettings, 300);
+
+  useEffect(() => {
+    setOverlayParameters((prev) => ({
+      ...prev,
+      dropShadowSettings: debouncedDropShadowSettings,
+    }));
+  }, [debouncedDropShadowSettings]);
 
   const handleUpdateUrl = () => {
     const url = new URL(chatUrl);
@@ -193,7 +104,7 @@ export const ChatSettings = ({ chatUrl, setChatUrl }: { chatUrl: string; setChat
 
   return (
     <div>
-      <ChatPreview overlayParameters={overlayParameters} />
+      <ChatPreview overlayParameters={{ ...overlayParameters, dropShadowSettings }} />
       <details className="chat-settings" ref={detailsRef}>
         <summary>👉 Customise look and feel of the overlay</summary>
         <section>
@@ -277,13 +188,25 @@ export const ChatSettings = ({ chatUrl, setChatUrl }: { chatUrl: string; setChat
                 <option value="rem">rem</option>
               </select>
             </div>
+            <button
+              className="button button-secondary"
+              onClick={() =>
+                setOverlayParameters((prev) => ({
+                  ...prev,
+                  fontSizeValue: DEFAULT_CHAT_SETTINGS_VALUES.fontSizeValue,
+                  fontSizeUnit: DEFAULT_CHAT_SETTINGS_VALUES.fontSizeUnit,
+                }))
+              }
+            >
+              Reset to defaults
+            </button>
           </div>
         </section>
         <section>
           <h3>Dimensions</h3>
           <div className="chat-settings-section">
             <p className="info">Set the width and height to match the browser source width and height so you get a perfect resolution match</p>
-            <label htmlFor="width">Overlay width:</label>
+            <label htmlFor="width-value">Overlay width:</label>
             <div className="chat-settings-size-inputs">
               <input
                 id="width-value"
@@ -312,9 +235,21 @@ export const ChatSettings = ({ chatUrl, setChatUrl }: { chatUrl: string; setChat
                 <option value="rem">rem</option>
                 <option value="vw">vw</option>
               </select>
+              <button
+                className="button button-secondary"
+                onClick={() =>
+                  setOverlayParameters((prev) => ({
+                    ...prev,
+                    widthValue: DEFAULT_CHAT_SETTINGS_VALUES.widthValue,
+                    widthUnit: DEFAULT_CHAT_SETTINGS_VALUES.widthUnit,
+                  }))
+                }
+              >
+                Reset to defaults
+              </button>
             </div>
 
-            <label htmlFor="chat-height">Overlay height:</label>
+            <label htmlFor="height-value">Overlay height:</label>
             <div className="chat-settings-size-inputs">
               <input
                 id="height-value"
@@ -343,6 +278,18 @@ export const ChatSettings = ({ chatUrl, setChatUrl }: { chatUrl: string; setChat
                 <option value="rem">rem</option>
                 <option value="vh">vh</option>
               </select>
+              <button
+                className="button button-secondary"
+                onClick={() =>
+                  setOverlayParameters((prev) => ({
+                    ...prev,
+                    widthValue: DEFAULT_CHAT_SETTINGS_VALUES.widthValue,
+                    widthUnit: DEFAULT_CHAT_SETTINGS_VALUES.widthUnit,
+                  }))
+                }
+              >
+                Reset to defaults
+              </button>
             </div>
           </div>
         </section>
@@ -389,6 +336,26 @@ export const ChatSettings = ({ chatUrl, setChatUrl }: { chatUrl: string; setChat
               }
             />
           </div>
+        </section>
+        <section>
+          <h3>Drop shadow</h3>
+          <div className="chat-settings-section">
+            <label htmlFor="dropShadowEnabled">Drop shadow:</label>
+            <p>
+              <small>Enable this to add a drop shadow effect to the chat overlay.</small>
+            </p>
+            <input
+              type="checkbox"
+              id="dropShadowEnabled"
+              checked={overlayParameters.dropShadowEnabled}
+              onChange={(e) => setOverlayParameters((prev) => ({ ...prev, dropShadowEnabled: e.target.checked }))}
+            />
+          </div>
+          {overlayParameters.dropShadowEnabled && (
+            <>
+              <TextShadowPicker onChange={(newShadow: string) => setDropShadowSettings(newShadow)} value={dropShadowSettings} />
+            </>
+          )}
         </section>
         <button className="button button-primary button-update-chat" onClick={handleUpdateUrl}>
           Update Chat URL

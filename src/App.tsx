@@ -14,6 +14,8 @@ function App() {
   const accessToken = persistedStore((s) => s.accessToken);
   const [searchParams] = useSearchParams();
 
+  persistedStore.getState().setSevenTVEnabled(false);
+
   useMount(() => {
     fetchBadges('global');
     fetchCheers('global');

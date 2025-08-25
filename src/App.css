@@ -1,10 +1,3 @@
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
-
 body {
   background: #18181b;
   color: #f4f4f5;
@@ -27,6 +20,7 @@ h1,
 h2,
 h3 {
   color: #a78bfa;
+  margin-top: 0;
   margin-bottom: 1.5rem;
 }
 
@@ -35,6 +29,7 @@ ol {
 }
 
 p {
+  margin: 0;
   margin-bottom: 1.5rem;
 }
 
@@ -94,20 +89,6 @@ button.button-secondary:hover {
   color: #fff;
 }
 
-input,
-textarea,
-select {
-  background: #232326;
-  color: #f4f4f5;
-  border: 1px solid #444;
-  border-radius: 6px;
-  padding: 8px;
-  font-size: 1rem;
-  margin-bottom: 12px;
-  outline: none;
-  transition: border-color 0.2s;
-}
-
 input:focus,
 textarea:focus,
 select:focus {
@@ -130,7 +111,6 @@ code {
   justify-content: space-between;
   flex-direction: column;
   padding: 1rem;
-  background: #232326;
   border: 1px solid #444;
   border-radius: 6px;
   margin-top: 1rem;
@@ -149,19 +129,19 @@ code {
 }
 
 .error {
-    color: #ff4d4d;
-    background-color: #330000;
-    padding: 0.5rem;
-    border: 1px solid #800000;
-    border-radius: 3px;
+  color: #ff4d4d;
+  background-color: #330000;
+  padding: 0.5rem;
+  border: 1px solid #800000;
+  border-radius: 3px;
 }
 
 .info {
-    color: #38bdf8;
-    background-color: #0a2540;
-    padding: 0.5rem;
-    border: 1px solid #004080;
-    border-radius: 3px;
+  color: #38bdf8;
+  background-color: #0a2540;
+  padding: 0.5rem;
+  border: 1px solid #004080;
+  border-radius: 3px;
 }
 
 details[open] summary ~ section {
@@ -172,6 +152,7 @@ details[open] summary ~ section {
   margin-top: 0.5rem;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
   color: #e0e0e0;
+  background-color: #1e1e1e;
 }
 
 @keyframes sweep {
@@ -196,13 +177,16 @@ footer {
   border-radius: 5px;
   padding: 1rem;
   text-align: center;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
 }
 
 .color-picker {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
+  flex-direction: column;
   gap: 1rem;
+  border: 1px solid #433b5d;
+  padding: 1rem;
 }
 
 .button-update-chat {
@@ -211,17 +195,33 @@ footer {
 }
 
 .chat-preview {
-    border: 1px solid #433b5d;
-    border-radius: 5px;
-    padding: 1rem;
-    margin-top: 1rem;
-    background: #1e1e1e;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-    overflow-y: auto;
-    display: flex;
-    justify-content: center;
+  border: 1px solid #433b5d;
+  border-radius: 5px;
+  padding: 1rem;
+  margin-top: 1rem;
+  background: #1e1e1e;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  overflow-y: auto;
+  display: flex;
+  justify-content: center;
 }
 
 .add-to-obs {
-    margin-bottom: 2rem;
+  margin-bottom: 2rem;
+}
+
+/* Keep the preview visible while scrolling settings */
+.chat-preview-container {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  /* Give it a solid background so content underneath doesn't show through when stuck */
+  background: #232326;
+  /* Match the main container's padding spacing visually when stuck */
+  padding-top: 0.5rem;
+}
+
+/* Constrain preview height so it doesn't exceed the viewport and can scroll internally */
+.chat-preview-container .chat-preview {
+  max-height: 70vh;
 }

@@ -12,7 +12,7 @@ export const ColorPicker = ({ id, onChange, value, placeholder, setToDefault }: 
       <label htmlFor={id}>{value}</label>
       <input style={{ height: '40px' }} id={id} type="color" value={value} onChange={(e) => onChange(e.target.value)} placeholder={placeholder} />
       <button className="button button-secondary" onClick={setToDefault}>
-        Set to default
+        Reset to default
       </button>
     </div>
   );
