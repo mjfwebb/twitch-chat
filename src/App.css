@@ -77,11 +77,14 @@ a:hover {
 }
 
 .button-secondary {
-  background: #9c93c4;
-  color: #000000;
-  padding: 6px 12px;
   font-size: 0.875rem;
   font-weight: 500;
+  background: #333;
+  color: #ddd;
+  border: 1px solid #444;
+  border-radius: 4px;
+  padding: 6px 10px;
+  cursor: pointer;
 }
 
 button.button-secondary:hover {

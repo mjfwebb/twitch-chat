@@ -6,7 +6,7 @@ import { ChatPreview } from './ChatPreview';
 import './ChatSettings.less';
 import { ColorPicker } from './ColorPicker';
 import { ConfirmModal } from './ConfirmModal';
-import { TextShadowPicker } from './TextShadowPicker/TextShadowPicker';
+import { TextShadowStacker } from './TextShadowPicker/TextShadowStacker';
 
 const multiPartSettingsMap = {
   'font-size': ['fontSizeValue', 'fontSizeUnit'],
@@ -52,19 +52,24 @@ export const ChatSettings = ({ chatUrl, setChatUrl }: { chatUrl: string; setChat
   };
 
   const setParametersToDefault = () => {
+    setDropShadowSettings(DEFAULT_CHAT_SETTINGS_VALUES.dropShadowSettings);
     setOverlayParameters(DEFAULT_CHAT_SETTINGS_VALUES);
+    // Keep local shadow state in sync with defaults
   };
 
   const openConfirmReset = () => setConfirmResetOpen(true);
   const cancelConfirmReset = () => setConfirmResetOpen(false);
   const confirmReset = () => {
     setParametersToDefault();
+
     setConfirmResetOpen(false);
   };
 
   const handleLoadUrl = () => {
     setLoadSettingsError('');
-    if (!loadingUrl) return;
+    if (!loadingUrl) {
+      return;
+    }
     try {
       const url = new URL(loadingUrl);
 
@@ -74,6 +79,17 @@ export const ChatSettings = ({ chatUrl, setChatUrl }: { chatUrl: string; setChat
       // Now load the chat settings from the URL
       for (const [key, urlParam] of Object.entries(chatSearchParamsMap)) {
         const value = url.searchParams.get(urlParam) ?? DEFAULT_CHAT_SETTINGS_VALUES[key as keyof typeof DEFAULT_CHAT_SETTINGS_VALUES];
+
+        // Special-case: stacked text-shadows (comma-separated)
+        if (key === 'dropShadowSettings') {
+          const shadowValue = url.searchParams.get(urlParam);
+          if (shadowValue != null) {
+            // Assign decoded, comma-separated shadow string to local and overlay state
+            setDropShadowSettings(shadowValue);
+            setOverlayParameters((prev) => ({ ...prev, dropShadowSettings: shadowValue }));
+          }
+          continue;
+        }
 
         if (Object.keys(multiPartSettingsMap).includes(urlParam)) {
           const match = String(value).match(multiPartRegex);
@@ -352,9 +368,7 @@ export const ChatSettings = ({ chatUrl, setChatUrl }: { chatUrl: string; setChat
             />
           </div>
           {overlayParameters.dropShadowEnabled && (
-            <>
-              <TextShadowPicker onChange={(newShadow: string) => setDropShadowSettings(newShadow)} value={dropShadowSettings} />
-            </>
+            <TextShadowStacker onChange={(newValue: string) => setDropShadowSettings(newValue)} value={dropShadowSettings} />
           )}
         </section>
         <button className="button button-primary button-update-chat" onClick={handleUpdateUrl}>
