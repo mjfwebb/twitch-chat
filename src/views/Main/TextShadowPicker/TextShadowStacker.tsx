@@ -54,17 +54,6 @@ const FooterActions = styled.div`
   display: flex;
   justify-content: flex-start;
   margin-top: 8px;
-  & > button {
-    background: #333;
-    color: #ddd;
-    border: 1px solid #444;
-    border-radius: 4px;
-    padding: 6px 10px;
-    cursor: pointer;
-  }
-  & > button:hover {
-    background: #3a3a3a;
-  }
 `;
 
 export interface TextShadowStackerProps {
@@ -154,18 +143,19 @@ export const TextShadowStacker: React.FC<TextShadowStackerProps> = ({ value, onC
       {shadows.map((s, idx) => (
         <ShadowCard key={idx}>
           <CardHeader>
-            <span>Shadow {idx + 1}</span>
-            <CardActions>
-              <button type="button" onClick={() => move(idx, -1)} disabled={idx === 0} title="Move up">
-                ↑
-              </button>
-              <button type="button" onClick={() => move(idx, 1)} disabled={idx === shadows.length - 1} title="Move down">
-                ↓
-              </button>
-              <button type="button" onClick={() => removeAt(idx)} title="Remove">
-                Remove
-              </button>
-            </CardActions>
+            {shadows.length > 1 && (
+              <CardActions>
+                <button type="button" onClick={() => move(idx, -1)} disabled={idx === 0} title="Move up">
+                  ↑
+                </button>
+                <button type="button" onClick={() => move(idx, 1)} disabled={idx === shadows.length - 1} title="Move down">
+                  ↓
+                </button>
+                <button type="button" onClick={() => removeAt(idx)} title="Remove">
+                  Remove
+                </button>
+              </CardActions>
+            )}
           </CardHeader>
           <TextShadowPicker value={s} onChange={(v) => updateAt(idx, v)} />
         </ShadowCard>
@@ -173,7 +163,7 @@ export const TextShadowStacker: React.FC<TextShadowStackerProps> = ({ value, onC
 
       <Row>
         <FooterActions>
-          <button type="button" onClick={addNew}>
+          <button className="button button-secondary" type="button" onClick={addNew}>
             + Add shadow
           </button>
         </FooterActions>

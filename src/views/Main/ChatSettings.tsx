@@ -316,94 +316,119 @@ export const ChatSettings = ({ chatUrl, setChatUrl }: { chatUrl: string; setChat
         <section>
           <h3>Avatars</h3>
           <div className="chat-settings-section">
-            <label htmlFor="showAvatars">Show avatars:</label>
-            <p>
-              <small>Enable this to show user avatars in the chat overlay.</small>
-            </p>
-            <input
-              type="checkbox"
-              id="showAvatars"
-              checked={overlayParameters.showAvatars}
-              onChange={(e) => setOverlayParameters((prev) => ({ ...prev, showAvatars: e.target.checked }))}
-            />
+            <label htmlFor="showAvatars">
+              <input
+                type="checkbox"
+                id="showAvatars"
+                checked={overlayParameters.showAvatars}
+                onChange={(e) => setOverlayParameters((prev) => ({ ...prev, showAvatars: e.target.checked }))}
+              />{' '}
+              Show user avatars in the chat overlay
+            </label>
           </div>
         </section>
         <section>
           <h3>Borders</h3>
           <div className="chat-settings-section">
-            <label htmlFor="showBorders">Show borders:</label>
-            <p>
-              <small>Enable this to show borders around chat messages.</small>
-            </p>
-            <input
-              type="checkbox"
-              id="showBorders"
-              checked={overlayParameters.showBorders}
-              onChange={(e) => setOverlayParameters((prev) => ({ ...prev, showBorders: e.target.checked }))}
-            />
+            <label htmlFor="showBorders">
+              <input
+                type="checkbox"
+                id="showBorders"
+                checked={overlayParameters.showBorders}
+                onChange={(e) => setOverlayParameters((prev) => ({ ...prev, showBorders: e.target.checked }))}
+              />{' '}
+              Show subscriber borders around chat messages
+            </label>
+          </div>
+        </section>
+        <section>
+          <h3>Aliases</h3>
+          <div className="chat-settings-section">
+            <label htmlFor="showNameAlias">
+              <input
+                type="checkbox"
+                id="showNameAlias"
+                checked={overlayParameters.showNameAlias}
+                onChange={(e) => setOverlayParameters((prev) => ({ ...prev, showNameAlias: e.target.checked }))}
+              />{' '}
+              Show name aliases for localised display names
+            </label>
           </div>
         </section>
         <section>
           <h3>Animation</h3>
           <div className="chat-settings-section">
-            <label htmlFor="animatedEntry">Animated entry:</label>
-            <p>
-              <small>Enable this to have the chat overlay fade in when it appears.</small>
-            </p>
-            <input
-              type="checkbox"
-              id="animatedEntry"
-              checked={overlayParameters.animatedEntry}
-              onChange={(e) => setOverlayParameters((prev) => ({ ...prev, animatedEntry: e.target.checked }))}
-            />
+            <label htmlFor="animatedEntry">
+              <input
+                type="checkbox"
+                id="animatedEntry"
+                checked={overlayParameters.animatedEntry}
+                onChange={(e) => setOverlayParameters((prev) => ({ ...prev, animatedEntry: e.target.checked }))}
+              />{' '}
+              Enable animated entry for chat messages
+            </label>
           </div>
           <div className="chat-settings-section">
-            <label htmlFor="animatedExit">Animated exit:</label>
-            <p>
-              <small>Enable this to have the chat overlay fade out when it disappears.</small>
-            </p>
-            <input
-              type="checkbox"
-              id="animatedExit"
-              checked={overlayParameters.animatedExit}
-              onChange={(e) => setOverlayParameters((prev) => ({ ...prev, animatedExit: e.target.checked }))}
-            />
+            <label htmlFor="animatedExit">
+              <input
+                type="checkbox"
+                id="animatedExit"
+                checked={overlayParameters.animatedExit}
+                onChange={(e) => setOverlayParameters((prev) => ({ ...prev, animatedExit: e.target.checked }))}
+              />
+              Enabled animated exit for chat messages
+            </label>
           </div>
-          <div className="chat-settings-section">
-            <label htmlFor="secondsBeforeExit">Seconds before exit:</label>
-            <p>
-              <small>Set the number of seconds before the chat overlay exits. Only applies if animated exit is enabled.</small>
-            </p>
-            <input
-              id="secondsBeforeExit"
-              type="number"
-              value={overlayParameters.secondsBeforeExit}
-              onChange={(e) =>
-                setOverlayParameters((prev) => ({
-                  ...prev,
-                  secondsBeforeExit: Number(e.target.value),
-                }))
-              }
-            />
-          </div>
+          {overlayParameters.animatedExit && (
+            <div className="chat-settings-section">
+              <label htmlFor="secondsBeforeExit">Seconds before exit:</label>
+              <p>
+                <small>Set the number of seconds before the chat message exits.</small>
+              </p>
+              <input
+                id="secondsBeforeExit"
+                type="number"
+                value={overlayParameters.secondsBeforeExit}
+                onChange={(e) =>
+                  setOverlayParameters((prev) => ({
+                    ...prev,
+                    secondsBeforeExit: Number(e.target.value),
+                  }))
+                }
+              />
+            </div>
+          )}
         </section>
         <section>
           <h3>Drop shadow</h3>
           <div className="chat-settings-section">
-            <label htmlFor="dropShadowEnabled">Drop shadow:</label>
-            <p>
-              <small>Enable this to add a drop shadow effect to the chat overlay.</small>
-            </p>
-            <input
-              type="checkbox"
-              id="dropShadowEnabled"
-              checked={overlayParameters.dropShadowEnabled}
-              onChange={(e) => setOverlayParameters((prev) => ({ ...prev, dropShadowEnabled: e.target.checked }))}
-            />
+            <label htmlFor="dropShadowEnabled">
+              <input
+                type="checkbox"
+                id="dropShadowEnabled"
+                checked={overlayParameters.dropShadowEnabled}
+                onChange={(e) => setOverlayParameters((prev) => ({ ...prev, dropShadowEnabled: e.target.checked }))}
+              />{' '}
+              Enable drop shadow on chat message text
+            </label>
           </div>
           {overlayParameters.dropShadowEnabled && (
             <TextShadowStacker onChange={(newValue: string) => setDropShadowSettings(newValue)} value={dropShadowSettings} />
           )}
+        </section>
+        <section>
+          <h3>Text stroke</h3>
+          <div className="chat-settings-section">
+            <label htmlFor="textStrokeEnabled">
+              <input
+                type="checkbox"
+                id="textStrokeEnabled"
+                checked={overlayParameters.textStrokeEnabled}
+                onChange={(e) => setOverlayParameters((prev) => ({ ...prev, textStrokeEnabled: e.target.checked }))}
+              />{' '}
+              Enable text stroke on chat message text
+            </label>
+          </div>
         </section>
         <button className="button button-primary button-update-chat" onClick={handleUpdateUrl}>
           Update source URL with these settings
