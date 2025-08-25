@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 
+import { useToast } from '../../components/Toast/useToast';
 import { chatSearchParamsMap, DEFAULT_CHAT_SETTINGS_VALUES } from '../../constants';
 import { useDebounce } from '../../hooks/useDebounce';
 import { ChatPreview } from './ChatPreview';
@@ -25,6 +26,7 @@ export const ChatSettings = ({ chatUrl, setChatUrl }: { chatUrl: string; setChat
   const detailsRef = useRef<HTMLDetailsElement>(null);
   const [dropShadowSettings, setDropShadowSettings] = useState(overlayParameters.dropShadowSettings);
   const debouncedDropShadowSettings = useDebounce(dropShadowSettings, 300);
+  const toast = useToast();
 
   useEffect(() => {
     setOverlayParameters((prev) => ({
@@ -49,6 +51,8 @@ export const ChatSettings = ({ chatUrl, setChatUrl }: { chatUrl: string; setChat
     setChatUrl(url.toString());
     detailsRef.current?.removeAttribute('open');
     detailsRef.current?.scrollIntoView();
+
+    toast.showToast('Chat settings updated!');
   };
 
   const setParametersToDefault = () => {
@@ -58,10 +62,11 @@ export const ChatSettings = ({ chatUrl, setChatUrl }: { chatUrl: string; setChat
   };
 
   const openConfirmReset = () => setConfirmResetOpen(true);
+
   const cancelConfirmReset = () => setConfirmResetOpen(false);
+
   const confirmReset = () => {
     setParametersToDefault();
-
     setConfirmResetOpen(false);
   };
 
@@ -401,7 +406,7 @@ export const ChatSettings = ({ chatUrl, setChatUrl }: { chatUrl: string; setChat
           )}
         </section>
         <button className="button button-primary button-update-chat" onClick={handleUpdateUrl}>
-          Update Chat URL
+          Update source URL with these settings
         </button>
       </details>
       <ConfirmModal
