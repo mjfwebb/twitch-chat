@@ -264,7 +264,6 @@ export const ChatSettings = ({ chatUrl, setChatUrl }: { chatUrl: string; setChat
                 Reset to defaults
               </button>
             </div>
-
             <label htmlFor="height-value">Overlay height:</label>
             <div className="chat-settings-size-inputs">
               <input
@@ -307,6 +306,36 @@ export const ChatSettings = ({ chatUrl, setChatUrl }: { chatUrl: string; setChat
                 Reset to defaults
               </button>
             </div>
+          </div>
+        </section>
+        <section>
+          <h3>Avatars</h3>
+          <div className="chat-settings-section">
+            <label htmlFor="showAvatars">Show avatars:</label>
+            <p>
+              <small>Enable this to show user avatars in the chat overlay.</small>
+            </p>
+            <input
+              type="checkbox"
+              id="showAvatars"
+              checked={overlayParameters.showAvatars}
+              onChange={(e) => setOverlayParameters((prev) => ({ ...prev, showAvatars: e.target.checked }))}
+            />
+          </div>
+        </section>
+        <section>
+          <h3>Borders</h3>
+          <div className="chat-settings-section">
+            <label htmlFor="showBorders">Show borders:</label>
+            <p>
+              <small>Enable this to show borders around chat messages.</small>
+            </p>
+            <input
+              type="checkbox"
+              id="showBorders"
+              checked={overlayParameters.showBorders}
+              onChange={(e) => setOverlayParameters((prev) => ({ ...prev, showBorders: e.target.checked }))}
+            />
           </div>
         </section>
         <section>

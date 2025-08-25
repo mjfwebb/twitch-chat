@@ -43,7 +43,7 @@ export const DEFAULT_CHAT_SETTINGS_VALUES = {
   dropShadowEnabled: false,
   thickTextShadowEnabled: false,
   showAvatars: true,
-  showBorders: true,
+  showBorders: false,
   showColonAfterDisplayName: false,
   textStrokeEnabled: false,
   showNameAlias: true,

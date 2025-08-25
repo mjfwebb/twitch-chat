@@ -12,14 +12,40 @@ const fakesTwitchMessages = [
 
 const fakeUsers: {
   name: string;
+  login: string;
   color: string;
   avatarUrl: string;
+  badges: ChannelChatMessageEvent['badges'];
 }[] = [
-  { name: 'Alice', color: '#ff5733', avatarUrl: 'https://i.pravatar.cc/256?img=10' },
-  { name: 'Bob', color: '#33ff57', avatarUrl: 'https://i.pravatar.cc/256?img=15' },
-  { name: 'Charlie', color: '#3357ff', avatarUrl: 'https://i.pravatar.cc/256?img=11' },
-  { name: 'Diana', color: '#f333ff', avatarUrl: 'https://i.pravatar.cc/256?img=28' },
-  { name: 'Eve', color: '#33fff5', avatarUrl: 'https://i.pravatar.cc/256?img=21' },
+  { name: 'Alice', login: 'alice', color: '#ff5733', avatarUrl: 'https://i.pravatar.cc/256?img=10', badges: [] },
+  { name: 'Bob', login: 'bob', color: '#33ff57', avatarUrl: 'https://i.pravatar.cc/256?img=15', badges: [] },
+  {
+    name: 'Charlie',
+    login: 'charlie',
+    color: '#3357ff',
+    avatarUrl: 'https://i.pravatar.cc/256?img=11',
+    badges: [
+      {
+        set_id: 'subscriber',
+        id: '1',
+        info: '12',
+      },
+    ],
+  },
+  {
+    name: 'Diana',
+    login: 'diana',
+    color: '#f333ff',
+    avatarUrl: 'https://i.pravatar.cc/256?img=28',
+    badges: [
+      {
+        set_id: 'subscriber',
+        id: '1',
+        info: '',
+      },
+    ],
+  },
+  { name: '안녕하세요', login: 'Eve', color: '#33fff5', avatarUrl: 'https://i.pravatar.cc/256?img=21', badges: [] },
 ];
 
 export const ChatPreview = ({ overlayParameters }: { overlayParameters: typeof DEFAULT_CHAT_SETTINGS_VALUES }) => {
@@ -58,12 +84,12 @@ export const ChatPreview = ({ overlayParameters }: { overlayParameters: typeof D
         broadcaster_user_login: 'athano',
         broadcaster_user_name: 'Athano',
         chatter_user_id: '0',
-        chatter_user_login: user.name.toLowerCase(),
+        chatter_user_login: user.login,
         chatter_user_name: user.name,
         message_id: String(idx),
         message: chatMessage,
         message_type: 'text',
-        badges: [],
+        badges: fakeUsers[idx].badges,
         color: user.color,
         eventType: 'channel.chat.message',
       } satisfies ChannelChatMessageEvent;
