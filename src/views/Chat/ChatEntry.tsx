@@ -24,7 +24,7 @@ const Username = ({ user, showNameAlias }: { user: { displayName: string; alias?
   return (
     <>
       {user.displayName}
-      {showNameAlias && user.alias ? ` (${user.alias})` : null}
+      {showNameAlias && user.alias ? <span className="chat-message-nick-alias">({user.alias})</span> : null}
     </>
   );
 };
