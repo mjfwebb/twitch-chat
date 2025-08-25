@@ -1,14 +1,19 @@
 .chat-settings {
     position: relative;
     padding: 1rem;
-    border-radius: 5px;
-    border: 1px solid #65ffa8;
     margin-bottom: 1rem;
 
-    p {
-        padding: 1rem;
-        border-radius: 5px;
-        background-color: #2a2a2a;
+    &-load-from-url {
+        background: linear-gradient(90deg, #7c3aed39, #e879f939);
+    }
+
+    summary {
+        cursor: pointer;
+        transition: color 150ms;
+
+        &:hover {
+            color: #a78bfa;
+        }
     }
 
     label {
@@ -18,15 +23,65 @@
         padding: 0;
     }
 
+    section {
+        border-width: 1px;
+        border-style: solid;
+        border-color: #433b5d;
+        padding: 1rem;
+        margin: 1rem 0;
+        border-radius: 5px;
+        transition: all 150ms;
+
+        &:hover {
+            border-color: lighten(#433b5d, 10%);
+        }
+    }
+
+    .error {
+        color: #ff4d4d;
+        background-color: #330000;
+        padding: 0.5rem;
+        border-radius: 3px;
+    }
+
     input {
         width: 100%;
         border-radius: 3px;
-        background-color: #2a2a2a;
+        background-color: #1a1a1a;
         color: #ffffff;
+
+
+        &[type='checkbox'] {
+            width: 1rem;
+            height: 1rem;
+        }
+
+
+        &[type='color'] {
+            padding: 2px 4px;
+        }
+
+        &[type='number'] {
+            max-width: 100px;
+        }
 
         &:focus {
             outline: none;
-            box-shadow: 0 0 5px rgba(101, 255, 168, 0.5);
+            box-shadow: 0 0 5px rgba(227, 101, 255, 0.5);
+        }
+    }
+
+    &-size-inputs {
+        display: flex;
+        gap: 0.5rem;
+
+        input {
+            flex: 1;
+            max-width: 100px;
+        }
+
+        select {
+            flex: 0 0 auto;
         }
     }
 }

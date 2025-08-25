@@ -22,7 +22,7 @@ const CopyToClipboardButton = ({ text }: { text: string }) => {
     );
   };
   return (
-    <button onClick={handleCopy} className="button-secondary">
+    <button onClick={handleCopy} className="button button-secondary">
       {success ? 'Copied!' : 'Copy URL'}
     </button>
   );
@@ -55,13 +55,18 @@ export const TwitchConnectPage = () => {
   if (accessToken && userLogin && userId) {
     return (
       <div className="logged-in">
-        <p>
-          You are now connected to Twitch as{' '}
-          <strong>
-            {userLogin} ({userId})
-          </strong>
-          .
-        </p>
+        <div className="logged-in-info-box">
+          <p>
+            You are now connected to Twitch as{' '}
+            <strong>
+              {userLogin} ({userId})
+            </strong>
+            .
+          </p>
+          <button className="button button-ghost" onClick={handleLogout}>
+            Disconnect
+          </button>
+        </div>
         <h2>How to add as a browser source in OBS</h2>
         <ol>
           <li>Open OBS and go to the Sources panel.</li>
@@ -70,22 +75,21 @@ export const TwitchConnectPage = () => {
           <li>Create a new browser source</li>
           <li>
             Paste the following URL into the URL field:
-            <p>
+            <div className="url-container">
               <code>{chatUrl}</code> <CopyToClipboardButton text={chatUrl} />
-            </p>
+            </div>
           </li>
         </ol>
         <ChatSettings chatUrl={chatUrl} setChatUrl={setChatUrl} />
-        <button className="button-ghost" onClick={handleLogout}>
-          Logout
-        </button>
       </div>
     );
   }
 
   return (
     <div>
-      <button onClick={handleLogin}>Connect with Twitch</button>
+      <button className="button-primary" onClick={handleLogin}>
+        Connect with Twitch
+      </button>
     </div>
   );
 };
