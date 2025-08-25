@@ -56,38 +56,38 @@ export const TwitchConnectPage = () => {
     return (
       <div className="logged-in">
         <div className="logged-in-info-box">
-          <p>
-            You are now connected to Twitch as{' '}
+          <span>
+            You are <strong>now connected</strong> to Twitch as{' '}
             <strong>
               {userLogin} ({userId})
             </strong>
-            .
-          </p>
+          </span>
           <button className="button button-ghost" onClick={handleLogout}>
             Disconnect
           </button>
         </div>
-        <h2>How to add as a browser source in OBS</h2>
-        <ol>
-          <li>Open OBS and go to the Sources panel.</li>
-          <li>Click the "+" button to add a new source.</li>
-          <li>Select "Browser" from the list of source types.</li>
-          <li>Create a new browser source</li>
-          <li>
-            Paste the following URL into the URL field:
-            <div className="url-container">
-              <code>{chatUrl}</code> <CopyToClipboardButton text={chatUrl} />
-            </div>
-          </li>
-        </ol>
+        <section className="add-to-obs">
+          <h2>Add as a browser source in OBS</h2>
+          <ol>
+            <li>Open OBS and go to the Sources panel.</li>
+            <li>Click the "+" button to add a new source.</li>
+            <li>Select "Browser" from the list of source types.</li>
+            <li>Create a new browser source</li>
+            <li>Paste the following URL into the URL field:</li>
+          </ol>
+          <div className="url-container">
+            <code>{chatUrl}</code> <CopyToClipboardButton text={chatUrl} />
+          </div>
+        </section>
         <ChatSettings chatUrl={chatUrl} setChatUrl={setChatUrl} />
       </div>
     );
   }
 
   return (
-    <div>
-      <button className="button-primary" onClick={handleLogin}>
+    <div className="not-logged-in">
+      <p>Connect your Twitch account to start using the chat overlay</p>
+      <button className="button button-primary" onClick={handleLogin}>
         Connect with Twitch
       </button>
     </div>
