@@ -29,6 +29,7 @@ export const NonDisappearingChat = () => {
         showColonAfterDisplayName={chatSearchParams.showColonAfterDisplayName}
         showNameAlias={chatSearchParams.showNameAlias}
         chatMessagePadding={chatSearchParams.chatMessagePadding}
+        userInformationStore={store.getState().userInformation}
       />
     );
   });

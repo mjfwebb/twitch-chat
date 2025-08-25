@@ -1,5 +1,4 @@
 import classNames from 'classnames';
-import { store } from '../../store/store';
 import { ChannelChatMessageEvent } from '../../types/twitchEvents';
 import { ChatImageRenderer } from './ChatImageRenderer';
 import { contrastCorrected } from './contrastCorrected';
@@ -18,6 +17,11 @@ interface ChatEntryProps {
   showColonAfterDisplayName: boolean;
   showNameAlias: boolean;
   chatMessagePadding: string;
+  userInformationStore: {
+    [userId: string]: {
+      profile_image_url?: string;
+    };
+  };
 }
 
 const Username = ({ user, showNameAlias }: { user: { displayName: string; alias?: string }; showNameAlias: boolean }) => {
@@ -42,6 +46,7 @@ export const ChatEntry = ({
   showColonAfterDisplayName,
   showNameAlias,
   chatMessagePadding,
+  userInformationStore,
 }: ChatEntryProps) => {
   const gigantified = chatMessage.message_type === 'power_ups_gigantified_emote';
   const actionMessage = chatMessage.message.text.startsWith('\u0001ACTION');
@@ -50,7 +55,7 @@ export const ChatEntry = ({
   const user: { displayName: string; alias?: string; avatarUrl: string } = {
     displayName: chatMessage.chatter_user_name,
     alias: chatMessage.chatter_user_name.toLowerCase() !== chatMessage.chatter_user_login.toLowerCase() ? chatMessage.chatter_user_login : undefined,
-    avatarUrl: store.getState().userInformation[chatMessage.chatter_user_id]?.profile_image_url || '',
+    avatarUrl: userInformationStore[chatMessage.chatter_user_id].profile_image_url || '',
   };
 
   return (

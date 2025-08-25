@@ -37,6 +37,7 @@ const Message = ({ chatMessage }: MessageProps) => {
     textStrokeSettings: chatSearchParams.textStrokeSettings,
     chatMessagePadding: chatSearchParams.chatMessagePadding,
     showNameAlias: chatSearchParams.showNameAlias,
+    userInformationStore: store.getState().userInformation,
   };
 
   if (chatSearchParams.animatedEntry) {

@@ -1,6 +1,9 @@
 * {
   box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
+
 
 body {
   background: #18181b;
@@ -24,7 +27,15 @@ h1,
 h2,
 h3 {
   color: #a78bfa;
-  margin-top: 0;
+  margin-bottom: 1.5rem;
+}
+
+ol {
+  padding-left: 1.5rem;
+}
+
+p {
+  margin-bottom: 1.5rem;
 }
 
 a {
@@ -73,7 +84,7 @@ a:hover {
 .button-secondary {
   background: #9c93c4;
   color: #000000;
-  padding: 4px;
+  padding: 6px 12px;
   font-size: 0.875rem;
   font-weight: 500;
 }
@@ -96,6 +107,7 @@ select {
   outline: none;
   transition: border-color 0.2s;
 }
+
 input:focus,
 textarea:focus,
 select:focus {
@@ -123,13 +135,93 @@ code {
   border-radius: 6px;
   margin-top: 1rem;
   gap: 1rem;
+  background: #1e1e1e;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
 .logged-in-info-box {
   display: flex;
   gap: 1rem;
-  flex-direction: row;
   align-items: center;
   background: #232326;
   margin-bottom: 1rem;
+  justify-content: center;
+}
+
+.error {
+    color: #ff4d4d;
+    background-color: #330000;
+    padding: 0.5rem;
+    border: 1px solid #800000;
+    border-radius: 3px;
+}
+
+.info {
+    color: #38bdf8;
+    background-color: #0a2540;
+    padding: 0.5rem;
+    border: 1px solid #004080;
+    border-radius: 3px;
+}
+
+details[open] summary ~ section {
+  animation: sweep 0.3s ease-in-out;
+  padding: 1rem;
+  border: 1px solid #323133;
+  border-radius: 5px;
+  margin-top: 0.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  color: #e0e0e0;
+}
+
+@keyframes sweep {
+  0% {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+footer {
+  text-align: center;
+  padding: 1rem;
+  font-size: 0.875rem;
+  color: #888;
+}
+
+.not-logged-in {
+  border-radius: 5px;
+  padding: 1rem;
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.color-picker {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.button-update-chat {
+  margin-top: 1rem;
+  width: 100%;
+}
+
+.chat-preview {
+    border: 1px solid #433b5d;
+    border-radius: 5px;
+    padding: 1rem;
+    margin-top: 1rem;
+    background: #1e1e1e;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    overflow-y: auto;
+    display: flex;
+    justify-content: center;
+}
+
+.add-to-obs {
+    margin-bottom: 2rem;
 }

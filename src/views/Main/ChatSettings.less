@@ -1,18 +1,18 @@
 .chat-settings {
     position: relative;
-    padding: 1rem;
-    margin-bottom: 1rem;
-
-    &-load-from-url {
-        background: linear-gradient(90deg, #7c3aed39, #e879f939);
-    }
+    margin: 1rem 0;
 
     summary {
+        background-color: #2a2438;
+        border: 1px solid #433b5d;
+        border-radius: 5px;
+        padding: 0.5rem 1rem;
         cursor: pointer;
         transition: color 150ms;
 
         &:hover {
-            color: #a78bfa;
+            background-color: #3a3248;
+            color: #e879f9;
         }
     }
 
@@ -23,12 +23,8 @@
         padding: 0;
     }
 
-    section {
-        border-width: 1px;
-        border-style: solid;
-        border-color: #433b5d;
-        padding: 1rem;
-        margin: 1rem 0;
+    &-section {
+        padding: 0.5rem;
         border-radius: 5px;
         transition: all 150ms;
 
@@ -37,11 +33,12 @@
         }
     }
 
-    .error {
-        color: #ff4d4d;
-        background-color: #330000;
-        padding: 0.5rem;
-        border-radius: 3px;
+    &-load-from-url {
+        border-width: 1px;
+        border-style: solid;
+        border-color: #433b5d;
+        padding: 1rem;
+        background: linear-gradient(90deg, #7c3aed39, #e879f939);
     }
 
     input {
@@ -58,7 +55,9 @@
 
 
         &[type='color'] {
-            padding: 2px 4px;
+            padding: 0;
+            margin: 0;
+            cursor: pointer;
         }
 
         &[type='number'] {
