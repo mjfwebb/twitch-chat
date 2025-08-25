@@ -63,13 +63,24 @@ export interface TextShadowStackerProps {
 }
 
 const splitShadows = (value?: string): string[] => {
-  if (!value) {
-    return [];
+  if (!value) return [];
+
+  const result: string[] = [];
+  let depth = 0; // track parentheses depth to ignore commas inside rgb()/rgba()
+  let current = '';
+  for (let i = 0; i < value.length; i++) {
+    const ch = value[i];
+    if (ch === '(') depth++;
+    if (ch === ')') depth = Math.max(0, depth - 1);
+    if (ch === ',' && depth === 0) {
+      if (current.trim()) result.push(current.trim());
+      current = '';
+      continue;
+    }
+    current += ch;
   }
-  return value
-    .split(/\s*,\s*/)
-    .map((s) => s.trim())
-    .filter(Boolean);
+  if (current.trim()) result.push(current.trim());
+  return result;
 };
 
 const joinShadows = (values: string[]) => values.join(', ');

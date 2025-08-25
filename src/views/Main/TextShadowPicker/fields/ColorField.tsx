@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 
 import { styled } from 'styled-components';
 
-import { parseHexColor } from '../common';
+import { parseHexColor, parseRgbColor } from '../common';
 import { Label } from '../inputs/Label';
 import { TextShadowInput } from '../inputs/TextShadowInput';
 
@@ -41,10 +41,10 @@ const useHex = (value: string) => {
   const [color, setColor] = useState('');
 
   useEffect(() => {
-    const values = parseHexColor(value);
-    if (values) {
-      setAlpha(values.alpha);
-      setColor(values.color);
+    const hex = parseHexColor(value) || parseRgbColor(value);
+    if (hex) {
+      setAlpha(hex.alpha);
+      setColor(hex.color);
     }
   }, [value]);
 
@@ -63,7 +63,8 @@ export const ColorField = ({ value, onChange }: Props) => {
   };
 
   const updatedAlpha: React.ChangeEventHandler<HTMLInputElement> = (e) => {
-    const hex = parseInt(e.target.value).toString(16).padStart(2, '0');
+    const aInt = Math.max(0, Math.min(255, parseInt(e.target.value)));
+    const hex = aInt.toString(16).padStart(2, '0');
     onChange(color + hex);
   };
 

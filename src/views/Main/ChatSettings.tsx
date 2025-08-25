@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 
+import { Space } from '../../components/Space/Space';
 import { useToast } from '../../components/Toast/useToast';
 import { chatSearchParamsMap, DEFAULT_CHAT_SETTINGS_VALUES } from '../../constants';
 import { useDebounce } from '../../hooks/useDebounce';
@@ -8,6 +9,7 @@ import './ChatSettings.less';
 import { ColorPicker } from './ColorPicker';
 import { ConfirmModal } from './ConfirmModal';
 import { TextShadowStacker } from './TextShadowPicker/TextShadowStacker';
+import { TextStrokeEditor } from './TextStrokePicker/TextStrokeEditor';
 
 const multiPartSettingsMap = {
   'font-size': ['fontSizeValue', 'fontSizeUnit'],
@@ -26,6 +28,8 @@ export const ChatSettings = ({ chatUrl, setChatUrl }: { chatUrl: string; setChat
   const detailsRef = useRef<HTMLDetailsElement>(null);
   const [dropShadowSettings, setDropShadowSettings] = useState(overlayParameters.dropShadowSettings);
   const debouncedDropShadowSettings = useDebounce(dropShadowSettings, 300);
+  const [textStrokeSettings, setTextStrokeSettings] = useState(overlayParameters.textStrokeSettings);
+  const debouncedTextStrokeSettings = useDebounce(textStrokeSettings, 300);
   const toast = useToast();
 
   useEffect(() => {
@@ -34,6 +38,13 @@ export const ChatSettings = ({ chatUrl, setChatUrl }: { chatUrl: string; setChat
       dropShadowSettings: debouncedDropShadowSettings,
     }));
   }, [debouncedDropShadowSettings]);
+
+  useEffect(() => {
+    setOverlayParameters((prev) => ({
+      ...prev,
+      textStrokeSettings: debouncedTextStrokeSettings,
+    }));
+  }, [debouncedTextStrokeSettings]);
 
   const handleUpdateUrl = () => {
     const url = new URL(chatUrl);
@@ -57,6 +68,7 @@ export const ChatSettings = ({ chatUrl, setChatUrl }: { chatUrl: string; setChat
 
   const setParametersToDefault = () => {
     setDropShadowSettings(DEFAULT_CHAT_SETTINGS_VALUES.dropShadowSettings);
+    setTextStrokeSettings(DEFAULT_CHAT_SETTINGS_VALUES.textStrokeSettings);
     setOverlayParameters(DEFAULT_CHAT_SETTINGS_VALUES);
     // Keep local shadow state in sync with defaults
   };
@@ -96,6 +108,16 @@ export const ChatSettings = ({ chatUrl, setChatUrl }: { chatUrl: string; setChat
           continue;
         }
 
+        // Special-case: text stroke (width + color)
+        if (key === 'textStrokeSettings') {
+          const strokeVal = url.searchParams.get(urlParam);
+          if (strokeVal != null) {
+            setTextStrokeSettings(strokeVal);
+            setOverlayParameters((prev) => ({ ...prev, textStrokeSettings: strokeVal }));
+          }
+          continue;
+        }
+
         if (Object.keys(multiPartSettingsMap).includes(urlParam)) {
           const match = String(value).match(multiPartRegex);
           if (match) {
@@ -123,9 +145,16 @@ export const ChatSettings = ({ chatUrl, setChatUrl }: { chatUrl: string; setChat
     setLoadingUrl(event.target.value);
   };
 
+  const applyNiceDropShadowPreset = () => {
+    const preset =
+      'rgb(0, 0, 0) 2px 0px 0px, rgb(0, 0, 0) 1.75517px 0.958851px 0px, rgb(0, 0, 0) 1.0806px 1.68294px 0px, rgb(0, 0, 0) 0.141474px 1.99499px 0px, rgb(0, 0, 0) -0.832294px 1.81859px 0px, rgb(0, 0, 0) -1.60229px 1.19694px 0px, rgb(0, 0, 0) -1.97998px 0.28224px 0px, rgb(0, 0, 0) -1.87291px -0.701566px 0px, rgb(0, 0, 0) -1.30729px -1.5136px 0px, rgb(0, 0, 0) -0.421592px -1.95506px 0px, rgb(0, 0, 0) 0.567324px -1.91785px 0px, rgb(0, 0, 0) 1.41734px -1.41108px 0px, rgb(0, 0, 0) 1.92034px -0.558831px 0px';
+    setDropShadowSettings(preset);
+    setOverlayParameters((prev) => ({ ...prev, dropShadowEnabled: true }));
+  };
+
   return (
     <div>
-      <ChatPreview overlayParameters={{ ...overlayParameters, dropShadowSettings }} />
+      <ChatPreview overlayParameters={{ ...overlayParameters, dropShadowSettings, textStrokeSettings }} />
       <details className="chat-settings" ref={detailsRef}>
         <summary>👉 Customise look and feel of the overlay</summary>
         <section>
@@ -231,7 +260,7 @@ export const ChatSettings = ({ chatUrl, setChatUrl }: { chatUrl: string; setChat
             <div className="chat-settings-size-inputs">
               <input
                 id="width-value"
-                type="text"
+                type="number"
                 placeholder={String(DEFAULT_CHAT_SETTINGS_VALUES.widthValue)}
                 value={overlayParameters.widthValue}
                 onChange={(e) =>
@@ -273,7 +302,7 @@ export const ChatSettings = ({ chatUrl, setChatUrl }: { chatUrl: string; setChat
             <div className="chat-settings-size-inputs">
               <input
                 id="height-value"
-                type="text"
+                type="number"
                 placeholder={String(DEFAULT_CHAT_SETTINGS_VALUES.heightValue)}
                 value={overlayParameters.heightValue}
                 onChange={(e) =>
@@ -305,6 +334,53 @@ export const ChatSettings = ({ chatUrl, setChatUrl }: { chatUrl: string; setChat
                     ...prev,
                     widthValue: DEFAULT_CHAT_SETTINGS_VALUES.widthValue,
                     widthUnit: DEFAULT_CHAT_SETTINGS_VALUES.widthUnit,
+                  }))
+                }
+              >
+                Reset to defaults
+              </button>
+            </div>
+          </div>
+        </section>
+        <section>
+          <h3>Message padding</h3>
+          <label htmlFor="padding-value">Padding between messages:</label>
+          <div className="chat-settings-section">
+            <div className="chat-settings-size-inputs">
+              <input
+                id="padding-value"
+                type="number"
+                placeholder={String(DEFAULT_CHAT_SETTINGS_VALUES.chatMessagePaddingValue)}
+                value={overlayParameters.chatMessagePaddingValue}
+                onChange={(e) =>
+                  setOverlayParameters((prev) => {
+                    if (!isNaN(Number(e.target.value))) {
+                      return { ...prev, chatMessagePaddingValue: Number(e.target.value) };
+                    }
+                    return prev;
+                  })
+                }
+                autoComplete="off"
+              />
+              <select
+                id="padding-unit"
+                value={overlayParameters.chatMessagePaddingUnit}
+                onChange={(e) => setOverlayParameters((prev) => ({ ...prev, chatMessagePaddingUnit: e.target.value }))}
+                autoComplete="off"
+                defaultValue={DEFAULT_CHAT_SETTINGS_VALUES.chatMessagePaddingUnit}
+              >
+                <option value="px">px</option>
+                <option value="em">em</option>
+                <option value="rem">rem</option>
+                <option value="vh">vh</option>
+              </select>
+              <button
+                className="button button-secondary"
+                onClick={() =>
+                  setOverlayParameters((prev) => ({
+                    ...prev,
+                    chatMessagePaddingValue: DEFAULT_CHAT_SETTINGS_VALUES.chatMessagePaddingValue,
+                    chatMessagePaddingUnit: DEFAULT_CHAT_SETTINGS_VALUES.chatMessagePaddingUnit,
                   }))
                 }
               >
@@ -413,7 +489,26 @@ export const ChatSettings = ({ chatUrl, setChatUrl }: { chatUrl: string; setChat
             </label>
           </div>
           {overlayParameters.dropShadowEnabled && (
-            <TextShadowStacker onChange={(newValue: string) => setDropShadowSettings(newValue)} value={dropShadowSettings} />
+            <div className="chat-settings-section">
+              <Space>
+                <button className="button button-secondary" type="button" onClick={applyNiceDropShadowPreset}>
+                  Load text-edged preset (this will overwrite your current shadows)
+                </button>
+                <button
+                  className="button button-secondary"
+                  onClick={() => {
+                    setDropShadowSettings(DEFAULT_CHAT_SETTINGS_VALUES.dropShadowSettings);
+                    setOverlayParameters((prev) => ({
+                      ...prev,
+                      dropShadowSettings: DEFAULT_CHAT_SETTINGS_VALUES.dropShadowSettings,
+                    }));
+                  }}
+                >
+                  Reset to default
+                </button>
+              </Space>
+              <TextShadowStacker onChange={(newValue: string) => setDropShadowSettings(newValue)} value={dropShadowSettings} />
+            </div>
           )}
         </section>
         <section>
@@ -429,6 +524,7 @@ export const ChatSettings = ({ chatUrl, setChatUrl }: { chatUrl: string; setChat
               Enable text stroke on chat message text
             </label>
           </div>
+          {overlayParameters.textStrokeEnabled && <TextStrokeEditor value={textStrokeSettings} onChange={(v: string) => setTextStrokeSettings(v)} />}
         </section>
         <button className="button button-primary button-update-chat" onClick={handleUpdateUrl}>
           Update source URL with these settings
