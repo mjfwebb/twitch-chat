@@ -1,114 +1,112 @@
 .chat-settings {
-    position: relative;
-    margin: 1rem 0;
+  position: relative;
+  margin: 1rem 0;
 
-    summary {
-        background-color: #635dc2;
-        border: 1px solid #9b87dc;
-        border-radius: 5px;
-        padding: 0.5rem 1rem;
-        cursor: pointer;
-        transition: all 150ms;
+  summary {
+    background-color: #635dc2;
+    border: 1px solid #9b87dc;
+    border-radius: 5px;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    transition: all 150ms;
 
-        &:hover {
-            background-color: darken(#635dc2, 5%);
-            color: #ffffff;
-        }
+    &:hover {
+      background-color: darken(#635dc2, 5%);
+      color: #ffffff;
+    }
+  }
+
+  label {
+    width: 100%;
+    display: flex;
+    margin-bottom: 0.5rem;
+    padding: 0;
+  }
+
+  &-section {
+    padding: 0.5rem;
+    border-radius: 5px;
+    transition: all 150ms;
+
+    &:hover {
+      border-color: lighten(#433b5d, 10%);
+    }
+  }
+
+  &-load-from-url {
+    border-width: 1px;
+    border-style: solid;
+    border-color: #433b5d;
+    padding: 1rem;
+  }
+
+  select {
+    box-sizing: border-box;
+    background-color: #1a1a1a;
+    color: #f4f4f5;
+    border: 1px solid #444;
+    border-radius: 6px;
+    padding: 8px;
+    font-size: 1rem;
+    margin-bottom: 12px;
+    outline: none;
+
+    &:focus {
+      outline: 2px solid #7c3aed;
+    }
+  }
+
+  input {
+    &[type='text'],
+    &[type='number'] {
+      width: 100%;
+      border-radius: 3px;
+      background-color: #1a1a1a;
+      color: #ffffff;
+      box-sizing: border-box;
+      color: #f4f4f5;
+      border: 1px solid #444;
+      border-radius: 6px;
+      padding: 8px;
+      font-size: 1rem;
+      margin-bottom: 12px;
+      outline: none;
+      transition: border-color 0.2s;
     }
 
-    label {
-        width: 100%;
-        display: flex;
-        margin-bottom: 0.5rem;
-        padding: 0;
+    &[type='checkbox'] {
+      width: 1.5rem;
+      height: 1.5rem;
+      margin-right: 0.5rem;
     }
 
-    &-section {
-        padding: 0.5rem;
-        border-radius: 5px;
-        transition: all 150ms;
-
-        &:hover {
-            border-color: lighten(#433b5d, 10%);
-        }
+    &[type='number'] {
+      max-width: 100px;
     }
 
-    &-load-from-url {
-        border-width: 1px;
-        border-style: solid;
-        border-color: #433b5d;
-        padding: 1rem;
+    &[type='color'] {
+      background-color: transparent;
+      outline: none;
+      border: none;
+    }
+
+    &:focus {
+      outline: 2px solid #7c3aed;
+    }
+  }
+
+  &-size-inputs {
+    display: flex;
+    gap: 0.5rem;
+    align-items: baseline;
+
+    input {
+      flex: 1;
+      max-width: 100px;
     }
 
     select {
-        box-sizing: border-box;
-        background-color: #1a1a1a;
-        color: #f4f4f5;
-        border: 1px solid #444;
-        border-radius: 6px;
-        padding: 8px;
-        font-size: 1rem;
-        margin-bottom: 12px;
-        outline: none;
-
-        &:focus {
-            outline: 2px solid #7c3aed;
-        }
+      flex: 0 0 auto;
     }
-
-    input {
-
-        &[type="text"],
-        &[type="number"] {
-            width: 100%;
-            border-radius: 3px;
-            background-color: #1a1a1a;
-            color: #ffffff;
-            box-sizing: border-box;
-            color: #f4f4f5;
-            border: 1px solid #444;
-            border-radius: 6px;
-            padding: 8px;
-            font-size: 1rem;
-            margin-bottom: 12px;
-            outline: none;
-            transition: border-color 0.2s;
-        }
-
-
-        &[type='checkbox'] {
-            width: 1.5rem;
-            height: 1.5rem;
-            margin-right: 0.5rem;
-        }
-
-        &[type='number'] {
-            max-width: 100px;
-        }
-
-        &[type='color'] {
-            background-color: transparent;
-            outline: none;
-            border: none;
-        }
-
-        &:focus {
-            outline: 2px solid #7c3aed;
-        }
-    }
-
-    &-size-inputs {
-        display: flex;
-        gap: 0.5rem;
-        align-items: baseline;
-
-        input {
-            flex: 1;
-            max-width: 100px;
-        }
-
-        select {
-            flex: 0 0 auto;
-        }
-    }
+  }
 }
