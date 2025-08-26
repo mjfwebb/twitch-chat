@@ -1,4 +1,5 @@
 import { chatSearchParamsMap, DEFAULT_CHAT_SETTINGS_VALUES } from '../../constants';
+import { buildUsernameRegex, decodeFiltersFromUrl } from '../../utils/filters';
 
 export const useChatSearchParams = () => {
   const searchParams = new URLSearchParams(window.location.search);
@@ -67,6 +68,11 @@ export const useChatSearchParams = () => {
   // Controls whether to show name alias when display name differs from login. Defaults to true.
   const showNameAlias = searchParams.get(chatSearchParamsMap.showNameAlias) === 'false' ? false : DEFAULT_CHAT_SETTINGS_VALUES.showNameAlias;
 
+  // Username filter (base64url encoded JSON). Empty means no filtering.
+  const filtersParam = searchParams.get(chatSearchParamsMap.filters) || DEFAULT_CHAT_SETTINGS_VALUES.filters;
+  const _filterCfg = decodeFiltersFromUrl(filtersParam);
+  const usernameFilterRegex = buildUsernameRegex(_filterCfg);
+
   return {
     animatedEntry,
     animatedExit,
@@ -86,5 +92,6 @@ export const useChatSearchParams = () => {
     textStrokeEnabled,
     textStrokeSettings,
     width,
+    usernameFilterRegex,
   };
 };

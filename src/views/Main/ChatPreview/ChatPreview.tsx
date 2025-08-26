@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { DEFAULT_CHAT_SETTINGS_VALUES } from '../../../constants';
 import { ChannelChatMessageEvent } from '../../../types/twitchEvents';
+import { buildUsernameRegex, decodeFiltersFromUrl, type UserFilterConfig } from '../../../utils/filters';
 import { ChatEntry } from '../../Chat/ChatEntry';
 
 import './ChatPreview.less';
@@ -10,7 +11,7 @@ const fakesTwitchMessages = [
   'This is so cool peepoWow',
   'Did you see that? Unbeleafable! haHAA',
   'Loving the stream, keep it up!',
-  'Can we get some hype in the chat? catJAM',
+  '!hype Can we get some hype in the chat? catJAM',
 ];
 
 const fakeUsers: {
@@ -106,6 +107,11 @@ export const ChatPreview = ({ overlayParameters }: { overlayParameters: typeof D
     }
   });
 
+  // Apply username filter if provided in overlayParameters.filters
+  const previewFilterCfg: UserFilterConfig | null = overlayParameters.filters ? decodeFiltersFromUrl(overlayParameters.filters) : null;
+
+  const previewRegex = previewFilterCfg ? buildUsernameRegex(previewFilterCfg) : null;
+
   return (
     <div className="chat-preview-container">
       <h2>Overlay preview</h2>
@@ -122,18 +128,20 @@ export const ChatPreview = ({ overlayParameters }: { overlayParameters: typeof D
             fontFamily: overlayParametersToChatEntryProps.fontFamily,
           }}
         >
-          {fakeChatMessageEvents.map((fakeChatMessageEvent) => (
-            <ChatEntry
-              key={fakeChatMessageEvent.message_id}
-              {...overlayParametersToChatEntryProps}
-              chatMessage={fakeChatMessageEvent}
-              userInformationStore={{
-                [fakeChatMessageEvent.chatter_user_id]: {
-                  profile_image_url: fakeUsers.find((u) => u.name === fakeChatMessageEvent.chatter_user_name)?.avatarUrl,
-                },
-              }}
-            />
-          ))}
+          {fakeChatMessageEvents
+            .filter((m) => (previewRegex ? previewRegex.test(m.chatter_user_name) : true))
+            .map((fakeChatMessageEvent) => (
+              <ChatEntry
+                key={fakeChatMessageEvent.message_id}
+                {...overlayParametersToChatEntryProps}
+                chatMessage={fakeChatMessageEvent}
+                userInformationStore={{
+                  [fakeChatMessageEvent.chatter_user_id]: {
+                    profile_image_url: fakeUsers.find((u) => u.name === fakeChatMessageEvent.broadcaster_user_name)?.avatarUrl,
+                  },
+                }}
+              />
+            ))}
         </div>
       </div>
     </div>

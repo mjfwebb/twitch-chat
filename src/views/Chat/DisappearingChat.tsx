@@ -53,6 +53,7 @@ const Message = ({ chatMessage }: MessageProps) => {
 export const DisappearingChat = () => {
   const chatMessageEvents = store((s) => s.chatMessageEvents);
   const bottomRef = useRef<HTMLDivElement | null>(null);
+  const chatSearchParams = useChatSearchParams();
 
   const scrollToBottom = () => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -65,9 +66,11 @@ export const DisappearingChat = () => {
   return (
     <div className="chat-disappearing">
       <AnimatePresence>
-        {chatMessageEvents.map((chatMessage) => (
-          <Message key={chatMessage.message_id} chatMessage={chatMessage} />
-        ))}
+        {chatMessageEvents
+          .filter((m) => (chatSearchParams.usernameFilterRegex ? chatSearchParams.usernameFilterRegex.test(m.chatter_user_name) : true))
+          .map((chatMessage) => (
+            <Message key={chatMessage.message_id} chatMessage={chatMessage} />
+          ))}
       </AnimatePresence>
       <div ref={bottomRef} />
     </div>

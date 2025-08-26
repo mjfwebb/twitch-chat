@@ -47,6 +47,8 @@ export const DEFAULT_CHAT_SETTINGS_VALUES = {
   textStrokeEnabled: false,
   showNameAlias: true,
   animatedEntry: true,
+  // Base64url-encoded UserFilterConfig for username filtering
+  filters: '',
 };
 
 export const chatSearchParamsMap = {
@@ -68,4 +70,5 @@ export const chatSearchParamsMap = {
   fontFamily: 'font-family',
   chatMessagePadding: 'chat-message-padding',
   showNameAlias: 'show-name-alias',
+  filters: 'filters',
 };

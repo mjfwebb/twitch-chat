@@ -1,0 +1,57 @@
+.twitch-connect-page {
+  &-info-box {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    background: #232326;
+    margin-bottom: 1rem;
+    justify-content: center;
+  }
+
+  &-logged-out {
+    border-radius: 5px;
+    padding: 1rem;
+    text-align: center;
+    margin-bottom: 1rem;
+  }
+
+  &-url-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-direction: column;
+    padding: 1rem;
+    border: 1px solid #444;
+    border-radius: 6px;
+    margin-top: 1rem;
+    gap: 1rem;
+    background: #1e1e1e;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  }
+
+  &-change-channel {
+    &-wrapper {
+      margin: 1rem 0;
+    }
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+  }
+
+  input {
+    &[type='text'],
+    &[type='number'] {
+      border-radius: 3px;
+      background-color: #1a1a1a;
+      color: #ffffff;
+      box-sizing: border-box;
+      color: #f4f4f5;
+      border: 1px solid #444;
+      border-radius: 6px;
+      padding: 8px;
+      font-size: 1rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+  }
+}

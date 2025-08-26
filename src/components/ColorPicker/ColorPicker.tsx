@@ -8,9 +8,10 @@ interface ColorPickerProps {
   value: string;
   placeholder: string;
   setToDefault: () => void;
+  canSetToTransparent?: boolean;
 }
 
-export const ColorPicker = ({ id, onChange, value, placeholder, setToDefault }: ColorPickerProps) => {
+export const ColorPicker = ({ id, onChange, value, placeholder, setToDefault, canSetToTransparent = false }: ColorPickerProps) => {
   return (
     <div className="color-picker">
       <label htmlFor={id}>{value}</label>
@@ -22,9 +23,16 @@ export const ColorPicker = ({ id, onChange, value, placeholder, setToDefault }: 
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
       />
-      <Button type="secondary" onClick={setToDefault}>
-        Reset to default
-      </Button>
+      <div className="color-picker-footer">
+        <Button type="secondary" onClick={setToDefault}>
+          Reset to default
+        </Button>
+        {canSetToTransparent && (
+          <Button type="secondary" onClick={() => onChange('transparent')}>
+            Set to transparent
+          </Button>
+        )}
+      </div>
     </div>
   );
 };

@@ -31,7 +31,6 @@ const Segmented = styled.div`
   background: #1f1f1f;
   border: 1px solid #3a3a3a;
   border-radius: 6px;
-  overflow: hidden;
 
   button {
     background: transparent;

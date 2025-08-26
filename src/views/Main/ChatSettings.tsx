@@ -2,15 +2,17 @@ import { useEffect, useRef, useState } from 'react';
 
 import { Button } from '../../components/Button/Button';
 import { ColorPicker } from '../../components/ColorPicker/ColorPicker';
+import { ConfirmModal } from '../../components/ConfirmModal/ConfirmModal';
+import FilterEditor from '../../components/FilterEditor/FilterEditor';
 import { Space } from '../../components/Space/Space';
 import { TextShadowStacker } from '../../components/TextShadowPicker/TextShadowStacker';
 import { TextStrokeEditor } from '../../components/TextStrokePicker/TextStrokeEditor';
 import { useToast } from '../../components/Toast/useToast';
 import { chatSearchParamsMap, DEFAULT_CHAT_SETTINGS_VALUES } from '../../constants';
 import { useDebounce } from '../../hooks/useDebounce';
+import { decodeFiltersFromUrl, EMPTY_FILTER_CONFIG, encodeFiltersToUrl, type UserFilterConfig } from '../../utils/filters';
 import { ChatPreview } from './ChatPreview/ChatPreview';
 import './ChatSettings.less';
-import { ConfirmModal } from './ConfirmModal';
 
 const multiPartSettingsMap = {
   'font-size': ['fontSizeValue', 'fontSizeUnit'],
@@ -31,6 +33,7 @@ export const ChatSettings = ({ chatUrl, setChatUrl }: { chatUrl: string; setChat
   const debouncedDropShadowSettings = useDebounce(dropShadowSettings, 300);
   const [textStrokeSettings, setTextStrokeSettings] = useState(overlayParameters.textStrokeSettings);
   const debouncedTextStrokeSettings = useDebounce(textStrokeSettings, 300);
+  const [userFilterConfig, setUserFilterConfig] = useState<UserFilterConfig>(decodeFiltersFromUrl(overlayParameters.filters));
   const toast = useToast();
 
   useEffect(() => {
@@ -47,13 +50,19 @@ export const ChatSettings = ({ chatUrl, setChatUrl }: { chatUrl: string; setChat
     }));
   }, [debouncedTextStrokeSettings]);
 
+  useEffect(() => {
+    // Sync encoded filters whenever config changes
+    const encoded = encodeFiltersToUrl(userFilterConfig);
+    setOverlayParameters((prev) => ({ ...prev, filters: encoded }));
+  }, [userFilterConfig]);
+
   const handleUpdateUrl = () => {
     const url = new URL(chatUrl);
     Object.entries(overlayParameters).forEach(([key, value]) => {
       // If the value is the default value, either remove the key from the chatURL, or just don't add it in the first place
       const defaultValue = DEFAULT_CHAT_SETTINGS_VALUES[key as keyof typeof DEFAULT_CHAT_SETTINGS_VALUES];
       const param = chatSearchParamsMap[key as keyof typeof chatSearchParamsMap];
-      if (value !== defaultValue) {
+      if (value !== defaultValue && value !== '' && value != null) {
         console.log(`Setting ${key} to ${value} (default is ${defaultValue})`);
         url.searchParams.set(param, String(value));
       } else {
@@ -71,6 +80,7 @@ export const ChatSettings = ({ chatUrl, setChatUrl }: { chatUrl: string; setChat
     setDropShadowSettings(DEFAULT_CHAT_SETTINGS_VALUES.dropShadowSettings);
     setTextStrokeSettings(DEFAULT_CHAT_SETTINGS_VALUES.textStrokeSettings);
     setOverlayParameters(DEFAULT_CHAT_SETTINGS_VALUES);
+    setUserFilterConfig(EMPTY_FILTER_CONFIG);
     // Keep local shadow state in sync with defaults
   };
 
@@ -133,6 +143,14 @@ export const ChatSettings = ({ chatUrl, setChatUrl }: { chatUrl: string; setChat
           }
         }
 
+        // Special-case: filters param (base64url encoded)
+        if (key === 'filters') {
+          const decoded = decodeFiltersFromUrl(url.searchParams.get(urlParam));
+          setUserFilterConfig(decoded);
+          setOverlayParameters((prev) => ({ ...prev, filters: encodeFiltersToUrl(decoded) }));
+          continue;
+        }
+
         const isBooleanSetting = typeof DEFAULT_CHAT_SETTINGS_VALUES[key as keyof typeof DEFAULT_CHAT_SETTINGS_VALUES] === 'boolean';
         // If the setting is a boolean, convert the string value to a boolean so it can be used correctly
         if (isBooleanSetting) {
@@ -160,14 +178,18 @@ export const ChatSettings = ({ chatUrl, setChatUrl }: { chatUrl: string; setChat
 
   return (
     <div>
-      <ChatPreview overlayParameters={{ ...overlayParameters, dropShadowSettings, textStrokeSettings }} />
+      <ChatPreview
+        overlayParameters={{ ...overlayParameters, dropShadowSettings, textStrokeSettings, filters: encodeFiltersToUrl(userFilterConfig) }}
+      />
       <details className="chat-settings" ref={detailsRef}>
         <summary>👉 Customise look and feel of the overlay</summary>
         <section>
           <h3>Load settings from URL</h3>
           <div className="chat-settings-section chat-settings-load-from-url">
             <label htmlFor="chat-url">👀 If you already have a URL and want to update it, enter it here so we can get the settings:</label>
-            <input id="chat-url" type="text" onChange={handleChatUrlChange} placeholder="Your source URL here" />
+            <div className="chat-settings-inputs-wrapper">
+              <input id="chat-url" type="text" onChange={handleChatUrlChange} placeholder="Your source URL here" />
+            </div>
             <Button onClick={() => handleLoadUrl()} type="secondary">
               Load settings from URL
             </Button>
@@ -184,6 +206,12 @@ export const ChatSettings = ({ chatUrl, setChatUrl }: { chatUrl: string; setChat
           </div>
         </section>
         <section>
+          <h3>Username filter</h3>
+          <div className="chat-settings-section">
+            <FilterEditor value={userFilterConfig} onChange={setUserFilterConfig} />
+          </div>
+        </section>
+        <section>
           <h3>Colors</h3>
           <div className="chat-settings-section">
             <label htmlFor="foreground-color">Text color:</label>
@@ -194,6 +222,7 @@ export const ChatSettings = ({ chatUrl, setChatUrl }: { chatUrl: string; setChat
               onChange={(newColor) => setOverlayParameters((prev) => ({ ...prev, foregroundColor: newColor }))}
               setToDefault={() => setOverlayParameters((prev) => ({ ...prev, foregroundColor: DEFAULT_CHAT_SETTINGS_VALUES.foregroundColor }))}
             />
+            <hr style={{ border: 0 }} />
             <label htmlFor="background-color">Background color:</label>
             <ColorPicker
               id="background-color"
@@ -201,6 +230,7 @@ export const ChatSettings = ({ chatUrl, setChatUrl }: { chatUrl: string; setChat
               value={overlayParameters.backgroundColor}
               onChange={(newColor) => setOverlayParameters((prev) => ({ ...prev, backgroundColor: newColor }))}
               setToDefault={() => setOverlayParameters((prev) => ({ ...prev, backgroundColor: DEFAULT_CHAT_SETTINGS_VALUES.backgroundColor }))}
+              canSetToTransparent
             />
           </div>
         </section>
@@ -208,19 +238,20 @@ export const ChatSettings = ({ chatUrl, setChatUrl }: { chatUrl: string; setChat
           <h3>Font</h3>
           <div className="chat-settings-section">
             <label htmlFor="font-family">Font family:</label>
-            <input
-              id="font-family"
-              type="text"
-              placeholder="Arial"
-              value={overlayParameters.fontFamily}
-              onChange={(e) => setOverlayParameters((prev) => ({ ...prev, fontFamily: e.target.value }))}
-            />
+            <div className="chat-settings-inputs-wrapper">
+              <input
+                id="font-family"
+                type="text"
+                placeholder="Arial"
+                value={overlayParameters.fontFamily}
+                onChange={(e) => setOverlayParameters((prev) => ({ ...prev, fontFamily: e.target.value }))}
+              />
+            </div>
             <label htmlFor="font-size-value">Font size:</label>
-            <div className="chat-settings-size-inputs">
+            <div className="chat-settings-inputs-wrapper">
               <input
                 id="font-size-value"
-                type="text"
-                placeholder="18px"
+                type="number"
                 value={overlayParameters.fontSizeValue}
                 onChange={(e) =>
                   setOverlayParameters((prev) => {
@@ -263,7 +294,7 @@ export const ChatSettings = ({ chatUrl, setChatUrl }: { chatUrl: string; setChat
           <div className="chat-settings-section">
             <p className="info">ℹ️ Set the width and height to match the browser source width and height so you get a perfect resolution match</p>
             <label htmlFor="width-value">Overlay width:</label>
-            <div className="chat-settings-size-inputs">
+            <div className="chat-settings-inputs-wrapper">
               <input
                 id="width-value"
                 type="number"
@@ -305,7 +336,7 @@ export const ChatSettings = ({ chatUrl, setChatUrl }: { chatUrl: string; setChat
               </Button>
             </div>
             <label htmlFor="height-value">Overlay height:</label>
-            <div className="chat-settings-size-inputs">
+            <div className="chat-settings-inputs-wrapper">
               <input
                 id="height-value"
                 type="number"
@@ -350,9 +381,9 @@ export const ChatSettings = ({ chatUrl, setChatUrl }: { chatUrl: string; setChat
         </section>
         <section>
           <h3>Message padding</h3>
-          <label htmlFor="padding-value">Padding between messages:</label>
           <div className="chat-settings-section">
-            <div className="chat-settings-size-inputs">
+            <label htmlFor="padding-value">Padding between messages:</label>
+            <div className="chat-settings-inputs-wrapper">
               <input
                 id="padding-value"
                 type="number"
