@@ -11,7 +11,6 @@ interface ChatEntryProps {
   showBorders: boolean;
   dropShadowEnabled: boolean;
   dropShadowSettings: string;
-  thickTextShadowEnabled: boolean;
   textStrokeEnabled: boolean;
   textStrokeSettings: string;
   showColonAfterDisplayName: boolean;
@@ -42,7 +41,6 @@ export const ChatEntry = ({
   dropShadowSettings,
   textStrokeEnabled,
   textStrokeSettings,
-  thickTextShadowEnabled,
   showColonAfterDisplayName,
   showNameAlias,
   chatMessagePadding,
@@ -67,7 +65,7 @@ export const ChatEntry = ({
           gigantified && 'chat-message-body-gigantified',
         )}
         style={{
-          ...(dropShadowEnabled && !thickTextShadowEnabled
+          ...(dropShadowEnabled
             ? {
                 textShadow: dropShadowSettings,
               }

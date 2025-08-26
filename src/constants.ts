@@ -41,7 +41,6 @@ export const DEFAULT_CHAT_SETTINGS_VALUES = {
   chatMessagePaddingUnit: 'px',
   animatedExit: false,
   dropShadowEnabled: false,
-  thickTextShadowEnabled: false,
   showAvatars: true,
   showBorders: false,
   showColonAfterDisplayName: false,

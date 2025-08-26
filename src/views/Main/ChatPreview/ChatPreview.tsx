@@ -68,7 +68,6 @@ export const ChatPreview = ({ overlayParameters }: { overlayParameters: typeof D
     showNameAlias: overlayParameters.showNameAlias,
     dropShadowEnabled: overlayParameters.dropShadowEnabled,
     dropShadowSettings: overlayParameters.dropShadowSettings,
-    thickTextShadowEnabled: overlayParameters.thickTextShadowEnabled,
     textStrokeEnabled: overlayParameters.textStrokeEnabled,
     textStrokeSettings: overlayParameters.textStrokeSettings,
     chatMessagePadding: `${overlayParameters.chatMessagePaddingValue}${overlayParameters.chatMessagePaddingUnit}`,
