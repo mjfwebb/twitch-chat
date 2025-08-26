@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
+import { Button } from '../../components/Button/Button';
 import { TWITCH_AUTH_URL } from '../../constants';
 import { persistedStore, store } from '../../store/store';
+import { ChatSettings } from './ChatSettings';
 
 const CopyToClipboardButton = ({ text }: { text: string }) => {
   const [success, setSuccess] = useState(false);
@@ -21,9 +23,9 @@ const CopyToClipboardButton = ({ text }: { text: string }) => {
     );
   };
   return (
-    <button onClick={handleCopy} className="button-secondary">
+    <Button onClick={handleCopy} type="secondary">
       {success ? 'Copied!' : 'Copy URL'}
-    </button>
+    </Button>
   );
 };
 
@@ -49,41 +51,46 @@ export const TwitchConnectPage = () => {
     window.location.assign('/');
   };
 
-  const chatUrl = `${import.meta.env.VITE_BASE_URI}/chat?access_token=${accessToken}`;
+  const [chatUrl, setChatUrl] = useState(`${import.meta.env.VITE_BASE_URI}/chat?access_token=${accessToken}`);
 
   if (accessToken && userLogin && userId) {
     return (
       <div className="logged-in">
-        <p>
-          You are now connected to Twitch as{' '}
-          <strong>
-            {userLogin} ({userId})
-          </strong>
-          .
-        </p>
-        <h2>How to add as a browser source in OBS</h2>
-        <ol>
-          <li>Open OBS and go to the Sources panel.</li>
-          <li>Click the "+" button to add a new source.</li>
-          <li>Select "Browser" from the list of source types.</li>
-          <li>Create a new browser source</li>
-          <li>
-            Paste the following URL into the URL field:
-            <p>
-              <code>{chatUrl}</code> <CopyToClipboardButton text={chatUrl} />
-            </p>
-          </li>
-        </ol>
-        <button className="button-ghost" onClick={handleLogout}>
-          Logout
-        </button>
+        <div className="logged-in-info-box">
+          <span>
+            You are <strong>now connected</strong> to Twitch as{' '}
+            <strong>
+              {userLogin} ({userId})
+            </strong>
+          </span>
+          <Button type="ghost" onClick={handleLogout}>
+            Disconnect
+          </Button>
+        </div>
+        <section className="add-to-obs">
+          <h2>Add as a browser source in OBS</h2>
+          <ol>
+            <li>Open OBS and go to the Sources panel.</li>
+            <li>Click the "+" button to add a new source.</li>
+            <li>Select "Browser" from the list of source types.</li>
+            <li>Create a new browser source</li>
+            <li>Paste the following URL into the URL field:</li>
+          </ol>
+          <div className="url-container">
+            <code>{chatUrl}</code> <CopyToClipboardButton text={chatUrl} />
+          </div>
+        </section>
+        <ChatSettings chatUrl={chatUrl} setChatUrl={setChatUrl} />
       </div>
     );
   }
 
   return (
-    <div>
-      <button onClick={handleLogin}>Connect with Twitch</button>
+    <div className="not-logged-in">
+      <p>Connect your Twitch account to start using the chat overlay</p>
+      <Button type="primary" onClick={handleLogin}>
+        Connect with Twitch
+      </Button>
     </div>
   );
 };

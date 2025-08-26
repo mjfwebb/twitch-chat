@@ -1,5 +1,4 @@
 import classNames from 'classnames';
-import { store } from '../../store/store';
 import { ChannelChatMessageEvent } from '../../types/twitchEvents';
 import { ChatImageRenderer } from './ChatImageRenderer';
 import { contrastCorrected } from './contrastCorrected';
@@ -12,12 +11,16 @@ interface ChatEntryProps {
   showBorders: boolean;
   dropShadowEnabled: boolean;
   dropShadowSettings: string;
-  thickTextShadowEnabled: boolean;
   textStrokeEnabled: boolean;
   textStrokeSettings: string;
   showColonAfterDisplayName: boolean;
   showNameAlias: boolean;
   chatMessagePadding: string;
+  userInformationStore: {
+    [userId: string]: {
+      profile_image_url?: string;
+    };
+  };
 }
 
 const Username = ({ user, showNameAlias }: { user: { displayName: string; alias?: string }; showNameAlias: boolean }) => {
@@ -38,10 +41,10 @@ export const ChatEntry = ({
   dropShadowSettings,
   textStrokeEnabled,
   textStrokeSettings,
-  thickTextShadowEnabled,
   showColonAfterDisplayName,
   showNameAlias,
   chatMessagePadding,
+  userInformationStore,
 }: ChatEntryProps) => {
   const gigantified = chatMessage.message_type === 'power_ups_gigantified_emote';
   const actionMessage = chatMessage.message.text.startsWith('\u0001ACTION');
@@ -50,7 +53,7 @@ export const ChatEntry = ({
   const user: { displayName: string; alias?: string; avatarUrl: string } = {
     displayName: chatMessage.chatter_user_name,
     alias: chatMessage.chatter_user_name.toLowerCase() !== chatMessage.chatter_user_login.toLowerCase() ? chatMessage.chatter_user_login : undefined,
-    avatarUrl: store.getState().userInformation[chatMessage.chatter_user_id]?.profile_image_url || '',
+    avatarUrl: userInformationStore[chatMessage.chatter_user_id].profile_image_url || '',
   };
 
   return (
@@ -59,11 +62,10 @@ export const ChatEntry = ({
         className={classNames(
           'chat-message-body',
           showBorders && chatMessage.badges.find((badge) => badge.set_id === 'subscriber') && 'chat-message-body-subscriber',
-          dropShadowEnabled && thickTextShadowEnabled && 'chat-message-body-thick-text-shadow',
           gigantified && 'chat-message-body-gigantified',
         )}
         style={{
-          ...(dropShadowEnabled && !thickTextShadowEnabled
+          ...(dropShadowEnabled
             ? {
                 textShadow: dropShadowSettings,
               }

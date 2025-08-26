@@ -31,12 +31,12 @@ const Message = ({ chatMessage }: MessageProps) => {
     showBorders: chatSearchParams.showBorders,
     dropShadowEnabled: chatSearchParams.dropShadowEnabled,
     dropShadowSettings: chatSearchParams.dropShadowSettings,
-    thickTextShadowEnabled: chatSearchParams.thickTextShadowEnabled,
     showColonAfterDisplayName: chatSearchParams.showColonAfterDisplayName,
     textStrokeEnabled: chatSearchParams.textStrokeEnabled,
     textStrokeSettings: chatSearchParams.textStrokeSettings,
     chatMessagePadding: chatSearchParams.chatMessagePadding,
     showNameAlias: chatSearchParams.showNameAlias,
+    userInformationStore: store.getState().userInformation,
   };
 
   if (chatSearchParams.animatedEntry) {

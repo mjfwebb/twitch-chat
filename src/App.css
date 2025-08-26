@@ -4,7 +4,11 @@ body {
   font-size: 16px;
   font-family: 'Segoe UI', Arial, sans-serif;
   margin: 0;
-  min-height: 100vh;
+  padding: 0;
+}
+
+html {
+  scrollbar-gutter: stable;
 }
 
 main {
@@ -21,6 +25,16 @@ h2,
 h3 {
   color: #a78bfa;
   margin-top: 0;
+  margin-bottom: 1.5rem;
+}
+
+ol {
+  padding-left: 1.5rem;
+}
+
+p {
+  margin: 0;
+  margin-bottom: 1.5rem;
 }
 
 a {
@@ -32,70 +46,6 @@ a:hover {
   color: #f472b6;
 }
 
-button {
-  background: linear-gradient(90deg, #a78bfa 0%, #38bdf8 100%);
-  color: #18181b;
-  border: none;
-  border-radius: 6px;
-  padding: 10px 20px;
-  font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
-  transition:
-    background 0.2s,
-    color 0.2s;
-}
-button:hover {
-  background: linear-gradient(90deg, #f472b6 0%, #38bdf8 100%);
-  color: #fff;
-}
-
-.button-ghost {
-  font-weight: 600;
-  padding: 8px;
-  background: transparent;
-  color: #38bdf8;
-  border: 1px solid #38bdf8;
-}
-
-.button-ghost:hover {
-  background: #38bdf8;
-  color: #fff;
-}
-
-.button-secondary {
-  background: #444;
-  color: #f4f4f5;
-  border: none;
-  border-radius: 6px;
-  padding: 4px;
-  font-size: 0.875rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition:
-    background-color 0.2s,
-    color 0.2s;
-}
-
-button.button-secondary:hover {
-  background: #555;
-  color: #fff;
-}
-
-input,
-textarea,
-select {
-  background: #232326;
-  color: #f4f4f5;
-  border: 1px solid #444;
-  border-radius: 6px;
-  padding: 8px;
-  font-size: 1rem;
-  margin-bottom: 12px;
-  outline: none;
-  transition: border-color 0.2s;
-}
 input:focus,
 textarea:focus,
 select:focus {
@@ -108,4 +58,90 @@ code {
   padding: 2px 4px;
   border-radius: 4px;
   font-family: 'Courier New', Courier, monospace;
+  max-width: 100%;
+  overflow-wrap: break-word;
+}
+
+.url-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-direction: column;
+  padding: 1rem;
+  border: 1px solid #444;
+  border-radius: 6px;
+  margin-top: 1rem;
+  gap: 1rem;
+  background: #1e1e1e;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.logged-in-info-box {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  background: #232326;
+  margin-bottom: 1rem;
+  justify-content: center;
+}
+
+.error {
+  color: #ff4d4d;
+  background-color: #330000;
+  padding: 0.5rem;
+  border: 1px solid #800000;
+  border-radius: 3px;
+}
+
+.info {
+  color: #38bdf8;
+  background-color: #0a2540;
+  padding: 0.5rem;
+  border: 1px solid #004080;
+  border-radius: 3px;
+}
+
+details[open] summary ~ section {
+  animation: sweep 0.3s ease-in-out;
+  padding: 1rem;
+  border: 1px solid #323133;
+  border-radius: 5px;
+  margin-top: 0.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  color: #e0e0e0;
+  background-color: #1e1e1e;
+}
+
+@keyframes sweep {
+  0% {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+footer {
+  text-align: center;
+  padding: 1rem;
+  font-size: 0.875rem;
+  color: #888;
+}
+
+.not-logged-in {
+  border-radius: 5px;
+  padding: 1rem;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.button-update-chat {
+  margin-top: 1rem;
+  width: 100%;
+}
+
+.add-to-obs {
+  margin-bottom: 2rem;
 }

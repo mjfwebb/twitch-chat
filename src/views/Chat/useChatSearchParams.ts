@@ -1,5 +1,4 @@
-import { DEFAULT_CHAT_SETTINGS_VALUES } from '../../constants';
-import { chatSearchParamsMap } from './chatSearchParamsMap';
+import { chatSearchParamsMap, DEFAULT_CHAT_SETTINGS_VALUES } from '../../constants';
 
 export const useChatSearchParams = () => {
   const searchParams = new URLSearchParams(window.location.search);
@@ -26,16 +25,12 @@ export const useChatSearchParams = () => {
       ? Number(searchParams.get(chatSearchParamsMap.secondsBeforeExit))
       : DEFAULT_CHAT_SETTINGS_VALUES.secondsBeforeExit;
 
-  // Controls whether drop shadow is applied to the chat container. Defaults to false.
+  // Controls whether drop shadow is applied to chat message text. Defaults to false.
   const dropShadowEnabled =
     searchParams.get(chatSearchParamsMap.dropShadowEnabled) === 'true' ? true : DEFAULT_CHAT_SETTINGS_VALUES.dropShadowEnabled;
 
   // CSS drop shadow settings (e.g., '1px 1px 2px #000000ff'). Defaults to '1px 1px 2px #000000ff'.
   const dropShadowSettings = searchParams.get(chatSearchParamsMap.dropShadowSettings) || DEFAULT_CHAT_SETTINGS_VALUES.dropShadowSettings;
-
-  // Controls whether thick text shadow is applied to chat text. Defaults to false.
-  const thickTextShadowEnabled =
-    searchParams.get(chatSearchParamsMap.thickTextShadowEnabled) === 'true' ? true : DEFAULT_CHAT_SETTINGS_VALUES.thickTextShadowEnabled;
 
   // Text color for chat messages. Defaults to '#ffffff'.
   const foregroundColor = searchParams.get(chatSearchParamsMap.foregroundColor) || DEFAULT_CHAT_SETTINGS_VALUES.foregroundColor;
@@ -43,8 +38,8 @@ export const useChatSearchParams = () => {
   // Controls whether user avatars are displayed. Defaults to true.
   const showAvatars = searchParams.get(chatSearchParamsMap.showAvatars) === 'false' ? false : DEFAULT_CHAT_SETTINGS_VALUES.showAvatars;
 
-  // Controls whether chat message borders are displayed. Defaults to true.
-  const showBorders = searchParams.get(chatSearchParamsMap.showBorders) === 'false' ? false : DEFAULT_CHAT_SETTINGS_VALUES.showBorders;
+  // Controls whether chat message borders are displayed. Defaults to false.
+  const showBorders = searchParams.get(chatSearchParamsMap.showBorders) === 'true' ? true : DEFAULT_CHAT_SETTINGS_VALUES.showBorders;
 
   // Controls whether a colon is shown after display names. Defaults to false.
   const showColonAfterDisplayName =
@@ -90,7 +85,6 @@ export const useChatSearchParams = () => {
     showNameAlias,
     textStrokeEnabled,
     textStrokeSettings,
-    thickTextShadowEnabled,
     width,
   };
 };

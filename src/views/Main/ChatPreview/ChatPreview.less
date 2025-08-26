@@ -1,0 +1,47 @@
+.chat-preview {
+  border: 1px solid #433b5d;
+  border-radius: 5px;
+  padding: 1rem;
+  margin-top: 1rem;
+  background: #1e1e1e;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  overflow-y: auto;
+  display: flex;
+  justify-content: center;
+  overflow: auto;
+  position: relative;
+}
+
+/* Keep the preview visible while scrolling settings */
+.chat-preview-container {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  /* Give it a solid background so content underneath doesn't show through when stuck */
+  background: #232326;
+  /* Match the main container's padding spacing visually when stuck */
+  padding-top: 0.5rem;
+}
+
+/* Constrain preview height so it doesn't exceed the viewport and can scroll internally */
+.chat-preview-container .chat-preview {
+  max-height: 50vh;
+}
+
+.chat-preview-change-bg-button {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  background-color: #635dc2;
+  border: 1px solid #9b87dc;
+  border-radius: 5px;
+  padding: 0.25rem 0.5rem;
+  cursor: pointer;
+  color: #ffffff;
+  font-size: 0.875rem;
+  transition: all 150ms;
+
+  &:hover {
+    background-color: #7a6bc2;
+  }
+}
