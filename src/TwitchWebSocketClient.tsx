@@ -6,6 +6,7 @@ import { twitchEventSubHandler } from './handlers/twitch/twitchEventSubHandler';
 import { store } from './store/store';
 import { EventsubEvent, EventSubResponse } from './types/twitchEvents';
 import { hasOwnProperty } from './utils/hasOwnProperty';
+import { logger } from './utils/logger';
 
 export const TwitchWebSocketClient = () => {
   const broadcasterId = store((s) => s.broadcasterId);
@@ -21,7 +22,7 @@ export const TwitchWebSocketClient = () => {
     const data = lastMessage?.data;
 
     if (!data) {
-      console.warn('No data received in last message');
+      logger.warn('No data received in last message');
       return;
     }
     const jsonData = JSON.parse(data);

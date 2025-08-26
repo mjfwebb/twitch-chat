@@ -16,17 +16,18 @@
     }
   }
 
-  label {
-    width: 100%;
-    display: flex;
-    margin-bottom: 0.5rem;
-    padding: 0;
-  }
-
   &-section {
     padding: 0.5rem;
     border-radius: 5px;
     transition: all 150ms;
+
+    > label {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      padding: 0;
+      margin-bottom: 1rem;
+    }
 
     &:hover {
       border-color: lighten(#433b5d, 10%);
@@ -48,7 +49,6 @@
     border-radius: 6px;
     padding: 8px;
     font-size: 1rem;
-    margin-bottom: 12px;
     outline: none;
 
     &:focus {
@@ -69,7 +69,6 @@
       border-radius: 6px;
       padding: 8px;
       font-size: 1rem;
-      margin-bottom: 12px;
       outline: none;
       transition: border-color 0.2s;
     }
@@ -95,11 +94,14 @@
     }
   }
 
-  &-size-inputs {
+  &-inputs-wrapper {
     display: flex;
     gap: 0.5rem;
-    align-items: baseline;
+    align-items: center;
+    margin-bottom: 1rem;
+  }
 
+  &-size-inputs {
     input {
       flex: 1;
       max-width: 100px;

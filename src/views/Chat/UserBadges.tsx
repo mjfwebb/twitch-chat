@@ -1,5 +1,6 @@
 import { store } from '../../store/store';
 import { ChannelChatMessageEvent } from '../../types/twitchEvents';
+import { logger } from '../../utils/logger';
 
 interface BadgesProps {
   badges?: ChannelChatMessageEvent['badges'];
@@ -9,7 +10,7 @@ export const UserBadges = ({ badges }: BadgesProps) => {
   const chatBadges = store((s) => s.chatBadges);
 
   if (!badges) {
-    console.warn('No badges provided to UserBadges component.');
+    logger.warn('No badges provided to UserBadges component.');
     return null;
   }
 
@@ -17,7 +18,7 @@ export const UserBadges = ({ badges }: BadgesProps) => {
     const foundBadge = chatBadges[`${badge.set_id}_${badge.id}`];
 
     if (!foundBadge) {
-      console.warn(`Badge not found in store: ${badge.set_id}_${badge.id}`);
+      logger.warn(`Badge not found in store: ${badge.set_id}_${badge.id}`);
       return null;
     }
 

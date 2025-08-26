@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { Button } from '../../components/Button/Button';
+import { Button } from '../Button/Button';
 
 const backdropStyle: React.CSSProperties = {
   position: 'fixed',

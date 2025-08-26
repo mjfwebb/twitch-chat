@@ -14,10 +14,21 @@ export const NonDisappearingChat = () => {
   const chatMessages = store((s) => s.chatMessageEvents);
   const virtuoso = useRef<VirtuosoHandle>(null);
 
+  const filteredMessages = chatMessages.filter((m) => {
+    if (!chatSearchParams.usernameFilterRegex && !chatSearchParams.messageFilterRegex) {
+      return true;
+    }
+
+    const userOk = chatSearchParams.usernameFilterRegex ? chatSearchParams.usernameFilterRegex.test(m.chatter_user_name) : true;
+    const msgOk = chatSearchParams.messageFilterRegex ? chatSearchParams.messageFilterRegex.test(m.message.text) : true;
+
+    return userOk && msgOk;
+  });
+
   const InnerItem = memo(({ index }: { index: number }) => {
     return (
       <ChatEntry
-        chatMessage={chatMessages[index]}
+        chatMessage={filteredMessages[index]}
         backgroundColor={chatSearchParams.backgroundColor}
         showAvatars={chatSearchParams.showAvatars}
         showBorders={chatSearchParams.showBorders}
@@ -51,8 +62,8 @@ export const NonDisappearingChat = () => {
       alignToBottom={true}
       followOutput={'auto'}
       itemContent={itemContent}
-      totalCount={chatMessages.length}
-      initialTopMostItemIndex={chatMessages.length - 1}
+      totalCount={filteredMessages.length}
+      initialTopMostItemIndex={filteredMessages.length - 1}
       atBottomThreshold={400}
     />
   );

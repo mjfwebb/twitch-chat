@@ -36,7 +36,7 @@ export const DEFAULT_CHAT_SETTINGS_VALUES = {
   textStrokeSettings: PRESET_CHAT_SETTINGS_VALUES.textStrokeSettingsPresetThin,
   fontSizeValue: PRESET_CHAT_SETTINGS_VALUES.fontSizeValueMedium,
   fontSizeUnit: PRESET_CHAT_SETTINGS_VALUES.fontSizeUnit,
-  fontFamily: 'Sans-Serif',
+  fontFamily: 'sans-serif',
   chatMessagePaddingValue: 5,
   chatMessagePaddingUnit: 'px',
   animatedExit: false,
@@ -47,6 +47,8 @@ export const DEFAULT_CHAT_SETTINGS_VALUES = {
   textStrokeEnabled: false,
   showNameAlias: true,
   animatedEntry: true,
+  usernameFilters: '',
+  messageFilters: '',
 };
 
 export const chatSearchParamsMap = {
@@ -68,4 +70,6 @@ export const chatSearchParamsMap = {
   fontFamily: 'font-family',
   chatMessagePadding: 'chat-message-padding',
   showNameAlias: 'show-name-alias',
+  usernameFilters: 'username-filters',
+  messageFilters: 'message-filters',
 };
