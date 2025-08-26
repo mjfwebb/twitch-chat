@@ -153,7 +153,7 @@ export const ChatPreview = ({ overlayParameters }: { overlayParameters: typeof D
               chatMessage={fakeChatMessageEvent}
               userInformationStore={{
                 [fakeChatMessageEvent.chatter_user_id]: {
-                  profile_image_url: fakeUsers.find((u) => u.name === fakeChatMessageEvent.broadcaster_user_name)?.avatarUrl,
+                  profile_image_url: fakeUsers.find((u) => u.name === fakeChatMessageEvent.chatter_user_name)?.avatarUrl,
                 },
               }}
             />
