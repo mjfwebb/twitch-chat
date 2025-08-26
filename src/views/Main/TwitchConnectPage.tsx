@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Button } from '../../components/Button/Button';
 import { TWITCH_AUTH_URL } from '../../constants';
 import { persistedStore, store } from '../../store/store';
 import { ChatSettings } from './ChatSettings';
@@ -22,9 +23,9 @@ const CopyToClipboardButton = ({ text }: { text: string }) => {
     );
   };
   return (
-    <button onClick={handleCopy} className="button button-secondary">
+    <Button onClick={handleCopy} type="secondary">
       {success ? 'Copied!' : 'Copy URL'}
-    </button>
+    </Button>
   );
 };
 
@@ -62,9 +63,9 @@ export const TwitchConnectPage = () => {
               {userLogin} ({userId})
             </strong>
           </span>
-          <button className="button button-ghost" onClick={handleLogout}>
+          <Button type="ghost" onClick={handleLogout}>
             Disconnect
-          </button>
+          </Button>
         </div>
         <section className="add-to-obs">
           <h2>Add as a browser source in OBS</h2>
@@ -87,9 +88,9 @@ export const TwitchConnectPage = () => {
   return (
     <div className="not-logged-in">
       <p>Connect your Twitch account to start using the chat overlay</p>
-      <button className="button button-primary" onClick={handleLogin}>
+      <Button type="primary" onClick={handleLogin}>
         Connect with Twitch
-      </button>
+      </Button>
     </div>
   );
 };

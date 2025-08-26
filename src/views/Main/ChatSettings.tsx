@@ -1,12 +1,13 @@
 import { useEffect, useRef, useState } from 'react';
 
+import { Button } from '../../components/Button/Button';
+import { ColorPicker } from '../../components/ColorPicker/ColorPicker';
 import { Space } from '../../components/Space/Space';
 import { useToast } from '../../components/Toast/useToast';
 import { chatSearchParamsMap, DEFAULT_CHAT_SETTINGS_VALUES } from '../../constants';
 import { useDebounce } from '../../hooks/useDebounce';
-import { ChatPreview } from './ChatPreview';
+import { ChatPreview } from './ChatPreview/ChatPreview';
 import './ChatSettings.less';
-import { ColorPicker } from './ColorPicker';
 import { ConfirmModal } from './ConfirmModal';
 import { TextShadowStacker } from './TextShadowPicker/TextShadowStacker';
 import { TextStrokeEditor } from './TextStrokePicker/TextStrokeEditor';
@@ -165,11 +166,11 @@ export const ChatSettings = ({ chatUrl, setChatUrl }: { chatUrl: string; setChat
         <section>
           <h3>Load settings from URL</h3>
           <div className="chat-settings-section chat-settings-load-from-url">
-            <label htmlFor="chat-url">If you already have a URL and want to update it, enter it here so we can get the settings:</label>
+            <label htmlFor="chat-url">👀 If you already have a URL and want to update it, enter it here so we can get the settings:</label>
             <input id="chat-url" type="text" onChange={handleChatUrlChange} placeholder="Your source URL here" />
-            <button onClick={() => handleLoadUrl()} className="button button-secondary">
+            <Button onClick={() => handleLoadUrl()} type="secondary">
               Load settings from URL
-            </button>
+            </Button>
             {loadSettingsError && <p className="error">{loadSettingsError}</p>}
           </div>
         </section>
@@ -177,9 +178,9 @@ export const ChatSettings = ({ chatUrl, setChatUrl }: { chatUrl: string; setChat
           <h3>Reset to default settings</h3>
           <div className="chat-settings-section chat-settings-reset">
             <p>This will reset all settings to their default values.</p>
-            <button onClick={openConfirmReset} className="button button-secondary">
+            <Button onClick={openConfirmReset} type="secondary">
               Reset to default settings
-            </button>
+            </Button>
           </div>
         </section>
         <section>
@@ -243,8 +244,8 @@ export const ChatSettings = ({ chatUrl, setChatUrl }: { chatUrl: string; setChat
                 <option value="rem">rem</option>
               </select>
             </div>
-            <button
-              className="button button-secondary"
+            <Button
+              type="secondary"
               onClick={() =>
                 setOverlayParameters((prev) => ({
                   ...prev,
@@ -254,13 +255,13 @@ export const ChatSettings = ({ chatUrl, setChatUrl }: { chatUrl: string; setChat
               }
             >
               Reset to defaults
-            </button>
+            </Button>
           </div>
         </section>
         <section>
           <h3>Dimensions</h3>
           <div className="chat-settings-section">
-            <p className="info">Set the width and height to match the browser source width and height so you get a perfect resolution match</p>
+            <p className="info">ℹ️ Set the width and height to match the browser source width and height so you get a perfect resolution match</p>
             <label htmlFor="width-value">Overlay width:</label>
             <div className="chat-settings-size-inputs">
               <input
@@ -290,8 +291,8 @@ export const ChatSettings = ({ chatUrl, setChatUrl }: { chatUrl: string; setChat
                 <option value="rem">rem</option>
                 <option value="vw">vw</option>
               </select>
-              <button
-                className="button button-secondary"
+              <Button
+                type="secondary"
                 onClick={() =>
                   setOverlayParameters((prev) => ({
                     ...prev,
@@ -301,7 +302,7 @@ export const ChatSettings = ({ chatUrl, setChatUrl }: { chatUrl: string; setChat
                 }
               >
                 Reset to defaults
-              </button>
+              </Button>
             </div>
             <label htmlFor="height-value">Overlay height:</label>
             <div className="chat-settings-size-inputs">
@@ -332,8 +333,8 @@ export const ChatSettings = ({ chatUrl, setChatUrl }: { chatUrl: string; setChat
                 <option value="rem">rem</option>
                 <option value="vh">vh</option>
               </select>
-              <button
-                className="button button-secondary"
+              <Button
+                type="secondary"
                 onClick={() =>
                   setOverlayParameters((prev) => ({
                     ...prev,
@@ -343,7 +344,7 @@ export const ChatSettings = ({ chatUrl, setChatUrl }: { chatUrl: string; setChat
                 }
               >
                 Reset to defaults
-              </button>
+              </Button>
             </div>
           </div>
         </section>
@@ -379,8 +380,8 @@ export const ChatSettings = ({ chatUrl, setChatUrl }: { chatUrl: string; setChat
                 <option value="rem">rem</option>
                 <option value="vh">vh</option>
               </select>
-              <button
-                className="button button-secondary"
+              <Button
+                type="secondary"
                 onClick={() =>
                   setOverlayParameters((prev) => ({
                     ...prev,
@@ -390,7 +391,7 @@ export const ChatSettings = ({ chatUrl, setChatUrl }: { chatUrl: string; setChat
                 }
               >
                 Reset to defaults
-              </button>
+              </Button>
             </div>
           </div>
         </section>
@@ -419,6 +420,20 @@ export const ChatSettings = ({ chatUrl, setChatUrl }: { chatUrl: string; setChat
                 onChange={(e) => setOverlayParameters((prev) => ({ ...prev, showBorders: e.target.checked }))}
               />{' '}
               Show subscriber borders around chat messages
+            </label>
+          </div>
+        </section>
+        <section>
+          <h3>Colon after username</h3>
+          <div className="chat-settings-section">
+            <label htmlFor="showColonAfterDisplayName">
+              <input
+                type="checkbox"
+                id="showColonAfterDisplayName"
+                checked={overlayParameters.showColonAfterDisplayName}
+                onChange={(e) => setOverlayParameters((prev) => ({ ...prev, showColonAfterDisplayName: e.target.checked }))}
+              />{' '}
+              Show a colon symbol after the username in a chat message
             </label>
           </div>
         </section>
@@ -496,11 +511,11 @@ export const ChatSettings = ({ chatUrl, setChatUrl }: { chatUrl: string; setChat
           {overlayParameters.dropShadowEnabled && (
             <div className="chat-settings-section">
               <Space>
-                <button className="button button-secondary" type="button" onClick={applyNiceDropShadowPreset}>
+                <Button type="secondary" onClick={applyNiceDropShadowPreset}>
                   Load text-edged preset (this will overwrite your current shadows)
-                </button>
-                <button
-                  className="button button-secondary"
+                </Button>
+                <Button
+                  type="secondary"
                   onClick={() => {
                     setDropShadowSettings(DEFAULT_CHAT_SETTINGS_VALUES.dropShadowSettings);
                     setOverlayParameters((prev) => ({
@@ -510,7 +525,7 @@ export const ChatSettings = ({ chatUrl, setChatUrl }: { chatUrl: string; setChat
                   }}
                 >
                   Reset to default
-                </button>
+                </Button>
               </Space>
               <TextShadowStacker onChange={(newValue: string) => setDropShadowSettings(newValue)} value={dropShadowSettings} />
             </div>
@@ -531,9 +546,9 @@ export const ChatSettings = ({ chatUrl, setChatUrl }: { chatUrl: string; setChat
           </div>
           {overlayParameters.textStrokeEnabled && <TextStrokeEditor value={textStrokeSettings} onChange={(v: string) => setTextStrokeSettings(v)} />}
         </section>
-        <button className="button button-primary button-update-chat" onClick={handleUpdateUrl}>
+        <Button type="primary" className="button-update-chat" onClick={handleUpdateUrl}>
           Update source URL with these settings
-        </button>
+        </Button>
       </details>
       <ConfirmModal
         open={confirmResetOpen}

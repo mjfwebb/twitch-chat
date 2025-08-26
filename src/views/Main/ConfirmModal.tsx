@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { Button } from '../../components/Button/Button';
 
 const backdropStyle: React.CSSProperties = {
   position: 'fixed',
@@ -69,12 +70,12 @@ export const ConfirmModal = ({
         </h3>
         <p>{message}</p>
         <div style={actionsStyle}>
-          <button className="button button-secondary" onClick={onCancel} aria-label={cancelText}>
+          <Button type="secondary" onClick={onCancel} aria-label={cancelText}>
             {cancelText}
-          </button>
-          <button className="button button-primary" onClick={onConfirm} aria-label={confirmText}>
+          </Button>
+          <Button type="primary" onClick={onConfirm} aria-label={confirmText}>
             {confirmText}
-          </button>
+          </Button>
         </div>
       </div>
     </div>

@@ -1,6 +1,9 @@
-import { DEFAULT_CHAT_SETTINGS_VALUES } from '../../constants';
-import { ChannelChatMessageEvent } from '../../types/twitchEvents';
-import { ChatEntry } from '../Chat/ChatEntry';
+import { useState } from 'react';
+import { DEFAULT_CHAT_SETTINGS_VALUES } from '../../../constants';
+import { ChannelChatMessageEvent } from '../../../types/twitchEvents';
+import { ChatEntry } from '../../Chat/ChatEntry';
+
+import './ChatPreview.less';
 
 const fakesTwitchMessages = [
   'Wow so awesome!',
@@ -70,6 +73,14 @@ export const ChatPreview = ({ overlayParameters }: { overlayParameters: typeof D
     textStrokeSettings: overlayParameters.textStrokeSettings,
     chatMessagePadding: `${overlayParameters.chatMessagePaddingValue}${overlayParameters.chatMessagePaddingUnit}`,
   };
+  const [backgroundColor, setBackgroundColor] = useState('#1a4045');
+
+  const generateNewBackgroundColor = () => {
+    const randomColor = Math.floor(Math.random() * 16777215)
+      .toString(16)
+      .padStart(6, '0');
+    setBackgroundColor(`#${randomColor}`);
+  };
 
   const fakeChatMessageEvents = Array.from({ length: 5 }, (_, idx: number) => {
     {
@@ -99,7 +110,10 @@ export const ChatPreview = ({ overlayParameters }: { overlayParameters: typeof D
   return (
     <div className="chat-preview-container">
       <h2>Overlay preview</h2>
-      <div className="chat-preview">
+      <div className="chat-preview" style={{ backgroundColor }}>
+        <button className="chat-preview-change-bg-button" onClick={generateNewBackgroundColor}>
+          Change background color
+        </button>
         <div
           style={{
             background: overlayParametersToChatEntryProps.backgroundColor,

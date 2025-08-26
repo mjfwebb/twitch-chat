@@ -1,3 +1,7 @@
+import { Button } from '../Button/Button';
+
+import './ColorPicker.less';
+
 interface ColorPickerProps {
   id: string;
   onChange: (color: string) => void;
@@ -18,9 +22,9 @@ export const ColorPicker = ({ id, onChange, value, placeholder, setToDefault }: 
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
       />
-      <button className="button button-secondary" onClick={setToDefault}>
+      <Button type="secondary" onClick={setToDefault}>
         Reset to default
-      </button>
+      </Button>
     </div>
   );
 };
