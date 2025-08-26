@@ -92,7 +92,10 @@ export const TwitchConnectPage = () => {
             <li>Paste the following URL into the URL field:</li>
           </ol>
           <div className="twitch-connect-page-url-container">
-            <code>{chatUrl}</code> <CopyToClipboardButton text={chatUrl} />
+            <code>{chatUrl}</code> <CopyToClipboardButton text={chatUrl} />{' '}
+            <a href={chatUrl} target="_blank">
+              Open in new tab
+            </a>
           </div>
           <div className="twitch-connect-page-change-channel-wrapper">
             <p>Optionally set a channel so you can watch someone else's Twitch chat:</p>
