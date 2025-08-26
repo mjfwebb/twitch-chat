@@ -1,5 +1,6 @@
 import { Redirect } from 'wouter';
 import { persistedStore } from './store/store';
+import { logger } from './utils/logger';
 
 const getTwitchAuthResponseData = () => {
   const url = new URL(window.location.href);
@@ -18,7 +19,7 @@ export const TwitchAuthHandler = () => {
   const { accessToken, state } = getTwitchAuthResponseData();
 
   if (state !== authStateValue) {
-    console.error('Invalid state value. Possible CSRF attack. Expected:', authStateValue, 'Received:', state);
+    logger.error('Invalid state value. Possible CSRF attack. Expected:', authStateValue, 'Received:', state);
     return <span>Error: Invalid state value.</span>;
   }
 

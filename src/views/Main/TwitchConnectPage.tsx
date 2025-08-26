@@ -46,7 +46,6 @@ export const TwitchConnectPage = () => {
     const generatedStateValue = Math.random().toString(36).substring(2, 15);
     persistedStore.getState().setAuthStateValue(generatedStateValue);
     const authStateValue = persistedStore.getState().authStateValue;
-    console.log('Generated auth state value:', authStateValue);
     window.location.assign(
       `${TWITCH_AUTH_URL}authorize?response_type=token&client_id=${clientId}&redirect_uri=${import.meta.env.VITE_AUTH_REDIRECT_URI}&scope=user%3Aread%3Achat&state=${authStateValue}`,
     );
