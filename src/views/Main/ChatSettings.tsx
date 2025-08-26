@@ -54,13 +54,13 @@ export const ChatSettings = ({ chatUrl, setChatUrl }: { chatUrl: string; setChat
   useEffect(() => {
     // Sync encoded filters whenever config changes
     const encoded = encodeFiltersToUrl(userFilterConfig);
-    setOverlayParameters((prev) => ({ ...prev, filters: encoded }));
+    setOverlayParameters((prev) => ({ ...prev, usernameFilters: encoded }));
   }, [userFilterConfig]);
 
   useEffect(() => {
     // Sync encoded filters whenever config changes
     const encoded = encodeFiltersToUrl(messageFilterConfig);
-    setOverlayParameters((prev) => ({ ...prev, filters: encoded }));
+    setOverlayParameters((prev) => ({ ...prev, messageFilters: encoded }));
   }, [messageFilterConfig]);
 
   const handleUpdateUrl = () => {

@@ -36,7 +36,7 @@ export const DEFAULT_CHAT_SETTINGS_VALUES = {
   textStrokeSettings: PRESET_CHAT_SETTINGS_VALUES.textStrokeSettingsPresetThin,
   fontSizeValue: PRESET_CHAT_SETTINGS_VALUES.fontSizeValueMedium,
   fontSizeUnit: PRESET_CHAT_SETTINGS_VALUES.fontSizeUnit,
-  fontFamily: 'Sans-Serif',
+  fontFamily: 'sans-serif',
   chatMessagePaddingValue: 5,
   chatMessagePaddingUnit: 'px',
   animatedExit: false,
