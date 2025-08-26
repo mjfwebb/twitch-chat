@@ -64,7 +64,6 @@ export const ChatEntry = ({
         className={classNames(
           'chat-message-body',
           showBorders && chatMessage.badges.find((badge) => badge.set_id === 'subscriber') && 'chat-message-body-subscriber',
-          dropShadowEnabled && thickTextShadowEnabled && 'chat-message-body-thick-text-shadow',
           gigantified && 'chat-message-body-gigantified',
         )}
         style={{

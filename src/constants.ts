@@ -59,7 +59,6 @@ export const chatSearchParamsMap = {
   secondsBeforeExit: 'seconds-before-exit',
   dropShadowEnabled: 'drop-shadow',
   dropShadowSettings: 'drop-shadow-settings',
-  thickTextShadowEnabled: 'thick-text-shadow',
   foregroundColor: 'foreground-color',
   showAvatars: 'show-avatars',
   showBorders: 'show-borders',

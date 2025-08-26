@@ -32,7 +32,6 @@ This document describes the URL parameters you can use to customize the chat ove
 | `show-name-alias`               | Show/hide name alias for users                                 | `false`             | `true`                  |
 | `text-stroke-enabled`           | Enable/disable text stroke                                     | `false`             | `false`                 |
 | `text-stroke`                   | CSS text stroke settings                                       | `1px #aeff00`       | `1px black`             |
-| `thick-text-shadow`             | Enable/disable thick text shadow                               | `true`              | `false`                 |
 | `width`                         | Width of the chat overlay (with unit)                          | `600px`             | `500px`                 |
 
 ## Usage Example
