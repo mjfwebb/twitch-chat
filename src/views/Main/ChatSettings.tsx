@@ -14,11 +14,46 @@ import { decodeFiltersFromUrl, EMPTY_FILTER_CONFIG, encodeFiltersToUrl, type Use
 import { ChatPreview } from './ChatPreview/ChatPreview';
 import './ChatSettings.less';
 
-const multiPartSettingsMap = {
+const multiPartSettingsMapForLoading = {
   'font-size': ['fontSizeValue', 'fontSizeUnit'],
   width: ['widthValue', 'widthUnit'],
   height: ['heightValue', 'heightUnit'],
   'chat-message-padding': ['chatMessagePaddingValue', 'chatMessagePaddingUnit'],
+};
+
+const multiPartSettingsMapForSaving = {
+  fontSizeValue: {
+    compositeKeys: ['fontSizeValue', 'fontSizeUnit'],
+    param: 'font-size',
+  },
+  fontSizeUnit: {
+    compositeKeys: ['fontSizeValue', 'fontSizeUnit'],
+    param: 'font-size',
+  },
+  widthValue: {
+    compositeKeys: ['widthValue', 'widthUnit'],
+    param: 'width',
+  },
+  widthUnit: {
+    compositeKeys: ['widthValue', 'widthUnit'],
+    param: 'width',
+  },
+  heightValue: {
+    compositeKeys: ['heightValue', 'heightUnit'],
+    param: 'height',
+  },
+  heightUnit: {
+    compositeKeys: ['heightValue', 'heightUnit'],
+    param: 'height',
+  },
+  chatMessagePaddingValue: {
+    compositeKeys: ['chatMessagePaddingValue', 'chatMessagePaddingUnit'],
+    param: 'chat-message-padding',
+  },
+  chatMessagePaddingUnit: {
+    compositeKeys: ['chatMessagePaddingValue', 'chatMessagePaddingUnit'],
+    param: 'chat-message-padding',
+  },
 };
 
 const multiPartRegex = /^(?<value>[\d.]+)(?<unit>px|em|rem|vh|vw|ch)$/;
@@ -69,13 +104,27 @@ export const ChatSettings = ({ chatUrl, setChatUrl }: { chatUrl: string; setChat
       // If the value is the default value, either remove the key from the chatURL, or just don't add it in the first place
       const defaultValue = DEFAULT_CHAT_SETTINGS_VALUES[key as keyof typeof DEFAULT_CHAT_SETTINGS_VALUES];
       const param = chatSearchParamsMap[key as keyof typeof chatSearchParamsMap];
-      if (value !== defaultValue && value !== '' && value != null) {
-        console.log(`Setting ${key} to ${value} (default is ${defaultValue})`);
-        url.searchParams.set(param, String(value));
+
+      let paramToSet = param;
+      let valueToSet = value;
+
+      if (Object.keys(multiPartSettingsMapForSaving).includes(key)) {
+        const multiPartKey = key as keyof typeof multiPartSettingsMapForSaving;
+        const multiPartParam = multiPartSettingsMapForSaving[multiPartKey].param;
+        if (overlayParameters[multiPartKey] !== DEFAULT_CHAT_SETTINGS_VALUES[multiPartKey]) {
+          const multiPartCompositeValue = `${overlayParameters[multiPartSettingsMapForSaving[multiPartKey].compositeKeys[0] as keyof typeof overlayParameters]}${overlayParameters[multiPartSettingsMapForSaving[multiPartKey].compositeKeys[1] as keyof typeof overlayParameters]}`;
+          paramToSet = multiPartParam;
+          valueToSet = multiPartCompositeValue;
+        }
+      }
+
+      if (String(valueToSet) !== String(defaultValue)) {
+        url.searchParams.set(paramToSet, String(valueToSet));
       } else {
-        url.searchParams.delete(param);
+        url.searchParams.delete(paramToSet);
       }
     });
+
     setChatUrl(url.toString());
     detailsRef.current?.removeAttribute('open');
     detailsRef.current?.scrollIntoView();
@@ -136,15 +185,15 @@ export const ChatSettings = ({ chatUrl, setChatUrl }: { chatUrl: string; setChat
           continue;
         }
 
-        if (Object.keys(multiPartSettingsMap).includes(urlParam)) {
+        if (Object.keys(multiPartSettingsMapForLoading).includes(urlParam)) {
           const match = String(value).match(multiPartRegex);
           if (match) {
             const sizeValue = Number(match.groups?.value);
             const sizeUnit = match.groups?.unit;
             setOverlayParameters((prev) => ({
               ...prev,
-              [multiPartSettingsMap[urlParam as keyof typeof multiPartSettingsMap][0]]: sizeValue,
-              [multiPartSettingsMap[urlParam as keyof typeof multiPartSettingsMap][1]]: sizeUnit,
+              [multiPartSettingsMapForLoading[urlParam as keyof typeof multiPartSettingsMapForLoading][0]]: sizeValue,
+              [multiPartSettingsMapForLoading[urlParam as keyof typeof multiPartSettingsMapForLoading][1]]: sizeUnit,
             }));
             continue;
           }
@@ -169,7 +218,10 @@ export const ChatSettings = ({ chatUrl, setChatUrl }: { chatUrl: string; setChat
         const isBooleanSetting = typeof DEFAULT_CHAT_SETTINGS_VALUES[key as keyof typeof DEFAULT_CHAT_SETTINGS_VALUES] === 'boolean';
         // If the setting is a boolean, convert the string value to a boolean so it can be used correctly
         if (isBooleanSetting) {
-          setOverlayParameters((prev) => ({ ...prev, [key]: value === 'true' }));
+          setOverlayParameters((prev) => ({
+            ...prev,
+            [key]: value === String(DEFAULT_CHAT_SETTINGS_VALUES[key as keyof typeof DEFAULT_CHAT_SETTINGS_VALUES]),
+          }));
         } else {
           setOverlayParameters((prev) => ({ ...prev, [key]: value }));
         }
