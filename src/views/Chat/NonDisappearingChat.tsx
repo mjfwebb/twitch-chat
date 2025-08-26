@@ -14,9 +14,16 @@ export const NonDisappearingChat = () => {
   const chatMessages = store((s) => s.chatMessageEvents);
   const virtuoso = useRef<VirtuosoHandle>(null);
 
-  const filteredMessages = chatMessages.filter((m) =>
-    chatSearchParams.usernameFilterRegex ? chatSearchParams.usernameFilterRegex.test(m.chatter_user_name) : true,
-  );
+  const filteredMessages = chatMessages.filter((m) => {
+    if (!chatSearchParams.usernameFilterRegex && !chatSearchParams.messageFilterRegex) {
+      return true;
+    }
+
+    const userOk = chatSearchParams.usernameFilterRegex ? chatSearchParams.usernameFilterRegex.test(m.chatter_user_name) : true;
+    const msgOk = chatSearchParams.messageFilterRegex ? chatSearchParams.messageFilterRegex.test(m.message.text) : true;
+
+    return userOk && msgOk;
+  });
 
   const InnerItem = memo(({ index }: { index: number }) => {
     return (

@@ -63,14 +63,23 @@ export const DisappearingChat = () => {
     scrollToBottom();
   }, [chatMessageEvents]);
 
+  const filteredMessages = chatMessageEvents.filter((m) => {
+    if (!chatSearchParams.usernameFilterRegex && !chatSearchParams.messageFilterRegex) {
+      return true;
+    }
+
+    const userOk = chatSearchParams.usernameFilterRegex ? chatSearchParams.usernameFilterRegex.test(m.chatter_user_name) : true;
+    const msgOk = chatSearchParams.messageFilterRegex ? chatSearchParams.messageFilterRegex.test(m.message.text) : true;
+
+    return userOk && msgOk;
+  });
+
   return (
     <div className="chat-disappearing">
       <AnimatePresence>
-        {chatMessageEvents
-          .filter((m) => (chatSearchParams.usernameFilterRegex ? chatSearchParams.usernameFilterRegex.test(m.chatter_user_name) : true))
-          .map((chatMessage) => (
-            <Message key={chatMessage.message_id} chatMessage={chatMessage} />
-          ))}
+        {filteredMessages.map((chatMessage) => (
+          <Message key={chatMessage.message_id} chatMessage={chatMessage} />
+        ))}
       </AnimatePresence>
       <div ref={bottomRef} />
     </div>

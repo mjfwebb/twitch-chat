@@ -33,7 +33,8 @@ export const ChatSettings = ({ chatUrl, setChatUrl }: { chatUrl: string; setChat
   const debouncedDropShadowSettings = useDebounce(dropShadowSettings, 300);
   const [textStrokeSettings, setTextStrokeSettings] = useState(overlayParameters.textStrokeSettings);
   const debouncedTextStrokeSettings = useDebounce(textStrokeSettings, 300);
-  const [userFilterConfig, setUserFilterConfig] = useState<UserFilterConfig>(decodeFiltersFromUrl(overlayParameters.filters));
+  const [userFilterConfig, setUserFilterConfig] = useState<UserFilterConfig>(decodeFiltersFromUrl(overlayParameters.usernameFilters));
+  const [messageFilterConfig, setMessageFilterConfig] = useState<UserFilterConfig>(decodeFiltersFromUrl(overlayParameters.messageFilters));
   const toast = useToast();
 
   useEffect(() => {
@@ -55,6 +56,12 @@ export const ChatSettings = ({ chatUrl, setChatUrl }: { chatUrl: string; setChat
     const encoded = encodeFiltersToUrl(userFilterConfig);
     setOverlayParameters((prev) => ({ ...prev, filters: encoded }));
   }, [userFilterConfig]);
+
+  useEffect(() => {
+    // Sync encoded filters whenever config changes
+    const encoded = encodeFiltersToUrl(messageFilterConfig);
+    setOverlayParameters((prev) => ({ ...prev, filters: encoded }));
+  }, [messageFilterConfig]);
 
   const handleUpdateUrl = () => {
     const url = new URL(chatUrl);
@@ -143,11 +150,19 @@ export const ChatSettings = ({ chatUrl, setChatUrl }: { chatUrl: string; setChat
           }
         }
 
-        // Special-case: filters param (base64url encoded)
-        if (key === 'filters') {
+        // Special-case: username filters param (base64url encoded)
+        if (key === 'usernameFilters') {
           const decoded = decodeFiltersFromUrl(url.searchParams.get(urlParam));
           setUserFilterConfig(decoded);
-          setOverlayParameters((prev) => ({ ...prev, filters: encodeFiltersToUrl(decoded) }));
+          setOverlayParameters((prev) => ({ ...prev, usernameFilters: encodeFiltersToUrl(decoded) }));
+          continue;
+        }
+
+        // Special-case: username filters param (base64url encoded)
+        if (key === 'messageFilters') {
+          const decoded = decodeFiltersFromUrl(url.searchParams.get(urlParam));
+          setMessageFilterConfig(decoded);
+          setOverlayParameters((prev) => ({ ...prev, messageFilters: encodeFiltersToUrl(decoded) }));
           continue;
         }
 
@@ -179,7 +194,13 @@ export const ChatSettings = ({ chatUrl, setChatUrl }: { chatUrl: string; setChat
   return (
     <div>
       <ChatPreview
-        overlayParameters={{ ...overlayParameters, dropShadowSettings, textStrokeSettings, filters: encodeFiltersToUrl(userFilterConfig) }}
+        overlayParameters={{
+          ...overlayParameters,
+          dropShadowSettings,
+          textStrokeSettings,
+          usernameFilters: encodeFiltersToUrl(userFilterConfig),
+          messageFilters: encodeFiltersToUrl(messageFilterConfig),
+        }}
       />
       <details className="chat-settings" ref={detailsRef}>
         <summary>👉 Customise look and feel of the overlay</summary>
@@ -208,7 +229,19 @@ export const ChatSettings = ({ chatUrl, setChatUrl }: { chatUrl: string; setChat
         <section>
           <h3>Username filter</h3>
           <div className="chat-settings-section">
+            <p className="info">
+              Username filter rules (optional). Exclude usernames by exact, contains, or wildcard (* and ?). Case-insensitive by default.
+            </p>
             <FilterEditor value={userFilterConfig} onChange={setUserFilterConfig} />
+          </div>
+        </section>
+        <section>
+          <h3>Message filter</h3>
+          <div className="chat-settings-section">
+            <p className="info">
+              Message filter rules (optional). Exclude messages by exact, contains, or wildcard (* and ?). Case-insensitive by default.
+            </p>
+            <FilterEditor value={messageFilterConfig} onChange={setMessageFilterConfig} />
           </div>
         </section>
         <section>

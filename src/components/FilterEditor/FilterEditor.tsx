@@ -36,9 +36,6 @@ export function FilterEditor({ value, onChange }: FilterEditorProps) {
 
   return (
     <div className="filter-editor">
-      <p className="info">
-        Username filter rules (optional). Exclude usernames by exact, contains, or wildcard (* and ?). Case-insensitive by default.
-      </p>
       {hasRules ? (
         <div className="filter-editor-rules">
           {rules.map((r, idx) => (

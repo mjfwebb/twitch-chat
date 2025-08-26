@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { DEFAULT_CHAT_SETTINGS_VALUES } from '../../../constants';
 import { ChannelChatMessageEvent } from '../../../types/twitchEvents';
-import { buildUsernameRegex, decodeFiltersFromUrl, type UserFilterConfig } from '../../../utils/filters';
+import { buildFilterRegex, decodeFiltersFromUrl, type UserFilterConfig } from '../../../utils/filters';
 import { ChatEntry } from '../../Chat/ChatEntry';
 
 import './ChatPreview.less';
@@ -107,10 +107,28 @@ export const ChatPreview = ({ overlayParameters }: { overlayParameters: typeof D
     }
   });
 
-  // Apply username filter if provided in overlayParameters.filters
-  const previewFilterCfg: UserFilterConfig | null = overlayParameters.filters ? decodeFiltersFromUrl(overlayParameters.filters) : null;
+  // Apply username filter if provided in overlayParameters.usernameFilters
+  const previewUsernameFilterCfg: UserFilterConfig | null = overlayParameters.usernameFilters
+    ? decodeFiltersFromUrl(overlayParameters.usernameFilters)
+    : null;
+  const usernameFilterRegex = previewUsernameFilterCfg ? buildFilterRegex(previewUsernameFilterCfg) : null;
 
-  const previewRegex = previewFilterCfg ? buildUsernameRegex(previewFilterCfg) : null;
+  // Apply message filter if provided in overlayParameters.messageFilters
+  const previewMessageFilterCfg: UserFilterConfig | null = overlayParameters.messageFilters
+    ? decodeFiltersFromUrl(overlayParameters.messageFilters)
+    : null;
+  const messageFilterRegex = previewMessageFilterCfg ? buildFilterRegex(previewMessageFilterCfg) : null;
+
+  const filteredMessages = fakeChatMessageEvents.filter((m) => {
+    if (!usernameFilterRegex && !messageFilterRegex) {
+      return true;
+    }
+
+    const userOk = usernameFilterRegex ? usernameFilterRegex.test(m.chatter_user_name) : true;
+    const msgOk = messageFilterRegex ? messageFilterRegex.test(m.message.text) : true;
+
+    return userOk && msgOk;
+  });
 
   return (
     <div className="chat-preview-container">
@@ -128,20 +146,18 @@ export const ChatPreview = ({ overlayParameters }: { overlayParameters: typeof D
             fontFamily: overlayParametersToChatEntryProps.fontFamily,
           }}
         >
-          {fakeChatMessageEvents
-            .filter((m) => (previewRegex ? previewRegex.test(m.chatter_user_name) : true))
-            .map((fakeChatMessageEvent) => (
-              <ChatEntry
-                key={fakeChatMessageEvent.message_id}
-                {...overlayParametersToChatEntryProps}
-                chatMessage={fakeChatMessageEvent}
-                userInformationStore={{
-                  [fakeChatMessageEvent.chatter_user_id]: {
-                    profile_image_url: fakeUsers.find((u) => u.name === fakeChatMessageEvent.broadcaster_user_name)?.avatarUrl,
-                  },
-                }}
-              />
-            ))}
+          {filteredMessages.map((fakeChatMessageEvent) => (
+            <ChatEntry
+              key={fakeChatMessageEvent.message_id}
+              {...overlayParametersToChatEntryProps}
+              chatMessage={fakeChatMessageEvent}
+              userInformationStore={{
+                [fakeChatMessageEvent.chatter_user_id]: {
+                  profile_image_url: fakeUsers.find((u) => u.name === fakeChatMessageEvent.broadcaster_user_name)?.avatarUrl,
+                },
+              }}
+            />
+          ))}
         </div>
       </div>
     </div>

@@ -63,7 +63,7 @@ function toCaseInsensitive(body: string): string {
 
 // Build final regex from exclude-only rules with per-rule case sensitivity.
 // We construct chained negative lookaheads, one per rule, anchored at ^ ... .*$
-export function buildUsernameRegex(cfg: UserFilterConfig): RegExp | null {
+export function buildFilterRegex(cfg: UserFilterConfig): RegExp | null {
   if (!cfg || !Array.isArray(cfg.rules) || cfg.rules.length === 0) {
     return null;
   }

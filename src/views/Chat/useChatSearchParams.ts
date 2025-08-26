@@ -1,5 +1,5 @@
 import { chatSearchParamsMap, DEFAULT_CHAT_SETTINGS_VALUES } from '../../constants';
-import { buildUsernameRegex, decodeFiltersFromUrl } from '../../utils/filters';
+import { buildFilterRegex, decodeFiltersFromUrl } from '../../utils/filters';
 
 export const useChatSearchParams = () => {
   const searchParams = new URLSearchParams(window.location.search);
@@ -69,9 +69,14 @@ export const useChatSearchParams = () => {
   const showNameAlias = searchParams.get(chatSearchParamsMap.showNameAlias) === 'false' ? false : DEFAULT_CHAT_SETTINGS_VALUES.showNameAlias;
 
   // Username filter (base64url encoded JSON). Empty means no filtering.
-  const filtersParam = searchParams.get(chatSearchParamsMap.filters) || DEFAULT_CHAT_SETTINGS_VALUES.filters;
+  const filtersParam = searchParams.get(chatSearchParamsMap.usernameFilters) || DEFAULT_CHAT_SETTINGS_VALUES.usernameFilters;
   const _filterCfg = decodeFiltersFromUrl(filtersParam);
-  const usernameFilterRegex = buildUsernameRegex(_filterCfg);
+  const usernameFilterRegex = buildFilterRegex(_filterCfg);
+
+  // Message filter (base64url encoded JSON). Empty means no filtering.
+  const messageFiltersParam = searchParams.get(chatSearchParamsMap.messageFilters) || DEFAULT_CHAT_SETTINGS_VALUES.messageFilters;
+  const _messageFilterCfg = decodeFiltersFromUrl(messageFiltersParam);
+  const messageFilterRegex = buildFilterRegex(_messageFilterCfg);
 
   return {
     animatedEntry,
@@ -93,5 +98,6 @@ export const useChatSearchParams = () => {
     textStrokeSettings,
     width,
     usernameFilterRegex,
+    messageFilterRegex,
   };
 };
