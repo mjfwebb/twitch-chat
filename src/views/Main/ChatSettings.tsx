@@ -3,14 +3,14 @@ import { useEffect, useRef, useState } from 'react';
 import { Button } from '../../components/Button/Button';
 import { ColorPicker } from '../../components/ColorPicker/ColorPicker';
 import { Space } from '../../components/Space/Space';
+import { TextShadowStacker } from '../../components/TextShadowPicker/TextShadowStacker';
+import { TextStrokeEditor } from '../../components/TextStrokePicker/TextStrokeEditor';
 import { useToast } from '../../components/Toast/useToast';
 import { chatSearchParamsMap, DEFAULT_CHAT_SETTINGS_VALUES } from '../../constants';
 import { useDebounce } from '../../hooks/useDebounce';
 import { ChatPreview } from './ChatPreview/ChatPreview';
 import './ChatSettings.less';
 import { ConfirmModal } from './ConfirmModal';
-import { TextShadowStacker } from './TextShadowPicker/TextShadowStacker';
-import { TextStrokeEditor } from './TextStrokePicker/TextStrokeEditor';
 
 const multiPartSettingsMap = {
   'font-size': ['fontSizeValue', 'fontSizeUnit'],

@@ -143,8 +143,12 @@ export const TextStrokeEditor: React.FC<TextStrokeEditorProps> = ({ value, onCha
     const colorChanged = next.color !== color;
     if (widthChanged || colorChanged) {
       suppressNextEmitRef.current = true;
-      if (widthChanged) setWidth(next.width);
-      if (colorChanged) setColor(next.color);
+      if (widthChanged) {
+        setWidth(next.width);
+      }
+      if (colorChanged) {
+        setColor(next.color);
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value]);
@@ -167,10 +171,15 @@ export const TextStrokeEditor: React.FC<TextStrokeEditorProps> = ({ value, onCha
   const handleSegment = (w: StrokeWidthKeyword | 'custom') => {
     if (w === 'custom') {
       // if switching to custom from keyword, map common keyword to px defaults
-      if (keyword === 'thin') setWidth('1px');
-      else if (keyword === 'medium') setWidth('2px');
-      else if (keyword === 'thick') setWidth('3px');
-      else setWidth('1px');
+      if (keyword === 'thin') {
+        setWidth('1px');
+      } else if (keyword === 'medium') {
+        setWidth('2px');
+      } else if (keyword === 'thick') {
+        setWidth('3px');
+      } else {
+        setWidth('1px');
+      }
       return;
     }
     setWidth(w);
@@ -227,5 +236,3 @@ export const TextStrokeEditor: React.FC<TextStrokeEditorProps> = ({ value, onCha
     </Wrapper>
   );
 };
-
-export default TextStrokeEditor;
