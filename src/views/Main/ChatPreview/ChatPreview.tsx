@@ -73,7 +73,7 @@ export const ChatPreview = ({ overlayParameters }: { overlayParameters: typeof D
     textStrokeSettings: overlayParameters.textStrokeSettings,
     chatMessagePadding: `${overlayParameters.chatMessagePaddingValue}${overlayParameters.chatMessagePaddingUnit}`,
   };
-  const [backgroundColor, setBackgroundColor] = useState('#1a4045');
+  const [backgroundColor, setBackgroundColor] = useState('#202c51');
 
   const generateNewBackgroundColor = () => {
     const randomColor = Math.floor(Math.random() * 16777215)
