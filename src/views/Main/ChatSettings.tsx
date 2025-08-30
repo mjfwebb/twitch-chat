@@ -282,7 +282,10 @@ export const ChatSettings = ({ chatUrl, setChatUrl }: { chatUrl: string; setChat
           <h3>Username filter</h3>
           <div className="chat-settings-section">
             <p className="info">
-              Username filter rules (optional). Exclude usernames by exact, contains, or wildcard (* and ?). Case-insensitive by default.
+              Username filter rules (optional). Exclude usernames by exact, contains, or wildcard (<code>*</code> and <code>?</code>).
+              Case-insensitive by default.
+              <hr className="divider" />
+              In wildcard rules <code>*</code> matches any number of characters, <code>?</code> matches a single character.
             </p>
             <FilterEditor value={userFilterConfig} onChange={setUserFilterConfig} />
           </div>
@@ -291,7 +294,10 @@ export const ChatSettings = ({ chatUrl, setChatUrl }: { chatUrl: string; setChat
           <h3>Message filter</h3>
           <div className="chat-settings-section">
             <p className="info">
-              Message filter rules (optional). Exclude messages by exact, contains, or wildcard (* and ?). Case-insensitive by default.
+              Username filter rules (optional). Exclude usernames by exact, contains, or wildcard (<code>*</code> and <code>?</code>).
+              Case-insensitive by default.
+              <hr className="divider" />
+              In wildcard rules <code>*</code> matches any number of characters, <code>?</code> matches a single character.
             </p>
             <FilterEditor value={messageFilterConfig} onChange={setMessageFilterConfig} />
           </div>
