@@ -116,3 +116,9 @@ footer {
 .add-to-obs {
   margin-bottom: 2rem;
 }
+
+.divider {
+  border: none;
+  border-top: 1px solid #323133;
+  margin: 1rem 0;
+}
