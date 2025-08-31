@@ -220,7 +220,7 @@ export const ChatSettings = ({ chatUrl, setChatUrl }: { chatUrl: string; setChat
         if (isBooleanSetting) {
           setOverlayParameters((prev) => ({
             ...prev,
-            [key]: value === String(DEFAULT_CHAT_SETTINGS_VALUES[key as keyof typeof DEFAULT_CHAT_SETTINGS_VALUES]),
+            [key]: Boolean(value),
           }));
         } else {
           setOverlayParameters((prev) => ({ ...prev, [key]: value }));
