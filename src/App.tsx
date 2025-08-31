@@ -38,6 +38,20 @@ function App() {
     persistedStore.getState().setChannel('');
   }
 
+  // Try to get emote service enable flags from the URL hash
+  const sevenTVEnabled = searchParams.get('7tv-emotes');
+  if (sevenTVEnabled) {
+    persistedStore.getState().setSevenTVEnabled(sevenTVEnabled === 'true');
+  }
+  const betterTTVEnabled = searchParams.get('bttv-emotes');
+  if (betterTTVEnabled) {
+    persistedStore.getState().setBetterTTVEnabled(betterTTVEnabled === 'true');
+  }
+  const frankerFaceZEnabled = searchParams.get('ffz-emotes');
+  if (frankerFaceZEnabled) {
+    persistedStore.getState().setFrankerFaceZEnabled(frankerFaceZEnabled === 'true');
+  }
+
   return (
     <>
       {accessToken && (

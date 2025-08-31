@@ -33,6 +33,9 @@ This document describes the URL parameters you can use to customize the chat ove
 | `text-stroke-enabled`           | Enable/disable text stroke                                     | `false`             | `false`                 |
 | `text-stroke`                   | CSS text stroke settings                                       | `1px #aeff00`       | `1px black`             |
 | `width`                         | Width of the chat overlay (with unit)                          | `600px`             | `500px`                 |
+| `7tv-emotes`                    | Enable/disable 7tv emotes                                      | `true`              | `true`                  |
+| `bttv-emotes`                   | Enable/disable BTTV emotes                                     | `true`              | `true`                  |
+| `ffz-emotes`                    | Enable/disable FFZ emotes                                      | `true`              | `true`                  |
 
 ## Usage Example
 
