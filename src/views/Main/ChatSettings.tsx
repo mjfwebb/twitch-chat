@@ -284,7 +284,7 @@ export const ChatSettings = ({ chatUrl, setChatUrl }: { chatUrl: string; setChat
             <p className="info">
               Username filter rules (optional). Exclude usernames by exact, contains, or wildcard (<code>*</code> and <code>?</code>).
               Case-insensitive by default.
-              <hr className="divider" />
+              <span className="divider" />
               In wildcard rules <code>*</code> matches any number of characters, <code>?</code> matches a single character.
             </p>
             <FilterEditor value={userFilterConfig} onChange={setUserFilterConfig} />
@@ -296,7 +296,7 @@ export const ChatSettings = ({ chatUrl, setChatUrl }: { chatUrl: string; setChat
             <p className="info">
               Username filter rules (optional). Exclude usernames by exact, contains, or wildcard (<code>*</code> and <code>?</code>).
               Case-insensitive by default.
-              <hr className="divider" />
+              <span className="divider" />
               In wildcard rules <code>*</code> matches any number of characters, <code>?</code> matches a single character.
             </p>
             <FilterEditor value={messageFilterConfig} onChange={setMessageFilterConfig} />
