@@ -11,6 +11,7 @@ import { useToast } from '../../components/Toast/useToast';
 import { chatSearchParamsMap, DEFAULT_CHAT_SETTINGS_VALUES } from '../../constants';
 import { useDebounce } from '../../hooks/useDebounce';
 import { decodeFiltersFromUrl, EMPTY_FILTER_CONFIG, encodeFiltersToUrl, type UserFilterConfig } from '../../utils/filters';
+import { logger } from '../../utils/logger';
 import { ChatPreview } from './ChatPreview/ChatPreview';
 import './ChatSettings.less';
 
@@ -172,6 +173,7 @@ export const ChatSettings = ({ chatUrl, setChatUrl }: { chatUrl: string; setChat
             setDropShadowSettings(shadowValue);
             setOverlayParameters((prev) => ({ ...prev, dropShadowSettings: shadowValue }));
           }
+          logger.debug('Loaded drop shadow setting:', urlParam, { shadowValue });
           continue;
         }
 
@@ -182,6 +184,7 @@ export const ChatSettings = ({ chatUrl, setChatUrl }: { chatUrl: string; setChat
             setTextStrokeSettings(strokeVal);
             setOverlayParameters((prev) => ({ ...prev, textStrokeSettings: strokeVal }));
           }
+          logger.debug('Loaded text stroke setting:', urlParam, { strokeVal });
           continue;
         }
 
@@ -195,6 +198,7 @@ export const ChatSettings = ({ chatUrl, setChatUrl }: { chatUrl: string; setChat
               [multiPartSettingsMapForLoading[urlParam as keyof typeof multiPartSettingsMapForLoading][0]]: sizeValue,
               [multiPartSettingsMapForLoading[urlParam as keyof typeof multiPartSettingsMapForLoading][1]]: sizeUnit,
             }));
+            logger.debug('Loaded multi-part setting:', urlParam, { sizeValue, sizeUnit });
             continue;
           }
         }
@@ -204,6 +208,7 @@ export const ChatSettings = ({ chatUrl, setChatUrl }: { chatUrl: string; setChat
           const decoded = decodeFiltersFromUrl(url.searchParams.get(urlParam));
           setUserFilterConfig(decoded);
           setOverlayParameters((prev) => ({ ...prev, usernameFilters: encodeFiltersToUrl(decoded) }));
+          logger.debug('Loaded username filters:', urlParam, { decoded });
           continue;
         }
 
@@ -212,6 +217,7 @@ export const ChatSettings = ({ chatUrl, setChatUrl }: { chatUrl: string; setChat
           const decoded = decodeFiltersFromUrl(url.searchParams.get(urlParam));
           setMessageFilterConfig(decoded);
           setOverlayParameters((prev) => ({ ...prev, messageFilters: encodeFiltersToUrl(decoded) }));
+          logger.debug('Loaded message filters:', urlParam, { decoded });
           continue;
         }
 
@@ -222,8 +228,10 @@ export const ChatSettings = ({ chatUrl, setChatUrl }: { chatUrl: string; setChat
             ...prev,
             [key]: Boolean(value),
           }));
+          logger.debug('Loaded boolean setting:', urlParam, key, { value });
         } else {
           setOverlayParameters((prev) => ({ ...prev, [key]: value }));
+          logger.debug('Loaded setting:', urlParam, key, { value });
         }
       }
     } catch (error) {
