@@ -6,7 +6,6 @@ import { useMount } from './hooks/useMount';
 import { persistedStore } from './store/store';
 import { TwitchAuthHandler } from './TwitchAuthHandler';
 import { TwitchBroadcasterIdLoader } from './TwitchBroadcasterIdLoader';
-import { TwitchWebSocketClient } from './TwitchWebSocketClient';
 import { Chat } from './views/Chat/Chat';
 import { Main } from './views/Main/Main';
 
@@ -54,12 +53,7 @@ function App() {
 
   return (
     <>
-      {accessToken && (
-        <>
-          <TwitchBroadcasterIdLoader />
-          <TwitchWebSocketClient />
-        </>
-      )}
+      {accessToken && <TwitchBroadcasterIdLoader />}
       <Switch>
         <Route path="/" component={Main} />
         <Route path="/auth" component={TwitchAuthHandler} />
