@@ -8,7 +8,7 @@ Sentry.init({
   sendDefaultPii: false,
   enableLogs: true,
   integrations: [
-    // send console.log, console.warn, and console.error calls as logs to Sentry
+    // send console calls as logs to Sentry
     Sentry.consoleLoggingIntegration({ levels: ['log', 'info', 'warn', 'error'] }),
   ],
 });
