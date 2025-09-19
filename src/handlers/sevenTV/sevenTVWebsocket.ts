@@ -297,7 +297,7 @@ export function runSevenTVWebsocket(sevenTVTwitchUser: SevenTVTwitchUser) {
 
             // If there is no heartbeat, start one
             if (!heartbeat) {
-              heartbeat = setInterval(() => {
+              heartbeat = window.setInterval(() => {
                 missedHeartbeats++;
 
                 // If we miss 3 heartbeats, close the connection
