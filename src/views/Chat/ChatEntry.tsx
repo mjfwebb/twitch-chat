@@ -53,7 +53,7 @@ export const ChatEntry = ({
   const user: { displayName: string; alias?: string; avatarUrl: string } = {
     displayName: chatMessage.chatter_user_name,
     alias: chatMessage.chatter_user_name.toLowerCase() !== chatMessage.chatter_user_login.toLowerCase() ? chatMessage.chatter_user_login : undefined,
-    avatarUrl: userInformationStore[chatMessage.chatter_user_id].profile_image_url || '',
+    avatarUrl: userInformationStore[chatMessage.chatter_user_id]?.profile_image_url ?? '',
   };
 
   return (

@@ -4,6 +4,7 @@ import { TWITCH_WEBSOCKET_EVENTSUB_URL } from './constants';
 import { isEventSubReconnectMessage, isEventSubWelcomeMessage, isSubscriptionEvent } from './handlers/twitch/event-sub/schemas';
 import { subscribeToChat } from './handlers/twitch/event-sub/subscribers/subscribeToChat';
 import { twitchEventSubHandler } from './handlers/twitch/twitchEventSubHandler';
+import { useMount } from './hooks/useMount';
 import { store } from './store/store';
 import { EventsubEvent } from './types/twitchEvents';
 import { logger } from './utils/logger';
@@ -31,6 +32,33 @@ export const TwitchWebSocketClient = () => {
   const baseUrlRef = useRef<string>(TWITCH_WEBSOCKET_EVENTSUB_URL);
   // Ensure we only connect if we have the necessary IDs
   const shouldConnect = Boolean(broadcasterId && userId);
+
+  useMount(() => {
+    // Report to chat the current app version
+    const appVersion = import.meta.env.APP_VERSION || 'unknown';
+    store.getState().addChatMessage({
+      broadcaster_user_id: broadcasterId || '',
+      broadcaster_user_login: '',
+      broadcaster_user_name: '',
+      chatter_user_id: '',
+      chatter_user_login: '',
+      chatter_user_name: 'System',
+      message_id: crypto.randomUUID(),
+      message_type: 'text',
+      message: {
+        text: ``,
+        fragments: [
+          {
+            text: `Chat client version ${appVersion}`,
+            type: 'text',
+          },
+        ],
+      },
+      badges: [],
+      color: '#FF0000',
+      eventType: 'channel.chat.message',
+    });
+  });
 
   const { lastMessage, getWebSocket } = useWebSocket<string>(
     socketUrl,
