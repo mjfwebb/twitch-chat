@@ -5,7 +5,7 @@ import { logger } from '../../utils/logger';
 import type { SevenTVEmote, SevenTVTwitchUser } from './schemas';
 
 const closeCodes = {
-  ServerError: 4000, // An error occured on the server's end
+  ServerError: 4000, // An error occurred on the server's end
   UnknownOperation: 4001, // the client sent an unknown opcode
   InvalidPayload: 4002, // the client sent a payload that couldn't be decoded
   AuthFailure: 4003, // the client unsuccessfully tried to identify
@@ -25,7 +25,7 @@ const SevenTVWebsocketOpCodes = {
   Heartbeat: 2, // Ensures the connection is still alive
   Reconnect: 4, // Server wants the client to reconnect
   Acknowledgement: 5, // Server acknowledges an action by the client
-  Error: 6, // An error occured, you should log this
+  Error: 6, // An error occurred, you should log this
   EndOfStream: 7, // The server will send no further data and imminently end the connection
   Identify: 33, // Authenticate with an account
   Resume: 34, // Try to resume a previous session
@@ -107,13 +107,22 @@ type SubscribeMessage = SevenTVWebsocketOutboundMessage<{
 //   type: string; // subscription type
 //   condition?: Record<string, string>; // filter messages by conditions
 // }>;
+const MAX_RECONNECT_RETRIES = 8; // Maximum reconnect attempts before giving up
+const BASE_RECONNECT_DELAY_MS = 1000; // 1s base delay
+const MAX_RECONNECT_DELAY_MS = 60_000; // Cap at 60s
+const RATE_LIMIT_MIN_DELAY_MS = 30_000; // If rate-limited, wait at least 30s before retry
 
 let heartbeat: number | undefined; // Interval for heartbeat
 let missedHeartbeats = 0;
-// TODO: Implement resume when a connection is dropped with a non-normal, non-error closure
-// let storedSessionId: string; // To be used to resume a websocket https://github.com/SevenTV/EventAPI#resuming-websocket
+
+// Reconnect/backoff controls
+let reconnectTimeout: number | undefined;
+let retryCount = 0;
+
 const isSubscribed = false;
-let isConnected = true; // Default to true, will be set to false on close
+
+// Store last-known session ID to attempt a resume on reconnects
+let storedSessionId: string | undefined;
 
 function createSubscribeMessage(type: string, condition: Record<string, string>): SubscribeMessage {
   return {
@@ -127,25 +136,84 @@ function createSubscribeMessage(type: string, condition: Record<string, string>)
 
 let socket: WebSocket;
 
-export function runSevenTVWebsocket(seventTVTwitchUser: SevenTVTwitchUser) {
+export function runSevenTVWebsocket(sevenTVTwitchUser: SevenTVTwitchUser) {
   socket = new WebSocket(SEVEN_TV_WEBSOCKET_URL);
+
+  // Helper to compute backoff with jitter
+  const computeBackoff = (attempt: number, minDelay = BASE_RECONNECT_DELAY_MS) => {
+    const exp = Math.min(minDelay * Math.pow(2, attempt), MAX_RECONNECT_DELAY_MS);
+    // Add +/- 20% jitter to avoid thundering herd
+    const jitter = exp * (Math.random() * 0.4 - 0.2);
+    return Math.max(0, Math.floor(exp + jitter));
+  };
+
+  // Schedule a reconnect attempt with exponential backoff (or a provided delay)
+  const scheduleReconnect = (reason?: string, overrideDelay?: number) => {
+    if (reconnectTimeout) {
+      return;
+    }
+    if (retryCount >= MAX_RECONNECT_RETRIES) {
+      logger.error(
+        `SevenTV WebSocket: Max reconnect attempts reached (${MAX_RECONNECT_RETRIES}). Stopping reconnection. Last reason: ${reason ?? 'unknown'}`,
+      );
+      return;
+    }
+    const delay = overrideDelay ?? computeBackoff(retryCount);
+    logger.info(
+      `SevenTV WebSocket: Reconnecting in ${delay}ms (attempt ${retryCount + 1} of ${MAX_RECONNECT_RETRIES}).${reason ? ' Reason: ' + reason : ''}`,
+    );
+    reconnectTimeout = window.setTimeout(() => {
+      reconnectTimeout = undefined;
+      retryCount++;
+      runSevenTVWebsocket(sevenTVTwitchUser);
+    }, delay);
+  };
 
   socket.addEventListener('error', function (error) {
     logger.error('SevenTV WebSocket: Connection Error: ' + error.toString());
+    // In browsers, onerror doesn't expose status codes (e.g., 429). We'll rely on close events or server opcodes.
+    // If the socket did not open, try to reconnect with backoff.
+    if (socket.readyState !== WebSocket.OPEN) {
+      scheduleReconnect('error event before open');
+    }
   });
 
   socket.addEventListener('open', function () {
-    isConnected = true;
     logger.info('SevenTV WebSocket: Client Connected');
+    // Reset retry state on successful connect
+    retryCount = 0;
+    if (reconnectTimeout) {
+      clearTimeout(reconnectTimeout);
+      reconnectTimeout = undefined;
+    }
   });
 
-  socket.addEventListener('error', function (error) {
-    logger.error('SevenTV WebSocket: Connection Error: ' + error.toString());
-  });
+  socket.addEventListener('close', function (event) {
+    logger.info(`SevenTV WebSocket: Connection Closed (code: ${event.code}, reason: ${event.reason || 'n/a'})`);
+    if (heartbeat) {
+      clearInterval(heartbeat);
+      heartbeat = undefined;
+    }
 
-  socket.addEventListener('close', function () {
-    isConnected = false;
-    logger.info('SevenTV WebSocket: Connection Closed');
+    // Determine reconnection strategy based on close code
+    // Note: 4005 (RateLimited) is specific to SevenTV close codes
+    if (event.code === closeCodes.RateLimited || /429|rate.?limit/i.test(event.reason)) {
+      // Apply a longer minimum delay when rate-limited
+      const delay = Math.max(RATE_LIMIT_MIN_DELAY_MS, computeBackoff(retryCount, RATE_LIMIT_MIN_DELAY_MS));
+      scheduleReconnect('rate limited', delay);
+      return;
+    }
+
+    // Server restart/maintenance/timeouts should reconnect
+    if (
+      event.code === closeCodes.Restart ||
+      event.code === closeCodes.Maintenance ||
+      event.code === closeCodes.Timeout ||
+      event.code === closeCodes.ServerError ||
+      !event.wasClean
+    ) {
+      scheduleReconnect(`close code ${event.code}${event.reason ? ' - ' + event.reason : ''}`);
+    }
   });
 
   socket.addEventListener('message', function (message) {
@@ -186,24 +254,45 @@ export function runSevenTVWebsocket(seventTVTwitchUser: SevenTVTwitchUser) {
 
             break;
           }
+          case SevenTVWebsocketOpCodes.Reconnect: {
+            // Server asks us to reconnect
+            logger.info('SevenTV WebSocket: Server requested reconnect');
+            try {
+              socket.close();
+            } catch (e) {
+              logger.debug('SevenTV WebSocket: Error while closing socket on reconnect request', e);
+            }
+            scheduleReconnect('server requested reconnect', 1000);
+            break;
+          }
           case SevenTVWebsocketOpCodes.Hello: {
             const { heartbeat_interval: heartbeatInterval, session_id: sessionId, subscription_limit: subscriptionLimit } = d as HelloMessage['d'];
             logger.debug(
               `SevenTV WebSocket: Hello received: ${t}. Heartbeat interval: ${heartbeatInterval}. Session ID: ${sessionId}. Subscription limit: ${subscriptionLimit}`,
             );
-            isConnected = true;
-            // TODO: Store session ID for resuming
-            // storedSessionId = sessionId;
+            // Store session ID for future resume attempts
+            const previousSessionId = storedSessionId;
+            storedSessionId = sessionId;
 
-            // Subscribe to events
-            if (!isSubscribed) {
-              socket.send(
-                JSON.stringify(
-                  createSubscribeMessage('emote_set.*', {
-                    object_id: seventTVTwitchUser.emote_set.id,
-                  }),
-                ),
-              );
+            // If we have a previous session ID, attempt to resume it. Otherwise subscribe fresh.
+            if (previousSessionId && previousSessionId !== sessionId) {
+              const resumeMsg: SevenTVWebsocketOutboundMessage<{ session_id: string }> = {
+                op: SevenTVWebsocketOpCodes.Resume,
+                d: { session_id: previousSessionId },
+              };
+              logger.info('SevenTV WebSocket: Attempting to resume previous session');
+              socket.send(JSON.stringify(resumeMsg));
+            } else {
+              // Subscribe to events
+              if (!isSubscribed) {
+                socket.send(
+                  JSON.stringify(
+                    createSubscribeMessage('emote_set.*', {
+                      object_id: sevenTVTwitchUser.emote_set.id,
+                    }),
+                  ),
+                );
+              }
             }
 
             // If there is no heartbeat, start one
@@ -216,10 +305,28 @@ export function runSevenTVWebsocket(seventTVTwitchUser: SevenTVTwitchUser) {
                   logger.error('SevenTV WebSocket: Too many missed heartbeats, closing connection.');
                   socket.close(closeCodes.Timeout);
                   missedHeartbeats = 0;
-                  isConnected = false;
                   return;
                 }
               }, heartbeatInterval);
+            }
+            break;
+          }
+          case SevenTVWebsocketOpCodes.Error: {
+            const payload = d as unknown;
+            const msg = typeof payload === 'string' ? payload : JSON.stringify(payload);
+            logger.error(`SevenTV WebSocket: Error opcode received: ${msg}`);
+            if (/429|rate.?limit/i.test(msg)) {
+              scheduleReconnect('error opcode rate limited', RATE_LIMIT_MIN_DELAY_MS);
+            } else if (/resume/i.test(msg)) {
+              // Resume failed, fallback to subscribing fresh
+              logger.info('SevenTV WebSocket: Resume failed, subscribing fresh');
+              socket.send(
+                JSON.stringify(
+                  createSubscribeMessage('emote_set.*', {
+                    object_id: sevenTVTwitchUser.emote_set.id,
+                  }),
+                ),
+              );
             }
             break;
           }
@@ -232,6 +339,9 @@ export function runSevenTVWebsocket(seventTVTwitchUser: SevenTVTwitchUser) {
           case SevenTVWebsocketOpCodes.Acknowledgement: {
             const { command } = d as AcknowledgementMessage['d'];
             logger.debug(`SevenTV WebSocket: Acknowledgement received for command: ${command}`);
+            if (String(command).toLowerCase().includes('resume')) {
+              logger.info('SevenTV WebSocket: Session resume acknowledged');
+            }
             break;
           }
           case SevenTVWebsocketOpCodes.EndOfStream: {
@@ -239,6 +349,12 @@ export function runSevenTVWebsocket(seventTVTwitchUser: SevenTVTwitchUser) {
             logger.debug(`SevenTV WebSocket: End of stream received. Closing connection. Code: ${code} Reason: ${message}`);
 
             clearInterval(heartbeat);
+            if (code === closeCodes.RateLimited || /429|rate.?limit/i.test(message)) {
+              const delay = Math.max(RATE_LIMIT_MIN_DELAY_MS, BASE_RECONNECT_DELAY_MS);
+              scheduleReconnect('end of stream rate limited', delay);
+            } else {
+              scheduleReconnect('end of stream');
+            }
             break;
           }
           default:
@@ -248,11 +364,4 @@ export function runSevenTVWebsocket(seventTVTwitchUser: SevenTVTwitchUser) {
       }
     }
   });
-
-  setInterval(() => {
-    if (!isConnected) {
-      logger.info('SevenTV WebSocket: Connecting...');
-      runSevenTVWebsocket(seventTVTwitchUser);
-    }
-  }, 10000);
 }
