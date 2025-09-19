@@ -33,10 +33,10 @@ export const fetchCheers = async (type: 'global' | 'channel'): Promise<void> => 
         logger.warn('No cheers found or data is not an array.');
       }
     } else {
-      logger.error('Failed to parse cheers response:', parsed.error);
+      logger.error(`Failed to parse cheers response: ${parsed.error.message}`);
     }
   } catch (error) {
-    logger.error(error);
+    logger.error(`Failed to fetch Twitch cheers: ${JSON.stringify(error)}`);
   }
 };
 

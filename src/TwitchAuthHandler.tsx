@@ -19,7 +19,7 @@ export const TwitchAuthHandler = () => {
   const { accessToken, state } = getTwitchAuthResponseData();
 
   if (state !== authStateValue) {
-    logger.error('Invalid state value. Possible CSRF attack. Expected:', authStateValue, 'Received:', state);
+    logger.error('Invalid state value. Possible CSRF attack.');
     return <span>Error: Invalid state value.</span>;
   }
 

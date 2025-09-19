@@ -18,7 +18,7 @@ export const fetchBetterTTVGlobalEmotes = async (): Promise<BttvEmote[] | null> 
       return json as BttvEmote[];
     }
   } catch (error) {
-    logger.error(error);
+    logger.error(`Failed to fetch BetterTTV global emotes: ${JSON.stringify(error)}`);
   }
 
   return null;

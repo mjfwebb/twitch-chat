@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/react';
 import pc from 'picocolors';
 
 export const logLevels = ['error', 'warn', 'info', 'debug'];
@@ -26,23 +27,25 @@ export function setLogLevel(logLevelString: string) {
   logLevel = logLevelsMap[logLevelString];
 }
 
+const APP_VERSION = import.meta.env.APP_VERSION || 'unknown';
+
 export const logger = {
-  error: (...args: unknown[]) => {
-    console.error(`${formattedDate()} ${pc.red('Error:')}`, ...args);
+  error: (message: string, extra?: Record<string, unknown>) => {
+    Sentry.logger.error(`${formattedDate()} (v${APP_VERSION}) ${pc.red('Error:')} ${message}`, extra);
   },
-  warn: (...args: unknown[]) => {
+  warn: (message: string, extra?: Record<string, unknown>) => {
     if (logLevel >= logLevelsMap['warn']) {
-      console.warn(`${formattedDate()} ${pc.yellow('Warn:')}`, ...args);
+      Sentry.logger.warn(`${formattedDate()} (v${APP_VERSION}) ${pc.yellow('Warn:')} ${message}`, extra);
     }
   },
-  info: (...args: unknown[]) => {
+  info: (message: string, extra?: Record<string, unknown>) => {
     if (logLevel >= logLevelsMap['info']) {
-      console.info(`${formattedDate()} ${pc.cyan('Info:')}`, ...args);
+      Sentry.logger.info(`${formattedDate()} (v${APP_VERSION}) ${pc.cyan('Info:')} ${message}`, extra);
     }
   },
   debug: (...args: unknown[]) => {
     if (logLevel >= logLevelsMap['debug']) {
-      console.debug(`${formattedDate()} ${pc.magenta('Debug:')}`, ...args);
+      console.debug(`${formattedDate()} (v${APP_VERSION}) ${pc.magenta('Debug:')}`, ...args);
     }
   },
 };

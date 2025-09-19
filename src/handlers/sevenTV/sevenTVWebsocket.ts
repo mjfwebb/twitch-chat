@@ -260,7 +260,7 @@ export function runSevenTVWebsocket(sevenTVTwitchUser: SevenTVTwitchUser) {
             try {
               socket.close();
             } catch (e) {
-              logger.debug('SevenTV WebSocket: Error while closing socket on reconnect request', e);
+              logger.debug(`SevenTV WebSocket: Error while closing socket on reconnect request: ${JSON.stringify(e)}`);
             }
             scheduleReconnect('server requested reconnect', 1000);
             break;
