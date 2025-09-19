@@ -121,6 +121,9 @@ let retryCount = 0;
 
 const isSubscribed = false;
 
+// Store last-known session ID to attempt a resume on reconnects
+let storedSessionId: string | undefined;
+
 function createSubscribeMessage(type: string, condition: Record<string, string>): SubscribeMessage {
   return {
     op: SevenTVWebsocketOpCodes.Subscribe,
@@ -267,18 +270,29 @@ export function runSevenTVWebsocket(sevenTVTwitchUser: SevenTVTwitchUser) {
             logger.debug(
               `SevenTV WebSocket: Hello received: ${t}. Heartbeat interval: ${heartbeatInterval}. Session ID: ${sessionId}. Subscription limit: ${subscriptionLimit}`,
             );
-            // TODO: Store session ID for resuming
-            // storedSessionId = sessionId;
+            // Store session ID for future resume attempts
+            const previousSessionId = storedSessionId;
+            storedSessionId = sessionId;
 
-            // Subscribe to events
-            if (!isSubscribed) {
-              socket.send(
-                JSON.stringify(
-                  createSubscribeMessage('emote_set.*', {
-                    object_id: sevenTVTwitchUser.emote_set.id,
-                  }),
-                ),
-              );
+            // If we have a previous session ID, attempt to resume it. Otherwise subscribe fresh.
+            if (previousSessionId && previousSessionId !== sessionId) {
+              const resumeMsg: SevenTVWebsocketOutboundMessage<{ session_id: string }> = {
+                op: SevenTVWebsocketOpCodes.Resume,
+                d: { session_id: previousSessionId },
+              };
+              logger.info('SevenTV WebSocket: Attempting to resume previous session');
+              socket.send(JSON.stringify(resumeMsg));
+            } else {
+              // Subscribe to events
+              if (!isSubscribed) {
+                socket.send(
+                  JSON.stringify(
+                    createSubscribeMessage('emote_set.*', {
+                      object_id: sevenTVTwitchUser.emote_set.id,
+                    }),
+                  ),
+                );
+              }
             }
 
             // If there is no heartbeat, start one
@@ -303,6 +317,16 @@ export function runSevenTVWebsocket(sevenTVTwitchUser: SevenTVTwitchUser) {
             logger.error(`SevenTV WebSocket: Error opcode received: ${msg}`);
             if (/429|rate.?limit/i.test(msg)) {
               scheduleReconnect('error opcode rate limited', RATE_LIMIT_MIN_DELAY_MS);
+            } else if (/resume/i.test(msg)) {
+              // Resume failed, fallback to subscribing fresh
+              logger.info('SevenTV WebSocket: Resume failed, subscribing fresh');
+              socket.send(
+                JSON.stringify(
+                  createSubscribeMessage('emote_set.*', {
+                    object_id: sevenTVTwitchUser.emote_set.id,
+                  }),
+                ),
+              );
             }
             break;
           }
@@ -315,6 +339,9 @@ export function runSevenTVWebsocket(sevenTVTwitchUser: SevenTVTwitchUser) {
           case SevenTVWebsocketOpCodes.Acknowledgement: {
             const { command } = d as AcknowledgementMessage['d'];
             logger.debug(`SevenTV WebSocket: Acknowledgement received for command: ${command}`);
+            if (String(command).toLowerCase().includes('resume')) {
+              logger.info('SevenTV WebSocket: Session resume acknowledged');
+            }
             break;
           }
           case SevenTVWebsocketOpCodes.EndOfStream: {
