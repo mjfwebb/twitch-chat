@@ -17,7 +17,7 @@ export const fetchSevenTVEmote = async (emoteId: string): Promise<SevenTVEmoteDa
       return json as SevenTVEmoteData;
     }
   } catch (error) {
-    logger.error(error);
+    logger.error(`Failed to fetch 7TV emote ${emoteId}: ${JSON.stringify(error)}`);
   }
   return null;
 };

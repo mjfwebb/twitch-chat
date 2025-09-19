@@ -31,7 +31,7 @@ export const fetchUserInformation = async (loginName: string): Promise<UserInfor
       }
     }
   } catch (error) {
-    logger.error(error);
+    logger.error(`Failed to fetch user information for ${loginName}: ${error}`);
   }
 
   return null;

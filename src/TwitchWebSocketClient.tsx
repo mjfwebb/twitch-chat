@@ -85,7 +85,7 @@ export const TwitchWebSocketClient = () => {
       // Don't share so we can close the socket explicitly if needed
       share: false,
       onError: (event) => {
-        logger.warn('WebSocket error', event);
+        logger.warn(`WebSocket error: ${JSON.stringify(event)}`);
       },
       onOpen: () => {
         logger.info(`WebSocket opened to ${socketUrl}`);
@@ -147,7 +147,7 @@ export const TwitchWebSocketClient = () => {
         }
       }
     } catch (e) {
-      logger.warn('Error closing temporary reconnect socket', e);
+      logger.warn(`Error closing temporary reconnect socket: ${JSON.stringify(e)}`);
     } finally {
       temporarySocketRef.current = null;
     }
@@ -187,7 +187,7 @@ export const TwitchWebSocketClient = () => {
               try {
                 getWebSocket()?.close();
               } catch (e) {
-                logger.warn('Failed to close primary socket during handover', e);
+                logger.warn(`Failed to close primary socket during handover: ${JSON.stringify(e)}`);
               }
               // We can now close the temporary socket; the hook-managed connection will take over
               closeTemporarySocket();
@@ -205,14 +205,14 @@ export const TwitchWebSocketClient = () => {
             break;
           }
           case 'revocation': {
-            logger.warn('EventSub subscription revoked (temporary socket)', jsonData.payload?.subscription);
+            logger.warn(`EventSub subscription revoked (temporary socket): ${JSON.stringify(jsonData.payload?.subscription)}`);
             break;
           }
           default:
             break;
         }
       } catch (e) {
-        logger.warn('Failed to handle temporary reconnect message', e);
+        logger.warn(`Failed to handle temporary reconnect message: ${JSON.stringify(e)}`);
       }
     },
     [closeTemporarySocket, getWebSocket, hasSeenMessageId, rememberMessageId, resetInactivityWatchdog],
@@ -289,33 +289,33 @@ export const TwitchWebSocketClient = () => {
               temporarySocket.onopen = () => {
                 logger.info('Temporary reconnect WebSocket opened');
               };
-              temporarySocket.onmessage = (evt) => {
-                const dataStr = typeof evt.data === 'string' ? evt.data : '';
+              temporarySocket.onmessage = (event) => {
+                const dataStr = typeof event.data === 'string' ? event.data : '';
                 if (dataStr) {
                   handleTempSocketMessage(dataStr);
                 }
               };
-              temporarySocket.onerror = (evt) => {
-                logger.warn('Temporary reconnect WebSocket error', evt);
+              temporarySocket.onerror = (event) => {
+                logger.warn(`Temporary reconnect WebSocket error: ${JSON.stringify(event)}`);
               };
-              temporarySocket.onclose = (evt) => {
-                logger.info(`Temporary reconnect WebSocket closed (code ${evt.code} reason: ${evt.reason || ''})`);
+              temporarySocket.onclose = (event) => {
+                logger.info(`Temporary reconnect WebSocket closed (code ${event.code} reason: ${event.reason || ''})`);
               };
-            } catch (e) {
-              logger.warn('Failed to create temporary reconnect WebSocket', e);
+            } catch (error) {
+              logger.warn(`Failed to create temporary reconnect WebSocket: ${JSON.stringify(error)}`);
               // Fall back: close primary to trigger hook reconnect on base
               try {
                 getWebSocket()?.close();
-              } catch (err) {
-                logger.warn('Fallback close after temporary socket failure also failed', err);
+              } catch (error) {
+                logger.warn(`Fallback close after temporary socket failure also failed: ${JSON.stringify(error)}`);
               }
             }
           } else {
             logger.warn('session_reconnect without reconnect_url; closing socket to trigger base reconnect');
             try {
               getWebSocket()?.close();
-            } catch (err) {
-              logger.warn('Fallback close without reconnect_url failed', err);
+            } catch (error) {
+              logger.warn(`Fallback close without reconnect_url failed: ${JSON.stringify(error)}`);
             }
           }
         }
@@ -323,7 +323,7 @@ export const TwitchWebSocketClient = () => {
       }
 
       case 'revocation':
-        logger.warn('EventSub subscription revoked', jsonData.payload?.subscription);
+        logger.warn(`EventSub subscription revoked: ${JSON.stringify(jsonData.payload?.subscription)}`);
         break;
       default:
         break;

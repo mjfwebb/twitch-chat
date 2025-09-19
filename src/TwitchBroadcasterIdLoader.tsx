@@ -45,7 +45,7 @@ export const TwitchBroadcasterIdLoader = () => {
       // If a channel is specified, try to get the broadcaster ID from the channel name
       if (channel) {
         loadedBroadcasterId = await getBroadcasterIdFromChannel(channel);
-        logger.info('Loaded broadcaster ID:', loadedBroadcasterId, 'from channel:', channel);
+        logger.info(`Loaded broadcaster ID: ${loadedBroadcasterId} from channel: ${channel}`);
       }
 
       // If we still don't have a broadcaster ID, try to get it from the access token,
@@ -57,9 +57,9 @@ export const TwitchBroadcasterIdLoader = () => {
           return;
         }
         if (res.id && res.login) {
-          logger.info('Loaded broadcaster ID:', res.id, 'from access token');
+          logger.info(`Loaded broadcaster ID: ${res.id} from access token`);
           loadedBroadcasterId ??= res.id;
-          logger.info('Loaded user ID:', res.id, 'from access token');
+          logger.info(`Loaded user ID: ${res.id} from access token`);
           store.getState().setUserId(res.id);
           store.getState().setUserLogin(res.login);
         }

@@ -17,7 +17,7 @@ export const fetchBetterTTVUser = async (broadcasterId: string): Promise<BttvUse
       return json as BttvUser;
     }
   } catch (error) {
-    logger.error(error);
+    logger.error(`Failed to fetch BetterTTV user: ${JSON.stringify(error)}`);
   }
 
   return null;

@@ -12,6 +12,6 @@ export const subscribeToChat = async (broadcasterId: string, userId: string, ses
       user_id: userId,
     });
   } catch (error) {
-    logger.error(error);
+    logger.error(`Failed to subscribe to chat events: ${JSON.stringify(error)}`);
   }
 };

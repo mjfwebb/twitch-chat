@@ -17,7 +17,7 @@ export const fetchFrankerFaceZRoomEmotes = async (broadcasterId: string): Promis
       return json as FrankerFaceZRoomEmotes;
     }
   } catch (error) {
-    logger.error(error);
+    logger.error(`Failed to fetch FrankerFaceZ room emotes: ${JSON.stringify(error)}`);
   }
 
   return null;

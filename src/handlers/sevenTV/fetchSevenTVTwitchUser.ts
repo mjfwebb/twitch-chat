@@ -17,7 +17,7 @@ export const fetchSevenTVTwitchUser = async (broadcasterId: string): Promise<Sev
       return json as SevenTVTwitchUser;
     }
   } catch (error) {
-    logger.error(error);
+    logger.error(`Failed to fetch 7TV Twitch user: ${JSON.stringify(error)}`);
   }
 
   return null;

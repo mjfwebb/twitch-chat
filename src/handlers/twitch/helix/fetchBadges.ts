@@ -33,10 +33,10 @@ export const fetchBadges = async (type: 'global' | 'channel'): Promise<void> => 
         logger.warn('No badges found or data is not an array.');
       }
     } else {
-      logger.error('Failed to parse badges response:', parsed.error);
+      logger.error(`Failed to parse badges response: ${parsed.error.message}`);
     }
   } catch (error) {
-    logger.error(error);
+    logger.error(`Failed to fetch Twitch badges: ${JSON.stringify(error)}`);
   }
 };
 

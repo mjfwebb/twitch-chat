@@ -29,6 +29,6 @@ export const eventSubscribe = async (sessionId: string, type: EventsubSubscripti
       body,
     });
   } catch (error) {
-    logger.error(error);
+    logger.error(`Failed to subscribe to EventSub event ${type}: ${JSON.stringify(error)}`);
   }
 };

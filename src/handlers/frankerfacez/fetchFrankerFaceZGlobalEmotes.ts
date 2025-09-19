@@ -17,7 +17,7 @@ export const fetchFrankerFaceZGlobalEmotes = async (): Promise<FrankerFaceZGloba
       return json as FrankerFaceZGlobalEmotes;
     }
   } catch (error) {
-    logger.error(error);
+    logger.error(`Failed to fetch FrankerFaceZ global emotes: ${JSON.stringify(error)}`);
   }
 
   return null;
