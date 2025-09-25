@@ -1,10 +1,9 @@
 import twemoji from '@twemoji/api';
 import classNames from 'classnames';
-
-import { JSX } from 'react';
+import { Fragment, JSX } from 'react';
 import { store } from '../../store/store';
 import { ChannelChatMessageEvent } from '../../types/twitchEvents';
-import { ChatCheer, ChatEmote } from '../../types/types';
+import { ChatCheer, ChatCheerWithBits, ChatEmote } from '../../types/types';
 import { bttvModifierMap, bttvModifiers } from './bttvModifierFlags';
 import { parseFrankerFaceZModifierFlags } from './parseFrankerFaceZModifierFlags';
 import { parseSevenTVModifierFlags } from './parseSevenTVModifierFlags';
@@ -28,20 +27,25 @@ function getTwitchEmote(emoteId: string): ChatEmote {
   };
 }
 
-export const ChatImageRenderer = ({
-  fragments,
-  bits,
-}: {
-  fragments: ChannelChatMessageEvent['message']['fragments'];
-  bits?: number;
-}): JSX.Element => {
+export const ChatImageRenderer = ({ fragments }: { fragments: ChannelChatMessageEvent['message']['fragments'] }): JSX.Element => {
   const chatEmotes = store((s) => s.chatEmotes);
   const chatCheers = store((s) => s.chatCheers);
+
+  function findChatCheer(prefix: string, bits: number): ChatCheer | undefined {
+    let foundCheer: ChatCheer | undefined = undefined;
+    for (const cheer of Object.values(chatCheers)) {
+      if (cheer.prefix.toLowerCase() === prefix.toLowerCase() && cheer.minBits <= bits) {
+        foundCheer = cheer;
+      }
+    }
+
+    return foundCheer;
+  }
 
   const messageParts: {
     match: string;
     emote: ChatEmote | undefined;
-    cheer: ChatCheer | undefined;
+    cheer: ChatCheerWithBits | undefined;
     skip: boolean;
     modifierFlags?: string[];
   }[] = [];
@@ -49,6 +53,27 @@ export const ChatImageRenderer = ({
   const nextMessageModifierFlags: string[] = [];
 
   fragments.forEach((fragment) => {
+    if (fragment.type === 'cheermote') {
+      if (fragment.cheermote) {
+        const foundCheer = findChatCheer(fragment.cheermote.prefix, fragment.cheermote.bits);
+        if (foundCheer) {
+          const cheer: ChatCheerWithBits = {
+            ...foundCheer,
+            bits: fragment.cheermote.bits,
+          };
+
+          messageParts.push({
+            match: fragment.text,
+            emote: undefined,
+            cheer,
+            skip: false,
+          });
+          nextMessageModifierFlags.length = 0;
+          return;
+        }
+      }
+    }
+
     if (fragment.emote) {
       messageParts.push({
         match: fragment.text,
@@ -61,37 +86,6 @@ export const ChatImageRenderer = ({
     }
 
     fragment.text.split(wordRegex).forEach((match) => {
-      if (bits) {
-        let closestCheer: ChatCheer | undefined = undefined;
-        // A match might look like VoHiYo199, but the cheer name is VoHiYo, so we need to remove the bits
-        const cheerName = match.replace(/\d+$/, '');
-        for (const cheer of Object.values(chatCheers)) {
-          // Check if the cheer name matches the message part
-          if (!cheer.name.startsWith(cheerName)) {
-            continue;
-          }
-
-          if (cheer.minBits <= bits) {
-            if (!closestCheer || cheer.minBits > closestCheer.minBits) {
-              closestCheer = cheer;
-              continue;
-            }
-
-            closestCheer = cheer;
-          }
-        }
-
-        if (closestCheer) {
-          messageParts.push({
-            match,
-            emote: undefined,
-            cheer: closestCheer,
-            skip: false,
-          });
-          return;
-        }
-      }
-
       if (bttvModifiers.includes(match)) {
         messageParts.push({
           match,
@@ -183,20 +177,12 @@ export const ChatImageRenderer = ({
           const cheerAmount = Number(match.replace(/\D/g, ''));
 
           return (
-            <>
-              <img
-                className={classNames('chat-cheer')}
-                key={`${match}.${index}`}
-                src={cheer.url}
-                // srcSet={emote.srcSet}
-                alt={match}
-                title={match}
-                width={28}
-              />
+            <Fragment key={`${match}.${index}`}>
+              <img className={classNames('chat-cheer')} src={cheer.url} alt={match} title={match} width={28} />
               <span className={classNames('chat-cheer-amount')} style={{ color: cheer.color }}>
                 {cheerAmount}
               </span>
-            </>
+            </Fragment>
           );
         }
 

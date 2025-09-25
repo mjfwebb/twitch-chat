@@ -17,8 +17,12 @@ export type ChatBadge = {
 };
 
 export type ChatCheer = {
-  name: string;
+  prefix: string;
   url: string;
   color: string;
   minBits: number;
+};
+
+export type ChatCheerWithBits = Exclude<ChatCheer, 'minBits'> & {
+  bits: number;
 };

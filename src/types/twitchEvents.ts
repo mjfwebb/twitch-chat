@@ -30,7 +30,7 @@ interface Emote {
   id: string; // An ID that uniquely identifies this emote.
   emote_set_id: string; // An ID that identifies the emote set that the emote belongs to.
   owner_id: string; // The ID of the broadcaster who owns the emote.
-  format: 'animated' | 'static'; // The formats that the emote is available in. For example, if the emote is available only as a static PNG, the array contains only static. But if the emote is available as a static PNG and an animated GIF, the array contains static and animated. The possible formats are: animated - An animated GIF is available for this emote. static - A static PNG file is available for this emote.
+  format: 'animated' | 'static'[]; // The formats that the emote is available in. For example, if the emote is available only as a static PNG, the array contains only static. But if the emote is available as a static PNG and an animated GIF, the array contains static and animated. The possible formats are: animated - An animated GIF is available for this emote. static - A static PNG file is available for this emote.
 }
 
 interface Mention {

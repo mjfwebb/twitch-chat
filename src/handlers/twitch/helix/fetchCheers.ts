@@ -47,7 +47,7 @@ const saveCheers = async (cheers: Cheermote[]) => {
       cheer.tiers.forEach((tier) => {
         const name = `${cheer.prefix}${tier.min_bits}`;
         chatCheers[name] = {
-          name,
+          prefix: cheer.prefix,
           color: tier.color,
           url: tier.images.dark.animated['4'],
           minBits: tier.min_bits,

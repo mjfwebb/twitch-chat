@@ -6,12 +6,80 @@ import { ChatEntry } from '../../Chat/ChatEntry';
 
 import './ChatPreview.less';
 
-const fakesTwitchMessages = [
-  'Wow so awesome!',
-  'This is so cool peepoWow',
-  'Did you see that? Unbeleafable! haHAA',
-  'Loving the stream, keep it up!',
-  '!hype Can we get some hype in the chat? catJAM',
+const fakeTwitchMessages: ChannelChatMessageEvent['message'][] = [
+  {
+    text: 'Kappa5000 keep being awesome!',
+    fragments: [
+      {
+        type: 'cheermote',
+        text: 'Kappa5000',
+        cheermote: {
+          prefix: 'kappa',
+          bits: 5000,
+          tier: 1,
+        },
+      },
+      {
+        type: 'text',
+        text: ' keep being awesome!',
+      },
+    ],
+  },
+  {
+    text: 'This is so cool peepoWow',
+    fragments: [
+      {
+        type: 'text',
+        text: 'This is so cool peepoWow',
+      },
+    ],
+  },
+  {
+    text: 'Did you see that? Unbeleafable! haHAA LUL',
+    fragments: [
+      {
+        type: 'text',
+        text: 'Did you see that? Unbeleafable! haHAA ',
+      },
+      {
+        type: 'emote',
+        text: 'LUL',
+        emote: {
+          id: '425618',
+          emote_set_id: '0',
+          owner_id: '0',
+          format: ['static'],
+        },
+      },
+    ],
+  },
+  {
+    text: 'Loving the stream, keep it up! Cheer169',
+    fragments: [
+      {
+        type: 'text',
+        text: 'Loving the stream, keep it up!',
+      },
+      {
+        type: 'cheermote',
+        text: 'Cheer169',
+        cheermote: {
+          prefix: 'cheer',
+          bits: 169,
+          tier: 1,
+        },
+      },
+    ],
+  },
+  {
+    text: '!hype Can we get some hype in the chat? catJAM',
+    fragments: [
+      {
+        type: 'text',
+        text: '!hype Can we get some hype in the chat? catJAM',
+      },
+    ],
+  },
 ];
 
 const fakeUsers: {
@@ -85,11 +153,7 @@ export const ChatPreview = ({ overlayParameters }: { overlayParameters: typeof D
   const fakeChatMessageEvents = Array.from({ length: 5 }, (_, idx: number) => {
     {
       const user = fakeUsers[idx];
-      const message = fakesTwitchMessages[idx];
-      const chatMessage: ChannelChatMessageEvent['message'] = {
-        text: message,
-        fragments: [{ text: message, type: 'text' }],
-      };
+
       return {
         broadcaster_user_id: '0',
         broadcaster_user_login: 'athano',
@@ -98,7 +162,7 @@ export const ChatPreview = ({ overlayParameters }: { overlayParameters: typeof D
         chatter_user_login: user.login,
         chatter_user_name: user.name,
         message_id: String(idx),
-        message: chatMessage,
+        message: fakeTwitchMessages[idx],
         message_type: 'text',
         badges: fakeUsers[idx].badges,
         color: user.color,
