@@ -1,7 +1,6 @@
 import twemoji from '@twemoji/api';
 import classNames from 'classnames';
-
-import { JSX } from 'react';
+import { Fragment, JSX } from 'react';
 import { store } from '../../store/store';
 import { ChannelChatMessageEvent } from '../../types/twitchEvents';
 import { ChatCheer, ChatEmote } from '../../types/types';
@@ -183,10 +182,9 @@ export const ChatImageRenderer = ({
           const cheerAmount = Number(match.replace(/\D/g, ''));
 
           return (
-            <>
+            <Fragment key={`${match}.${index}`}>
               <img
                 className={classNames('chat-cheer')}
-                key={`${match}.${index}`}
                 src={cheer.url}
                 // srcSet={emote.srcSet}
                 alt={match}
@@ -196,7 +194,7 @@ export const ChatImageRenderer = ({
               <span className={classNames('chat-cheer-amount')} style={{ color: cheer.color }}>
                 {cheerAmount}
               </span>
-            </>
+            </Fragment>
           );
         }
 
