@@ -170,8 +170,6 @@ export const ChatImageRenderer = ({ fragments }: { fragments: ChannelChatMessage
     });
   });
 
-  console.log('Message Parts:', messageParts);
-
   return (
     <>
       {messageParts.map(({ match, emote, cheer, skip, modifierFlags }, index) => {
