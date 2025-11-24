@@ -80,6 +80,7 @@ export const ChatImageRenderer = ({ fragments }: { fragments: ChannelChatMessage
         emote: getTwitchEmote(fragment.emote.id),
         cheer: undefined,
         skip: false,
+        modifierFlags: [...nextMessageModifierFlags],
       });
       nextMessageModifierFlags.length = 0;
       return;
@@ -169,6 +170,8 @@ export const ChatImageRenderer = ({ fragments }: { fragments: ChannelChatMessage
     });
   });
 
+  console.log('Message Parts:', messageParts);
+
   return (
     <>
       {messageParts.map(({ match, emote, cheer, skip, modifierFlags }, index) => {
@@ -208,7 +211,7 @@ export const ChatImageRenderer = ({ fragments }: { fragments: ChannelChatMessage
           }
 
           // Next message part is a space
-          if (nextMessagePart.match === ' ') {
+          if (nextMessagePart.match.trim() === '') {
             nextIndex++;
             continue;
           }
@@ -221,12 +224,10 @@ export const ChatImageRenderer = ({ fragments }: { fragments: ChannelChatMessage
 
           // Next message part is a modifier
           if (nextMessagePart.emote && nextMessagePart.emote.modifierFlags > 0) {
-            let nextMessageParsedFlags: string[] = [];
-            if (nextMessagePart.emote.origin === 'sevenTV') {
-              nextMessageParsedFlags = parseSevenTVModifierFlags(nextMessagePart.emote.modifierFlags);
-            } else if (nextMessagePart.emote.origin === 'frankerFaceZ') {
-              nextMessageParsedFlags = parseFrankerFaceZModifierFlags(nextMessagePart.emote.modifierFlags);
-            }
+            const nextMessageParsedFlags: string[] = [
+              ...parseSevenTVModifierFlags(nextMessagePart.emote.modifierFlags),
+              ...parseFrankerFaceZModifierFlags(nextMessagePart.emote.modifierFlags),
+            ];
 
             // Next message part is a modifier that applies to this emote
             if (nextMessageParsedFlags.length > 0) {
