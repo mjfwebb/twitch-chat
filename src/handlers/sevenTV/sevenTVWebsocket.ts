@@ -114,12 +114,12 @@ const RATE_LIMIT_MIN_DELAY_MS = 30_000; // If rate-limited, wait at least 30s be
 
 // Fatal client-error codes indicate a bug in this client. Reconnecting without a fix won't help.
 const fatalClientCodes: Set<number> = new Set([
-  closeCodes.UnknownOperation,      // 4001 - sent an unknown opcode
-  closeCodes.InvalidPayload,        // 4002 - sent a malformed payload
-  closeCodes.AuthFailure,           // 4003 - authentication failed
-  closeCodes.AlreadyIdentified,     // 4004 - tried to identify twice
-  closeCodes.AlreadySubscribed,     // 4009 - duplicate subscription
-  closeCodes.NotSubscribed,         // 4010 - unsubscribed from unknown event
+  closeCodes.UnknownOperation, // 4001 - sent an unknown opcode
+  closeCodes.InvalidPayload, // 4002 - sent a malformed payload
+  closeCodes.AuthFailure, // 4003 - authentication failed
+  closeCodes.AlreadyIdentified, // 4004 - tried to identify twice
+  closeCodes.AlreadySubscribed, // 4009 - duplicate subscription
+  closeCodes.NotSubscribed, // 4010 - unsubscribed from unknown event
   closeCodes.InsufficientPrivilege, // 4011 - permission error
 ]);
 
