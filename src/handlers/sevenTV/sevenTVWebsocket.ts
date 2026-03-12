@@ -112,6 +112,17 @@ const BASE_RECONNECT_DELAY_MS = 1000; // 1s base delay
 const MAX_RECONNECT_DELAY_MS = 60_000; // Cap at 60s
 const RATE_LIMIT_MIN_DELAY_MS = 30_000; // If rate-limited, wait at least 30s before retry
 
+// Fatal client-error codes indicate a bug in this client. Reconnecting without a fix won't help.
+const fatalClientCodes: Set<number> = new Set([
+  closeCodes.UnknownOperation,      // 4001 - sent an unknown opcode
+  closeCodes.InvalidPayload,        // 4002 - sent a malformed payload
+  closeCodes.AuthFailure,           // 4003 - authentication failed
+  closeCodes.AlreadyIdentified,     // 4004 - tried to identify twice
+  closeCodes.AlreadySubscribed,     // 4009 - duplicate subscription
+  closeCodes.NotSubscribed,         // 4010 - unsubscribed from unknown event
+  closeCodes.InsufficientPrivilege, // 4011 - permission error
+]);
+
 let heartbeat: number | undefined; // Interval for heartbeat
 let missedHeartbeats = 0;
 
@@ -119,7 +130,7 @@ let missedHeartbeats = 0;
 let reconnectTimeout: number | undefined;
 let retryCount = 0;
 
-const isSubscribed = false;
+let isSubscribed = false;
 
 // Store last-known session ID to attempt a resume on reconnects
 let storedSessionId: string | undefined;
@@ -190,35 +201,34 @@ export function runSevenTVWebsocket(sevenTVTwitchUser: SevenTVTwitchUser) {
 
   socket.addEventListener('close', function (event) {
     logger.info(`SevenTV WebSocket: Connection Closed (code: ${event.code}, reason: ${event.reason || 'n/a'})`);
+    isSubscribed = false;
     if (heartbeat) {
       clearInterval(heartbeat);
       heartbeat = undefined;
     }
 
-    // Determine reconnection strategy based on close code
-    // Note: 4005 (RateLimited) is specific to SevenTV close codes
+    // Determine reconnection strategy based on close code.
+    // Rate-limited gets a longer delay.
     if (event.code === closeCodes.RateLimited || /429|rate.?limit/i.test(event.reason)) {
-      // Apply a longer minimum delay when rate-limited
       const delay = Math.max(RATE_LIMIT_MIN_DELAY_MS, computeBackoff(retryCount, RATE_LIMIT_MIN_DELAY_MS));
       scheduleReconnect('rate limited', delay);
       return;
     }
 
-    // Server restart/maintenance/timeouts should reconnect
-    if (
-      event.code === closeCodes.Restart ||
-      event.code === closeCodes.Maintenance ||
-      event.code === closeCodes.Timeout ||
-      event.code === closeCodes.ServerError ||
-      !event.wasClean
-    ) {
-      scheduleReconnect(`close code ${event.code}${event.reason ? ' - ' + event.reason : ''}`);
+    // Check for fatal client errors
+    if (fatalClientCodes.has(event.code)) {
+      logger.error(`SevenTV WebSocket: Fatal client error (code: ${event.code}), not reconnecting.`);
+      return;
     }
+
+    // Reconnect for everything else: server errors, restarts, maintenance, standard codes
+    // like 1001 ("Going Away") that 7TV uses when redirecting clients, unclean closes, etc.
+    scheduleReconnect(`close code ${event.code}${event.reason ? ' - ' + event.reason : ''}`);
   });
 
   socket.addEventListener('message', function (message) {
-    if (hasOwnProperty(message, 'utf8Data') && typeof message.utf8Data === 'string') {
-      const data: unknown = JSON.parse(message.utf8Data);
+    if (typeof message.data === 'string') {
+      const data: unknown = JSON.parse(message.data);
       if (hasOwnProperty(data, 'op') && hasOwnProperty(data, 't') && hasOwnProperty(data, 'd')) {
         const { op, t, d } = data as SevenTVWebsocketInboundMessage<unknown>;
         switch (op) {
@@ -292,6 +302,7 @@ export function runSevenTVWebsocket(sevenTVTwitchUser: SevenTVTwitchUser) {
                     }),
                   ),
                 );
+                isSubscribed = true;
               }
             }
 
@@ -327,6 +338,7 @@ export function runSevenTVWebsocket(sevenTVTwitchUser: SevenTVTwitchUser) {
                   }),
                 ),
               );
+              isSubscribed = true;
             }
             break;
           }
