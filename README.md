@@ -1,6 +1,6 @@
-# Athano's Twitch Chat Overlay
+# Athano's Stream Chat Overlay
 
-A modern Twitch chat overlay built with React, TypeScript, and Vite utilising the Twitch EventSub API.
+A modern stream chat overlay built with React, TypeScript, and Vite utilising the Twitch EventSub API.
 
 Use it right now at [chat.nice.gg](https://chat.nice.gg/).
 
