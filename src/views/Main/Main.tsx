@@ -11,7 +11,7 @@ export const Main = () => {
           <a href="https://github.com/mjfwebb/twitch-chat/">
             <i className="fa fa-github"></i> GitHub
           </a>
-          . If you encounter issues or have feature requests, please check the <a href="https://github.com/mjfwebb/twitch-chat/issues">issues page</a>
+          . If you encounter issues or have feature requests, please check the <a href="https://github.com/mjfwebb/stream-chat/issues">issues page</a>
           .
         </p>
         <p>
