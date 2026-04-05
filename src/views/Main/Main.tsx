@@ -3,7 +3,7 @@ import { TwitchConnectPage } from './TwitchConnectPage';
 export const Main = () => {
   return (
     <main>
-      <h1>Athano's Twitch Chat Overlay</h1>
+      <h1>Athano's Stream Chat Overlay</h1>
       <TwitchConnectPage />
       <footer>
         <p>
