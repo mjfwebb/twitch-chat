@@ -272,20 +272,19 @@ export const ChatImageRenderer = ({ fragments }: { fragments: ChannelChatMessage
 
           if (zeroWidthEmotes.length > 0) {
             return (
-              <div className="chat-emote--zero-width-wrapper" key={`${match}.${index}`}>
+              <span className="chat-emote--zero-width-wrapper" key={`${match}.${index}`}>
                 {image}
                 {zeroWidthEmotes.map((zeroWidthEmote, index) => (
-                  <span key={index} className="chat-emote--zero-width-span">
-                    <img
-                      className={classNames('chat-emote', 'chat-emote--zero-width-img')}
-                      src={zeroWidthEmote.src}
-                      srcSet={zeroWidthEmote.srcSet}
-                      alt={''}
-                      title={''}
-                    />
-                  </span>
+                  <img
+                    key={index}
+                    className={classNames('chat-emote', 'chat-emote--zero-width-img')}
+                    src={zeroWidthEmote.src}
+                    srcSet={zeroWidthEmote.srcSet}
+                    alt={''}
+                    title={''}
+                  />
                 ))}
-              </div>
+              </span>
             );
           } else {
             return image;
