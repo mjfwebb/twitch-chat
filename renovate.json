@@ -1,0 +1,29 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:best-practices"],
+  "groupName": "all",
+  "rebaseWhen": "auto",
+  "automerge": true,
+  "major": {
+    "automerge": false
+  },
+  "rangeStrategy": "pin",
+  "schedule": ["before 4am on Monday"],
+  "separateMajorMinor": true,
+  "packageRules": [
+    {
+      "groupName": "vitest packages",
+      "matchPackageNames": ["*vitest{/,}**"]
+    },
+    {
+      "matchUpdateTypes": ["major"],
+      "groupName": null,
+      "automerge": false
+    },
+    {
+      "matchUpdateTypes": ["minor", "patch"],
+      "groupName": "all",
+      "automerge": true
+    }
+  ]
+}
