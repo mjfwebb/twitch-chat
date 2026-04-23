@@ -67,8 +67,8 @@ export const TwitchBroadcasterIdLoader = () => {
 
       if (loadedBroadcasterId) {
         store.getState().setBroadcasterId(loadedBroadcasterId);
-        fetchBadges('channel');
-        fetchCheers('channel');
+        void fetchBadges('channel');
+        void fetchCheers('channel');
         await loadEmotes(loadedBroadcasterId);
       }
     }

@@ -72,7 +72,7 @@ export const TwitchWebSocketClient = () => {
           );
           isUsingReconnectUrlRef.current = false;
           // Use a microtask to avoid setState during React render phases from the lib callback
-          Promise.resolve().then(() => setSocketUrl(baseUrlRef.current));
+          void Promise.resolve().then(() => setSocketUrl(baseUrlRef.current));
         } else {
           logger.info(`Socket closed (code ${closeEvent?.code} reason: ${closeEvent?.reason || ''}). Scheduling reconnect.`);
         }
@@ -181,7 +181,7 @@ export const TwitchWebSocketClient = () => {
               // Point main hook at the reconnect URL and then close it to promote
               const reconnectUrl = reconnectUrlRef.current;
               if (reconnectUrl) {
-                Promise.resolve().then(() => setSocketUrl(reconnectUrl));
+                void Promise.resolve().then(() => setSocketUrl(reconnectUrl));
               }
               // Close the primary socket to trigger the hook's reconnect to reconnect_url
               try {
@@ -200,7 +200,7 @@ export const TwitchWebSocketClient = () => {
                 ...jsonData.payload.event,
                 eventType: jsonData.payload.subscription.type,
               } as EventsubEvent;
-              twitchEventSubHandler(transformedData);
+              void twitchEventSubHandler(transformedData);
             }
             break;
           }
@@ -253,7 +253,7 @@ export const TwitchWebSocketClient = () => {
           if (followingReconnectRef.current) {
             followingReconnectRef.current = false;
           } else if (sessionId && broadcasterId && userId) {
-            subscribeToChat(broadcasterId, userId, sessionId);
+            void subscribeToChat(broadcasterId, userId, sessionId);
           }
         }
         break;
@@ -267,7 +267,7 @@ export const TwitchWebSocketClient = () => {
             eventType: jsonData.payload.subscription.type,
           } as EventsubEvent;
 
-          twitchEventSubHandler(transformedData);
+          void twitchEventSubHandler(transformedData);
         }
         break;
 

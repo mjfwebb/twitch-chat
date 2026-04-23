@@ -181,7 +181,7 @@ export function runSevenTVWebsocket(sevenTVTwitchUser: SevenTVTwitchUser) {
   };
 
   socket.addEventListener('error', function (error) {
-    logger.error('SevenTV WebSocket: Connection Error: ' + error.toString());
+    logger.error(`SevenTV WebSocket: Connection Error: ${JSON.stringify(error)}`);
     // In browsers, onerror doesn't expose status codes (e.g., 429). We'll rely on close events or server opcodes.
     // If the socket did not open, try to reconnect with backoff.
     if (socket.readyState !== WebSocket.OPEN) {

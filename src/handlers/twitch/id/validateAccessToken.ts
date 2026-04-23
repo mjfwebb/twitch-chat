@@ -25,7 +25,7 @@ export const validateAccessToken = async (): Promise<ValidateResponse | null> =>
       return data;
     }
   } catch (error) {
-    logger.error(`Failed to validate access token: ${error}`);
+    logger.error(`Failed to validate access token: ${JSON.stringify(error)}`);
   }
 
   return null;

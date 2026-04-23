@@ -14,8 +14,8 @@ function App() {
   const [searchParams] = useSearchParams();
 
   useMount(() => {
-    fetchBadges('global');
-    fetchCheers('global');
+    void fetchBadges('global');
+    void fetchCheers('global');
   });
 
   if (!accessToken) {

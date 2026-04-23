@@ -28,7 +28,7 @@ export const fetchCheers = async (type: 'global' | 'channel'): Promise<void> => 
     if (parsed.success) {
       const data = parsed.data.data;
       if (Array.isArray(data) && data.length > 0) {
-        saveCheers(data);
+        void saveCheers(data);
       } else {
         logger.warn('No cheers found or data is not an array.');
       }

@@ -25,7 +25,7 @@ export function runBetterTTVWebsocket() {
   }
 
   socket.addEventListener('error', function (error) {
-    logger.error(`BetterTTV WebSocket: Connect Error: ${String(error)}`);
+    logger.error(`BetterTTV WebSocket: Connect Error: ${JSON.stringify(error)}`);
   });
 
   socket.addEventListener('open', function () {
@@ -34,7 +34,7 @@ export function runBetterTTVWebsocket() {
     joinChannel(socket);
 
     socket.addEventListener('error', function (error) {
-      logger.error('BetterTTV WebSocket: Connection Error: ' + error.toString());
+      logger.error(`BetterTTV WebSocket: Connection Error: ${JSON.stringify(error)}`);
     });
 
     socket.addEventListener('close', function () {
