@@ -12,6 +12,7 @@ import { chatSearchParamsMap, DEFAULT_CHAT_SETTINGS_VALUES } from '../../constan
 import { useDebounce } from '../../hooks/useDebounce';
 import { decodeFiltersFromUrl, EMPTY_FILTER_CONFIG, encodeFiltersToUrl, type UserFilterConfig } from '../../utils/filters';
 import { logger } from '../../utils/logger';
+import { buildUpdatedChatUrl } from './buildChatUrl';
 import { ChatPreview } from './ChatPreview/ChatPreview';
 import './ChatSettings.less';
 
@@ -20,41 +21,6 @@ const multiPartSettingsMapForLoading = {
   width: ['widthValue', 'widthUnit'],
   height: ['heightValue', 'heightUnit'],
   'chat-message-padding': ['chatMessagePaddingValue', 'chatMessagePaddingUnit'],
-};
-
-const multiPartSettingsMapForSaving = {
-  fontSizeValue: {
-    compositeKeys: ['fontSizeValue', 'fontSizeUnit'],
-    param: 'font-size',
-  },
-  fontSizeUnit: {
-    compositeKeys: ['fontSizeValue', 'fontSizeUnit'],
-    param: 'font-size',
-  },
-  widthValue: {
-    compositeKeys: ['widthValue', 'widthUnit'],
-    param: 'width',
-  },
-  widthUnit: {
-    compositeKeys: ['widthValue', 'widthUnit'],
-    param: 'width',
-  },
-  heightValue: {
-    compositeKeys: ['heightValue', 'heightUnit'],
-    param: 'height',
-  },
-  heightUnit: {
-    compositeKeys: ['heightValue', 'heightUnit'],
-    param: 'height',
-  },
-  chatMessagePaddingValue: {
-    compositeKeys: ['chatMessagePaddingValue', 'chatMessagePaddingUnit'],
-    param: 'chat-message-padding',
-  },
-  chatMessagePaddingUnit: {
-    compositeKeys: ['chatMessagePaddingValue', 'chatMessagePaddingUnit'],
-    param: 'chat-message-padding',
-  },
 };
 
 const multiPartRegex = /^(?<value>[\d.]+)(?<unit>px|em|rem|vh|vw|ch)$/;
@@ -100,33 +66,7 @@ export const ChatSettings = ({ chatUrl, setChatUrl }: { chatUrl: string; setChat
   }, [messageFilterConfig]);
 
   const handleUpdateUrl = () => {
-    const url = new URL(chatUrl);
-    Object.entries(overlayParameters).forEach(([key, value]) => {
-      // If the value is the default value, either remove the key from the chatURL, or just don't add it in the first place
-      const defaultValue = DEFAULT_CHAT_SETTINGS_VALUES[key as keyof typeof DEFAULT_CHAT_SETTINGS_VALUES];
-      const param = chatSearchParamsMap[key as keyof typeof chatSearchParamsMap];
-
-      let paramToSet = param;
-      let valueToSet = value;
-
-      if (Object.keys(multiPartSettingsMapForSaving).includes(key)) {
-        const multiPartKey = key as keyof typeof multiPartSettingsMapForSaving;
-        const multiPartParam = multiPartSettingsMapForSaving[multiPartKey].param;
-        if (overlayParameters[multiPartKey] !== DEFAULT_CHAT_SETTINGS_VALUES[multiPartKey]) {
-          const multiPartCompositeValue = `${overlayParameters[multiPartSettingsMapForSaving[multiPartKey].compositeKeys[0] as keyof typeof overlayParameters]}${overlayParameters[multiPartSettingsMapForSaving[multiPartKey].compositeKeys[1] as keyof typeof overlayParameters]}`;
-          paramToSet = multiPartParam;
-          valueToSet = multiPartCompositeValue;
-        }
-      }
-
-      if (String(valueToSet) !== String(defaultValue)) {
-        url.searchParams.set(paramToSet, String(valueToSet));
-      } else {
-        url.searchParams.delete(paramToSet);
-      }
-    });
-
-    setChatUrl(url.toString());
+    setChatUrl(buildUpdatedChatUrl(chatUrl, overlayParameters));
     detailsRef.current?.removeAttribute('open');
     detailsRef.current?.scrollIntoView();
 
@@ -199,8 +139,8 @@ export const ChatSettings = ({ chatUrl, setChatUrl }: { chatUrl: string; setChat
               [multiPartSettingsMapForLoading[urlParam as keyof typeof multiPartSettingsMapForLoading][1]]: sizeUnit,
             }));
             logger.debug('Loaded multi-part setting:', urlParam, { sizeValue, sizeUnit });
-            continue;
           }
+          continue;
         }
 
         // Special-case: username filters param (base64url encoded)
