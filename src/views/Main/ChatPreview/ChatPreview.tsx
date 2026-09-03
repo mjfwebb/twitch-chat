@@ -135,6 +135,7 @@ export const ChatPreview = ({ overlayParameters }: { overlayParameters: typeof D
     showBorders: overlayParameters.showBorders,
     showColonAfterDisplayName: overlayParameters.showColonAfterDisplayName,
     showNameAlias: overlayParameters.showNameAlias,
+    showGifs: overlayParameters.showGifs,
     dropShadowEnabled: overlayParameters.dropShadowEnabled,
     dropShadowSettings: overlayParameters.dropShadowSettings,
     textStrokeEnabled: overlayParameters.textStrokeEnabled,

@@ -68,6 +68,9 @@ export const useChatSearchParams = () => {
   // Controls whether to show name alias when display name differs from login. Defaults to true.
   const showNameAlias = searchParams.get(chatSearchParamsMap.showNameAlias) === 'false' ? false : DEFAULT_CHAT_SETTINGS_VALUES.showNameAlias;
 
+  // Controls whether gifs are rendered in chat messages. Defaults to true.
+  const showGifs = searchParams.get(chatSearchParamsMap.showGifs) === 'false' ? false : DEFAULT_CHAT_SETTINGS_VALUES.showGifs;
+
   // Username filter (base64url encoded JSON). Empty means no filtering.
   const filtersParam = searchParams.get(chatSearchParamsMap.usernameFilters) || DEFAULT_CHAT_SETTINGS_VALUES.usernameFilters;
   const _filterCfg = decodeFiltersFromUrl(filtersParam);
@@ -94,6 +97,7 @@ export const useChatSearchParams = () => {
     showBorders,
     showColonAfterDisplayName,
     showNameAlias,
+    showGifs,
     textStrokeEnabled,
     textStrokeSettings,
     width,
