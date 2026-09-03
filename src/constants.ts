@@ -47,6 +47,7 @@ export const DEFAULT_CHAT_SETTINGS_VALUES = {
   textStrokeEnabled: false,
   showNameAlias: true,
   animatedEntry: true,
+  showGifs: true,
   usernameFilters: '',
   messageFilters: '',
 };
@@ -70,6 +71,7 @@ export const chatSearchParamsMap = {
   fontFamily: 'font-family',
   chatMessagePadding: 'chat-message-padding',
   showNameAlias: 'show-name-alias',
+  showGifs: 'show-gifs',
   usernameFilters: 'username-filters',
   messageFilters: 'message-filters',
 };

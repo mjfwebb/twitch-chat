@@ -522,6 +522,20 @@ export const ChatSettings = ({ chatUrl, setChatUrl }: { chatUrl: string; setChat
           </div>
         </section>
         <section>
+          <h3>Gifs</h3>
+          <div className="chat-settings-section">
+            <label htmlFor="showGifs">
+              <input
+                type="checkbox"
+                id="showGifs"
+                checked={overlayParameters.showGifs}
+                onChange={(e) => setOverlayParameters((prev) => ({ ...prev, showGifs: e.target.checked }))}
+              />{' '}
+              Show gifs in chat messages
+            </label>
+          </div>
+        </section>
+        <section>
           <h3>Animation</h3>
           <div className="chat-settings-section">
             <label htmlFor="animatedEntry">

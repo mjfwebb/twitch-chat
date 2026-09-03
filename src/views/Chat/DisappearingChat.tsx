@@ -36,6 +36,7 @@ const Message = ({ chatMessage }: MessageProps) => {
     textStrokeSettings: chatSearchParams.textStrokeSettings,
     chatMessagePadding: chatSearchParams.chatMessagePadding,
     showNameAlias: chatSearchParams.showNameAlias,
+    showGifs: chatSearchParams.showGifs,
     userInformationStore: store.getState().userInformation,
   };
 

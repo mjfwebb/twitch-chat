@@ -38,6 +38,7 @@ export const NonDisappearingChat = () => {
         textStrokeSettings={chatSearchParams.textStrokeSettings}
         showColonAfterDisplayName={chatSearchParams.showColonAfterDisplayName}
         showNameAlias={chatSearchParams.showNameAlias}
+        showGifs={chatSearchParams.showGifs}
         chatMessagePadding={chatSearchParams.chatMessagePadding}
         userInformationStore={store.getState().userInformation}
       />

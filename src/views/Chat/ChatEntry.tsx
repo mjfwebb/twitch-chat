@@ -15,6 +15,7 @@ interface ChatEntryProps {
   textStrokeSettings: string;
   showColonAfterDisplayName: boolean;
   showNameAlias: boolean;
+  showGifs: boolean;
   chatMessagePadding: string;
   userInformationStore: {
     [userId: string]: {
@@ -43,11 +44,17 @@ export const ChatEntry = ({
   textStrokeSettings,
   showColonAfterDisplayName,
   showNameAlias,
+  showGifs,
   chatMessagePadding,
   userInformationStore,
 }: ChatEntryProps) => {
   const gigantified = chatMessage.message_type === 'power_ups_gigantified_emote';
   const actionMessage = chatMessage.message.text.startsWith('\u0001ACTION');
+
+  // Gifs currently can't be combined with other fragments, so a disabled gif means an empty message
+  if (!showGifs && chatMessage.message.fragments.every((fragment) => fragment.type === 'gif')) {
+    return null;
+  }
 
   // Set default user if no user
   const user: { displayName: string; alias?: string; avatarUrl: string } = {
@@ -91,7 +98,7 @@ export const ChatEntry = ({
           </span>
           {showColonAfterDisplayName && !actionMessage && ': '}
           <span className={classNames('chat-message-text', actionMessage && 'chat-message-text-action')}>
-            <ChatImageRenderer fragments={chatMessage.message.fragments} />
+            <ChatImageRenderer fragments={chatMessage.message.fragments} showGifs={showGifs} />
           </span>
         </span>
       </div>

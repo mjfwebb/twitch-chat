@@ -27,7 +27,13 @@ function getTwitchEmote(emoteId: string): ChatEmote {
   };
 }
 
-export const ChatImageRenderer = ({ fragments }: { fragments: ChannelChatMessageEvent['message']['fragments'] }): JSX.Element => {
+export const ChatImageRenderer = ({
+  fragments,
+  showGifs,
+}: {
+  fragments: ChannelChatMessageEvent['message']['fragments'];
+  showGifs: boolean;
+}): JSX.Element => {
   const chatEmotes = store((s) => s.chatEmotes);
   const chatCheers = store((s) => s.chatCheers);
 
@@ -77,6 +83,10 @@ export const ChatImageRenderer = ({ fragments }: { fragments: ChannelChatMessage
     }
 
     if (fragment.type === 'gif' && fragment.gif) {
+      if (!showGifs) {
+        return;
+      }
+
       messageParts.push({
         match: fragment.text,
         emote: undefined,
