@@ -39,12 +39,18 @@ interface Mention {
   user_login: string; // The user login of the mentioned user.
 }
 
+interface Gif {
+  id: string; // An ID that uniquely identifies this GIF.
+  url: string; // The URL of the GIF.
+}
+
 export interface ChatMessageFragment {
-  type: 'text' | 'cheermote' | 'emote' | 'mention'; // The type of message fragment.
+  type: 'text' | 'cheermote' | 'emote' | 'mention' | 'gif'; // The type of message fragment.
   text: string; // Message text in fragment.
   cheermote?: Cheermote; // Metadata pertaining to the cheermote.
   emote?: Emote; // Metadata pertaining to the emote.
   mention?: Mention; // Metadata pertaining to the mention.
+  gif?: Gif; // Metadata pertaining to the GIF.
 }
 
 interface Cheer {

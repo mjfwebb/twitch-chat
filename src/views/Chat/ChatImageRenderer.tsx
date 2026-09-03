@@ -46,6 +46,7 @@ export const ChatImageRenderer = ({ fragments }: { fragments: ChannelChatMessage
     match: string;
     emote: ChatEmote | undefined;
     cheer: ChatCheerWithBits | undefined;
+    gif: string | undefined;
     skip: boolean;
     modifierFlags?: string[];
   }[] = [];
@@ -66,6 +67,7 @@ export const ChatImageRenderer = ({ fragments }: { fragments: ChannelChatMessage
             match: fragment.text,
             emote: undefined,
             cheer,
+            gif: undefined,
             skip: false,
           });
           nextMessageModifierFlags.length = 0;
@@ -74,11 +76,24 @@ export const ChatImageRenderer = ({ fragments }: { fragments: ChannelChatMessage
       }
     }
 
+    if (fragment.type === 'gif' && fragment.gif) {
+      messageParts.push({
+        match: fragment.text,
+        emote: undefined,
+        cheer: undefined,
+        gif: fragment.gif.url,
+        skip: false,
+      });
+      nextMessageModifierFlags.length = 0;
+      return;
+    }
+
     if (fragment.emote) {
       messageParts.push({
         match: fragment.text,
         emote: getTwitchEmote(fragment.emote.id),
         cheer: undefined,
+        gif: undefined,
         skip: false,
         modifierFlags: [...nextMessageModifierFlags],
       });
@@ -92,6 +107,7 @@ export const ChatImageRenderer = ({ fragments }: { fragments: ChannelChatMessage
           match,
           emote: undefined,
           cheer: undefined,
+          gif: undefined,
           skip: true,
         });
         nextMessageModifierFlags.push(bttvModifierMap[match]);
@@ -100,6 +116,7 @@ export const ChatImageRenderer = ({ fragments }: { fragments: ChannelChatMessage
           match,
           emote: chatEmotes[match],
           cheer: undefined,
+          gif: undefined,
           skip: false,
           modifierFlags: [...nextMessageModifierFlags],
         });
@@ -153,6 +170,7 @@ export const ChatImageRenderer = ({ fragments }: { fragments: ChannelChatMessage
                 id: unicodeMatch,
               },
               cheer: undefined,
+              gif: undefined,
               skip: false,
               modifierFlags: [...nextMessageModifierFlags],
             });
@@ -162,6 +180,7 @@ export const ChatImageRenderer = ({ fragments }: { fragments: ChannelChatMessage
               match: unicodeMatch,
               emote: undefined,
               cheer: undefined,
+              gif: undefined,
               skip: false,
             });
           }
@@ -172,7 +191,11 @@ export const ChatImageRenderer = ({ fragments }: { fragments: ChannelChatMessage
 
   return (
     <>
-      {messageParts.map(({ match, emote, cheer, skip, modifierFlags }, index) => {
+      {messageParts.map(({ match, emote, cheer, gif, skip, modifierFlags }, index) => {
+        if (gif) {
+          return <img className={classNames('chat-gif')} key={`${match}.${index}`} src={gif} alt={match} title={match} />;
+        }
+
         if (cheer) {
           // Get the cheer amount without the name:
           const cheerAmount = Number(match.replace(/\D/g, ''));
